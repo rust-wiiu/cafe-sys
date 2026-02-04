@@ -1,0 +1,36 @@
+//! ntag
+
+#[cfg(target_arch = "powerpc")]
+imports_section!(
+    "ntag",
+    [
+        "NTAGAbort",
+        "NTAGConvertMasterDataToWriteData",
+        "NTAGConvertMasterDataToWriteDataForT2T",
+        "NTAGConvertT2T",
+        "NTAGCreateAllWriteData",
+        "NTAGCreateAllWriteDataForT2T",
+        "NTAGFormat",
+        "NTAGInit",
+        "NTAGInitEx",
+        "NTAGIsInit",
+        "NTAGParseHeader",
+        "NTAGProc",
+        "NTAGRead",
+        "NTAGReadT2T",
+        "NTAGReadT2TRawData",
+        "NTAGSetFormatSettings",
+        "NTAGSetReadOnly",
+        "NTAGSetTagDetectCallback",
+        "NTAGShutdown",
+        "NTAGWrite",
+        "NTAGWriteT2T",
+        "NTAGWriteT2TConfigArea",
+        "NTAGWriteT2TLockArea",
+        "NTAGWriteT2TRawData",
+        "NTAGWriteT2TRawDataEx",
+        "NTAGWriteT2TWithConvert",
+        "__rplwrap_NTAGDetect"
+    ],
+    []
+);

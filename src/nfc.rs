@@ -1,0 +1,38 @@
+//! NFC
+
+#[cfg(target_arch = "powerpc")]
+imports_section!(
+    "nfc",
+    [
+        "NFCAbort",
+        "NFCAntennaCheck",
+        "NFCDetect",
+        "NFCFormat",
+        "NFCGetMode",
+        "NFCGetTagInfo",
+        "NFCGetTagInfoMulti",
+        "NFCGetUIDFromActivationEventData",
+        "NFCInit",
+        "NFCInitEx",
+        "NFCIsInit",
+        "NFCIsTagPresent",
+        "NFCProc",
+        "NFCRead",
+        "NFCReadT2T",
+        "NFCSendRawData",
+        "NFCSendRawDataEx",
+        "NFCSendRawDataEx2",
+        "NFCSendRawDataTwice",
+        "NFCSendRawDataWithPrePolling",
+        "NFCSendRawDataWithPrePollingEx",
+        "NFCSetLockBitsForT1T",
+        "NFCSetMode",
+        "NFCSetReadOnly",
+        "NFCSetTagDetectCallback",
+        "NFCShutdown",
+        "NFCWrite",
+        "NFCWriteT2T",
+        "__NFCSystemAbort"
+    ],
+    []
+);

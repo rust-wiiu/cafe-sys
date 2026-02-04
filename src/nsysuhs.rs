@@ -1,0 +1,34 @@
+//! nsysuhs
+
+#[cfg(target_arch = "powerpc")]
+imports_section!(
+    "nsysuhs",
+    [
+        "UhsAcquireInterface",
+        "UhsAdministerDevice",
+        "UhsAdministerEndpoint",
+        "UhsAdministerEndpointOpt",
+        "UhsClassDrvReg",
+        "UhsClassDrvUnReg",
+        "UhsClearEndpointHalt",
+        "UhsClientClose",
+        "UhsClientOpen",
+        "UhsGetAlternateInterface",
+        "UhsGetCurrentFrame",
+        "UhsGetDescriptorString",
+        "UhsGetFullConfigDescriptor",
+        "UhsGetInterface",
+        "UhsQueryInterfaces",
+        "UhsReleaseInterface",
+        "UhsSetInterface",
+        "UhsSubmitBulkRequest",
+        "UhsSubmitBulkRequestAsync",
+        "UhsSubmitControlRequest",
+        "UhsSubmitControlRequestAsync",
+        "UhsSubmitInterruptRequest",
+        "UhsSubmitInterruptRequestAsync",
+        "UhsSubmitIsocRequest",
+        "UhsSubmitIsocRequestAsync"
+    ],
+    []
+);

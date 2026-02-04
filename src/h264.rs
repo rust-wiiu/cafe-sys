@@ -1,0 +1,28 @@
+//! H264
+
+#[cfg(target_arch = "powerpc")]
+imports_section!(
+    "h264",
+    [
+        "H264DECBegin",
+        "H264DECCheckDecunitLength",
+        "H264DECCheckMemSegmentation",
+        "H264DECCheckSkipableFrame",
+        "H264DECClose",
+        "H264DECEnd",
+        "H264DECExecute",
+        "H264DECFindDecstartpoint",
+        "H264DECFindIdrpoint",
+        "H264DECFlush",
+        "H264DECGetImageSize",
+        "H264DECInitParam",
+        "H264DECMemoryRequirement",
+        "H264DECOpen",
+        "H264DECSetBitstream",
+        "H264DECSetParam",
+        "H264DECSetParam_FPTR_OUTPUT",
+        "H264DECSetParam_OUTPUT_PER_FRAME",
+        "H264DECSetParam_USER_MEMORY"
+    ],
+    []
+);
