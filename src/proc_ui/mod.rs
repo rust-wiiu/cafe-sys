@@ -1,15 +1,14 @@
 //! proc_ui
 
+use crate::ffi::*;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
-use crate::ffi::*;
-
-/// Called just before releasing the foreground. The callback must call [ready_to_release].
+/// Called just before releasing the foreground. The callback must call [ready_to_release][crate::coreinit::foreground::ready_to_release].
 ///
 /// ProcUISaveCallbackFunction
 pub type SaveCallbackFn = unsafe extern "C" fn();
 
-/// Called just before releasing the foreground. The callback must call [ready_to_release].
+/// Called just before releasing the foreground. The callback must call [ready_to_release][crate::coreinit::foreground::ready_to_release].
 ///
 /// Return `0` to indicate success. Return any non-zero value to indicate a failure.
 ///
@@ -60,7 +59,7 @@ pub enum Message {
     HomeButtonDenied = 5,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// Returns the amount of memory required by ProcUI to handle the specified number of callbacks.
     ///
@@ -90,7 +89,7 @@ unsafe extern "C" {
     ///
     /// ProcUIDrawDoneRelease
     #[link_name = "ProcUIDrawDoneRelease"]
-    pub unsafe fn ready_to_release();
+    pub unsafe fn drawing_done();
 
     /// Checks if the application is currently in the foreground.
     ///
@@ -130,13 +129,13 @@ unsafe extern "C" {
     #[link_name = "ProcUIInitEx"]
     pub unsafe fn init_ex(callback: SaveCallbackFnEx, data: *mut c_void);
 
-    /// Checks if ProcUI has been initialized.
+    /// Checks if ProcUI has been initialized and running.
     ///
     /// # Symbol
     ///
     /// ProcUIIsRunning
     #[link_name = "ProcUIIsRunning"]
-    pub unsafe fn is_initialized() -> c_bool;
+    pub unsafe fn is_running() -> c_bool;
 
     /// Handle system messages.
     ///
@@ -267,12 +266,12 @@ unsafe extern "C" {
     ///
     /// # Symbol
     ///
-    /// ProcUISubProcessMessage
-    #[link_name = "ProcUISubProcessMessage"]
-    pub unsafe fn sub_process_message(blocking: c_bool) -> Status;
+    /// ProcUISubProcessMessages
+    #[link_name = "ProcUISubProcessMessages"]
+    pub unsafe fn sub_process_messages(blocking: c_bool) -> Status;
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "proc_ui",
     [

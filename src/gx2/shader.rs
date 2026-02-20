@@ -891,7 +891,7 @@ pub enum PrimitiveMode {
     TessellateQuadStrip = 0x94,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// GX2CalcFetchShaderSizeEx
     #[link_name = "GX2CalcFetchShaderSizeEx"]

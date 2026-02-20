@@ -6,7 +6,7 @@ pub enum AcStatus {
     Processing = 1,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// Initializes the AC library.
     ///

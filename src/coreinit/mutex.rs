@@ -40,7 +40,7 @@ pub type MutexQueue = Queue<Mutex>;
 /// OSMutexLink
 pub type MutexLink = Link<Mutex>;
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// OSInitMutex
     #[link_name = "OSInitMutex"]

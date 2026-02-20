@@ -1,6 +1,19 @@
 //! sysapp
 
-#[cfg(target_arch = "powerpc")]
+use crate::ffi::*;
+
+// #[cfg(target_arch = "powerpc")]
+unsafe extern "C" {
+    #[doc(alias = "SYSRelaunchTitle")]
+    #[link_name = "SYSRelaunchTitle"]
+    pub unsafe fn relauch_title(argc: u32, argv: *const *const c_char);
+
+    #[doc(alias = "SYSLaunchMenu")]
+    #[link_name = "SYSLaunchMenu"]
+    pub unsafe fn launch_menu();
+}
+
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "sysapp",
     [

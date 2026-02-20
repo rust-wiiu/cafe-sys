@@ -10,7 +10,7 @@ pub struct SystemInfo {
     pub cpu_freq_ratio: u32,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// Global information about the system.
     ///

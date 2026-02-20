@@ -210,7 +210,7 @@ bitflags! {
     }
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
 
     /// Initializes the socket library.

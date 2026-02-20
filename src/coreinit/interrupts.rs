@@ -25,7 +25,7 @@ pub enum InterruptType {
 pub type UserInterruptHandler =
     Option<unsafe extern "C" fn(r#type: InterruptType, interrupted_context: *mut Context)>;
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
 
     /// OSEnableInterrupts

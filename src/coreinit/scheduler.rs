@@ -1,6 +1,6 @@
 use crate::ffi;
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
 
     /// __OSSchedulerLock

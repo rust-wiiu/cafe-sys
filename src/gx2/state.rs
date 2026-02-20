@@ -22,7 +22,7 @@ pub enum RenderTarget {
     T7,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// GX2Init
     #[link_name = "GX2Init"]

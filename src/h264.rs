@@ -1,6 +1,6 @@
 //! H264
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "h264",
     [

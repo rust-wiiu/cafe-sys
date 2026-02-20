@@ -1,6 +1,5 @@
 use crate::{UnsafeInit, ffi::*};
 use bitflags::bitflags;
-use core::ptr;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
 #[repr(u32)]
@@ -11,7 +10,7 @@ pub enum Format {
 }
 
 #[repr(C)]
-#[derive(Debug)] // IDK about Clone?!?!?!?
+#[derive(Debug, PartialEq)]
 pub struct ColorBuffer {
     pub surface: Surface,
     pub view_mip: u32,
@@ -19,86 +18,24 @@ pub struct ColorBuffer {
     pub view_num_slices: u32,
     pub aa_ptr: *mut c_void,
     pub aa_size: u32,
-    _regs: [u32; 5],
+    pub _regs: [u32; 5],
 }
-
-// #[bon]
-// impl ColorBuffer {
-//     #[builder]
-//     pub fn new(
-//         surface: Surface,
-//         #[builder(default = 0)] view_mip: u32,
-//         #[builder(default = 0)] view_first_slice: u32,
-//         #[builder(default = 1)] view_num_slices: u32,
-//         #[builder(default = (ptr::null_mut(), 0))] aa: (*mut c_void, usize),
-//     ) -> Self {
-//         let mut s = Self {
-//             surface,
-//             view_mip,
-//             view_first_slice,
-//             view_num_slices,
-//             aa_ptr: aa.0,
-//             aa_size: aa.1 as u32,
-//             _regs: [0; 5],
-//         };
-
-//         unsafe {
-//             init_colorbuffer_regs(&mut s);
-//         }
-
-//         s
-//     }
-// }
 
 impl UnsafeInit for ColorBuffer {}
 
 #[repr(C)]
-#[derive(Debug)] // IDK about Clone?!?!?!?
+#[derive(Debug, PartialEq)]
 pub struct DepthBuffer {
     pub surface: Surface,
     pub view_mip: u32,
     pub view_first_slice: u32,
     pub view_num_slices: u32,
     pub z_ptr: *mut c_void,
-    // pub z_ptr: Option<NonNull<c_void>>,
     pub z_size: u32,
     pub clear_depth: f32,
     pub clear_stencil: u32,
-    _regs: [u32; 7],
+    pub _regs: [u32; 7],
 }
-
-// #[bon]
-// impl DepthBuffer {
-//     #[builder]
-//     pub fn new(
-//         surface: Surface,
-//         #[builder(default = 0)] view_mip: u32,
-//         #[builder(default = 0)] view_first_slice: u32,
-//         #[builder(default = 1)] view_num_slices: u32,
-//         #[builder(default = 1.0)] clear_depth: f32,
-//         #[builder(default = 0)] clear_stencil: u32,
-//         #[builder(default = (ptr::null_mut(), 0))] z: (*mut c_void, usize),
-//     ) -> Self {
-//         let mut s = Self {
-//             surface,
-//             view_mip,
-//             view_first_slice,
-//             view_num_slices,
-//             z_ptr: z.0,
-//             // z_ptr: None,
-//             z_size: z.1 as u32,
-//             clear_depth,
-//             clear_stencil,
-//             _regs: [0; 7],
-//         };
-
-//         unsafe {
-//             init_depthbuffer_regs(&mut s);
-//         }
-
-//         s
-//     }
-// }
 
 impl UnsafeInit for DepthBuffer {}
 
@@ -150,6 +87,45 @@ pub enum TileMode {
     LinearSpecial = 0x10,
 }
 
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
+pub enum MipLevel {
+    L0 = 0,
+    L1 = 1,
+    L2 = 2,
+    L3 = 3,
+    L4 = 4,
+    L5 = 5,
+    L6 = 6,
+    L7 = 7,
+    L8 = 8,
+    L9 = 9,
+    L10 = 10,
+    L11 = 11,
+    L12 = 12,
+}
+
+#[repr(i32)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
+pub enum SurfaceData {
+    #[default]
+    Image = 0,
+    Mip0 = 1,
+    Mip1 = 2,
+    Mip2 = 3,
+    Mip3 = 4,
+    Mip4 = 5,
+    Mip5 = 6,
+    Mip6 = 7,
+    Mip7 = 8,
+    Mip8 = 9,
+    Mip9 = 10,
+    Mip10 = 11,
+    Mip11 = 12,
+    Mip12 = 13,
+    MipAll = -1,
+}
+
 bitflags! {
     #[repr(transparent)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -184,7 +160,7 @@ bitflags! {
 }
 
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Surface {
     pub dim: Dimension,
     pub width: u32,
@@ -205,61 +181,9 @@ pub struct Surface {
     pub mip_offset: [u32; 13],
 }
 
-// impl Drop for Surface {
-//     fn drop(&mut self) {
-//         unsafe {
-//             destroy_surface(self, ResourceFlags::empty());
-//         }
-//     }
-// }
+impl UnsafeInit for Surface {}
 
-// #[bon]
-// impl Surface {
-//     #[builder]
-//     pub fn new(
-//         dim: Dimension,
-//         width: u32,
-//         height: u32,
-//         depth: u32,
-//         #[builder(default = 0)] num_mips: u32,
-//         format: Format,
-//         aa: AntiAliasing,
-//         flags: ResourceFlags,
-//         #[builder(default = TileMode::Default)] tile_mode: TileMode,
-//     ) -> Self {
-//         let mut s = Self {
-//             dim,
-//             width,
-//             height,
-//             depth,
-//             num_mips,
-//             format,
-//             aa,
-//             flags,
-//             image_size: 0,
-//             image: ptr::null_mut(),
-//             mip_size: 0,
-//             mip: ptr::null_mut(),
-//             tile_mode,
-//             swizzle: 0,
-//             alignment: 0,
-//             pitch: 0,
-//             mip_offset: [0; 13],
-//         };
-
-//         let success = unsafe {
-//             calc_size_alignment(&mut s);
-//             create_surface(&mut s, s.flags)
-//         } != 0;
-
-//         match success {
-//             false => panic!("OOM!"),
-//             true => s,
-//         }
-//     }
-// }
-
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// GX2CalcSurfaceSizeAndAlignment
     #[link_name = "GX2CalcSurfaceSizeAndAlignment"]
@@ -280,4 +204,20 @@ unsafe extern "C" {
     #[doc(alias = "GX2RDestroySurfaceEx")]
     #[link_name = "GX2RDestroySurfaceEx"]
     pub unsafe fn destroy_surface(surface: *mut Surface, flags: ResourceFlags);
+
+    #[doc(alias = "GX2RLockSurfaceEx")]
+    #[link_name = "GX2RLockSurfaceEx"]
+    pub unsafe fn lock_surface(
+        surface: *const Surface,
+        data: SurfaceData,
+        flags: ResourceFlags,
+    ) -> *mut c_void;
+
+    #[doc(alias = "GX2RUnlockSurfaceEx")]
+    #[link_name = "GX2RUnlockSurfaceEx"]
+    pub unsafe fn unlock_surface(surface: *const Surface, data: SurfaceData, flags: ResourceFlags);
+
+    #[doc(alias = "GX2GetSurfaceMipSliceSize")]
+    #[link_name = "GX2GetSurfaceMipSliceSize"]
+    pub unsafe fn surface_mip_size(surface: *const Surface, level: MipLevel) -> u32;
 }

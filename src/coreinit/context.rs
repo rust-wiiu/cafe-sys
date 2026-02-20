@@ -48,7 +48,7 @@ impl Context {
     pub const TAG: u64 = 0x4F53436F6E747874;
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// OSInitContext
     #[link_name = "OSInitContext"]

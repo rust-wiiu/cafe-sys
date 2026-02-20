@@ -1,6 +1,6 @@
 //! usb_mic
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "usb_mic",
     [

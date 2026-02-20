@@ -1,6 +1,6 @@
 //! NN CCR
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_ccr",
     [

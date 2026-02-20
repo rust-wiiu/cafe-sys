@@ -1,6 +1,6 @@
 //! NN OLV
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_olv",
     [

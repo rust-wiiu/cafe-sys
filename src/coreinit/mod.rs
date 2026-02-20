@@ -7,8 +7,10 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 pub mod alarm;
 pub mod context;
 pub mod debug;
+pub mod dynload;
 pub mod exception;
 pub mod fast_mutex;
+pub mod foreground;
 pub mod interrupts;
 pub mod mem;
 pub mod mutex;
@@ -68,7 +70,7 @@ pub enum Cpu {
     Core2 = 2,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "coreinit",
     [

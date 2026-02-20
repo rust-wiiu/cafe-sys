@@ -15,7 +15,7 @@ pub type AllocFn =
 
 pub type FreeFn = Option<unsafe extern "C" fn(flags: ResourceFlags, ptr: *mut c_void)>;
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// GX2Invalidate
     #[link_name = "GX2Invalidate"]
@@ -66,7 +66,7 @@ pub struct Buffer {
 
 impl UnsafeInit for Buffer {}
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// GX2RCreateBuffer
     #[link_name = "GX2RCreateBuffer"]

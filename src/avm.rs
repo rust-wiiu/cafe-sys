@@ -1,6 +1,6 @@
 //! AVM
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "avm",
     [
@@ -176,7 +176,7 @@ imports_section!(
     []
 );
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     pub unsafe fn AVMCECInit() -> bool;
 }

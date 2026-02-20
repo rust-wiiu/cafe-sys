@@ -90,7 +90,7 @@ pub enum ScanTarget {
     Drc = 4,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// GX2GetSystemDRCMode
     #[link_name = "GX2GetSystemDRCMode"]

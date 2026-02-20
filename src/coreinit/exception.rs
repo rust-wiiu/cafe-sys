@@ -37,7 +37,7 @@ pub enum ExceptionType {
     Ici = 14,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// OSSetExceptionCallback
     #[link_name = "OSSetExceptionCallback"]

@@ -48,7 +48,7 @@ impl Alarm {
     pub const TAG: u32 = 0x614C724D;
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// OSCancelAlarm
     #[link_name = "OSCancelAlarm"]

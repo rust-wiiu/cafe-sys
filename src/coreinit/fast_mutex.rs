@@ -28,7 +28,7 @@ pub struct FastMutexQueue {
     pub tail: *mut FastMutex,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// OSFastMutex_Init
     #[link_name = "OSFastMutex_Init"]

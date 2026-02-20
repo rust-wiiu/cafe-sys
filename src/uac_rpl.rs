@@ -1,6 +1,6 @@
 //! uac_rpl
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "uac_rpl",
     [

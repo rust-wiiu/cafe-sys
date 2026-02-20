@@ -177,7 +177,7 @@ pub struct ThreadSimpleQueue {
     pub tail: *mut Thread,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
 
     /// OSCancelThread

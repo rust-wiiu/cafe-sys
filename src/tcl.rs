@@ -1,6 +1,6 @@
 //! tcl
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "tcl",
     [

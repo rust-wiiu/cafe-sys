@@ -30,7 +30,7 @@ pub struct DateTime {
     pub usec: i32,
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// Converts time from ticks to datetime.
     ///

@@ -82,7 +82,7 @@ pub enum Arena {
 /// MEMHeapHandle
 pub type HeapHandle = *mut HeapHeader;
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// MEMAllocFromDefaultHeap
     #[link_name = "MEMAllocFromDefaultHeap"]
@@ -97,7 +97,7 @@ unsafe extern "C" {
     pub unsafe static mut FreeToDefaultHeap: FreeToDefaultHeapFn;
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// CoreInitDefaultHeap
     #[link_name = "CoreInitDefaultHeap"]
@@ -143,7 +143,7 @@ bitflags! {
     }
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// MEMCreateFrmHeapEx
     #[link_name = "MEMCreateFrmHeapEx"]
@@ -178,7 +178,7 @@ unsafe extern "C" {
     pub unsafe fn free_frm_heap(heap: HeapHandle, mode: FrameHeapFree);
 }
 
-#[cfg(target_arch = "powerpc")]
+// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
     /// MEMCreateExpHeapEx
     #[link_name = "MEMCreateExpHeapEx"]

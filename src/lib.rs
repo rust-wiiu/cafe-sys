@@ -11,16 +11,22 @@
 
 #[allow(unused_macros)]
 macro_rules! imports_section {
+    // Main entry point
     ($name:literal, [$($func:literal),*], [$($data:literal),*]) => {
+        imports_section!(@fimport $name, $($func),*);
+        imports_section!(@dimport $name, $($data),*);
+    };
+
+    // Function imports - non-empty
+    (@fimport $name:literal, $($func:literal),+) => {
         ::core::arch::global_asm!(
             concat!(".section .fimport_", $name, ", \"ax\""),
             ".align 4",
-            ".long 1",                          // symbol count (not checked on HW)
-            ".long 0x00000000",                 // crc32 of imports (not checked on HW)
-            concat!(".string \"", $name, "\""), // module name
-            ".balign 8, 0",                     // pad to align 8
+            ".long 1",
+            ".long 0x00000000",
+            concat!(".string \"", $name, "\""),
+            ".balign 8, 0",
         );
-
         $(
             ::core::arch::global_asm!(
                 concat!(".section .fimport_", $name, ".", $func, ", \"ax\""),
@@ -31,19 +37,22 @@ macro_rules! imports_section {
                 ".long 0x0",
             );
         )*
+    };
+    (@fimport $name:literal,) => {};
 
+    // Data imports - non-empty
+    (@dimport $name:literal, $($data:literal),+) => {
         ::core::arch::global_asm!(
-            concat!(".section .dimport_", $name, ", \"ax\""),
+            concat!(".section .dimport_", $name, ", \"a\""),
             ".align 4",
-            ".long 1",                          // symbol count (not checked on HW)
-            ".long 0x00000000",                 // crc32 of imports (not checked on HW)
-            concat!(".string \"", $name, "\""), // module name
-            ".balign 8, 0",                     // pad to align 8
+            ".long 1",
+            ".long 0x00000000",
+            concat!(".string \"", $name, "\""),
+            ".balign 8, 0",
         );
-
         $(
             ::core::arch::global_asm!(
-                concat!(".section .dimport_", $name, ".", $data, ", \"ax\""),
+                concat!(".section .dimport_", $name, ".", $data, ", \"a\""),
                 concat!(".global ", $data),
                 concat!(".type ", $data, ", @object"),
                 concat!($data, ":"),
@@ -52,6 +61,7 @@ macro_rules! imports_section {
             );
         )*
     };
+    (@dimport $name:literal,) => {};
 }
 
 /// Should only be used on "#[[repr(C)]]" structs.
@@ -88,6 +98,7 @@ pub mod ffi {
     pub const TRUE: c_bool = 1;
     pub const FALSE: c_bool = 0;
 
+    /// Bytes inside a struct with unknown use
     #[repr(transparent)]
     #[derive(Debug, Clone, Copy)]
     pub struct unknown<const N: usize>([u8; N]);
