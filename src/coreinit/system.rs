@@ -29,4 +29,9 @@ unsafe extern "C" {
     /// OSGetCoreId
     #[link_name = "OSGetCoreId"]
     pub unsafe fn core_id() -> u32;
+
+    /// Returns the applications title ID.
+    #[doc(alias = "OSGetTitleID")]
+    #[link_name = "OSGetTitleID"]
+    pub unsafe fn title_id() -> u64;
 }

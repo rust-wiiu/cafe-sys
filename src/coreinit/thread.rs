@@ -13,7 +13,7 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 
 bitflags! {
     #[repr(transparent)]
-    #[derive(Debug, Clone, Copy)]
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct ThreadState : u8 {
         const None = 0;
         const Ready = 1 << 0;
@@ -23,7 +23,7 @@ bitflags! {
     }
 
     #[repr(transparent)]
-    #[derive(Debug, Clone, Copy)]
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct ThreadAttributes : u8 {
         const AffinityCpu0 = 1 << 0;
         const AffinityCpu1 = 1 << 1;
@@ -35,7 +35,7 @@ bitflags! {
     }
 
     #[repr(transparent)]
-    #[derive(Debug, Clone, Copy)]
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct ThreadType : u32 {
         const Driver = 0;
         const IO = 1;
@@ -43,7 +43,7 @@ bitflags! {
     }
 
     #[repr(transparent)]
-    #[derive(Debug, Clone, Copy)]
+    #[derive(Debug, Clone, Copy, PartialEq)]
     pub struct ThreadRequest : u32 {
         const None = 0;
         const Suspend = 1;

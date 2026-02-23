@@ -1,5 +1,9 @@
 //! padscore
 
+pub mod kpad;
+pub mod wpad;
+// pub mod wbc;
+
 // #[cfg(target_arch = "powerpc")]
 imports_section!(
     "padscore",
@@ -273,6 +277,7 @@ imports_section!(
         "WUDSerialFlashVersion",
         "WUDSetSniffMode",
         "WUDSetVisibility",
+        // I have no idea what these are supposed to be?
         "wpad_im_setup",
         "wpad_im_state_active",
         "wpad_im_state_home",

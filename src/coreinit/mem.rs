@@ -167,7 +167,7 @@ unsafe extern "C" {
 
     /// MEMGetAllocatableSizeForFrmHeapEx
     #[link_name = "MEMGetAllocatableSizeForFrmHeapEx"]
-    pub unsafe fn available_memory_frm_heap(heap: HeapHandle, align: u32) -> u32;
+    pub unsafe fn allocatable_frm_heap(heap: HeapHandle, align: u32) -> u32;
 
     /// MEMAllocFromFrmHeapEx
     #[link_name = "MEMAllocFromFrmHeapEx"]
@@ -195,6 +195,14 @@ unsafe extern "C" {
     /// MEMAllocFromExpHeapEx
     #[link_name = "MEMAllocFromExpHeapEx"]
     pub unsafe fn alloc_exp_heap(heap: HeapHandle, size: u32, align: i32) -> *mut ffi::c_void;
+
+    #[doc(alias = "MEMGetTotalFreeSizeForExpHeap")]
+    #[link_name = "MEMGetTotalFreeSizeForExpHeap"]
+    pub unsafe fn available_exp_heap(heap: HeapHandle) -> u32;
+
+    #[doc(alias = "MEMGetAllocatableSizeForExpHeapEx")]
+    #[link_name = "MEMGetAllocatableSizeForExpHeapEx"]
+    pub unsafe fn allocatable_exp_heap(heap: HeapHandle, align: i32) -> u32;
 
     /// MEMFreeToExpHeap
     #[link_name = "MEMFreeToExpHeap"]

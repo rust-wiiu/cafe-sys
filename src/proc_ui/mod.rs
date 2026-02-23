@@ -28,34 +28,46 @@ pub type BackgroundCallbackFn = unsafe extern "C" fn(data: *mut c_void) -> u32;
 pub type MessageCallbackFn = Option<unsafe extern "C" fn(data: *mut c_void) -> u32>;
 
 /// ProcUIStatus
+#[doc(alias = "ProcUIStatus")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, IntoPrimitive, TryFromPrimitive)]
 pub enum Status {
     /// Process is currently in the foreground.
+    #[doc(alias = "PROCUI_STATUS_IN_FOREGROUND")]
     Foreground = 0,
     /// Process is currently in the background. This is only possible if ... is set to non-blocking.
+    #[doc(alias = "PROCUI_STATUS_IN_FOREGROUND")]
     Background = 1,
-    /// Process needs to release the foreground. Upon receiving this, [ready_to_release] should be called to release the foreground.
+    /// Process needs to release the foreground. Upon receiving this, [drawing_done] should be called to release the foreground.
+    #[doc(alias = "PROCUI_STATUS_RELEASE_FOREGROUND")]
     Releasing = 2,
     /// Process needs to exit.
+    #[doc(alias = "PROCUI_STATUS_EXITING")]
     Exit = 3,
 }
 
 /// ProcUIMessage
+#[doc(alias = "ProcUICallbackType")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, IntoPrimitive, TryFromPrimitive)]
 pub enum Message {
     /// Process moved to foreground.
+    #[doc(alias = "PROCUI_CALLBACK_ACQUIRE")]
     Acquire = 0,
-    /// Process should move to background.
+    /// Process must move to background.
+    #[doc(alias = "PROCUI_CALLBACK_RELEASE")]
     Release = 1,
-    /// Process should exit.
+    /// Process must exit.
+    #[doc(alias = "PROCUI_CALLBACK_EXIT")]
     Exit = 2,
-    /// Another process is trying to use the network.
+    /// Process may start using networking.
+    #[doc(alias = "PROCUI_CALLBACK_NET_IO_START")]
     NetIoStart = 3,
-    /// Another process has stopped using the network.
+    /// Process must stop using networking.
+    #[doc(alias = "PROCUI_CALLBACK_NET_IO_STOP")]
     NetIoStop = 4,
     /// Home Button has been pressed and ignored.
+    #[doc(alias = "PROCUI_CALLBACK_HOME_BUTTON_DENIED")]
     HomeButtonDenied = 5,
 }
 

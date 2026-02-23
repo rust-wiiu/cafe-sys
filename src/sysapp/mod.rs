@@ -6,11 +6,11 @@ use crate::ffi::*;
 unsafe extern "C" {
     #[doc(alias = "SYSRelaunchTitle")]
     #[link_name = "SYSRelaunchTitle"]
-    pub unsafe fn relauch_title(argc: u32, argv: *const *const c_char);
+    pub unsafe fn relauch_title(argc: u32, argv: *const *const c_char) -> i32;
 
     #[doc(alias = "SYSLaunchMenu")]
     #[link_name = "SYSLaunchMenu"]
-    pub unsafe fn launch_menu();
+    pub unsafe fn launch_menu() -> i32;
 }
 
 // #[cfg(target_arch = "powerpc")]
