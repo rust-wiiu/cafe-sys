@@ -97,13 +97,27 @@ bitflags! {
         const Right = 0x00008000;
         const R3 = 0x00010000;
         const L3 = 0x00020000;
-        const LStickUp = 0x00080000;
+        const LStickUp = 0x00200000;
         const LStickDown = 0x00100000;
         const LStickLeft = 0x00040000;
         const LStickRight = 0x00080000;
-        const RStickUp = 0x01000000;
-        const RStickDown = 0x02000000;
+        const RStickUp = 0x02000000;
+        const RStickDown = 0x01000000;
         const RStickLeft = 0x00400000;
         const RStickRight = 0x00800000;
     }
+}
+
+unsafe extern "C" {
+    #[doc(alias = "WPADEnableURCC")]
+    #[link_name = "WPADEnableURCC"]
+    pub unsafe fn enable_urcc(enable: bool);
+
+    #[doc(alias = "WPADEnableWBC")]
+    #[link_name = "WPADEnableWBC"]
+    pub unsafe fn enable_wbc(enable: bool);
+
+    #[doc(alias = "WPADEnableWiiRemote")]
+    #[link_name = "WPADEnableWiiRemote"]
+    pub unsafe fn enable_wiimote(enable: bool);
 }

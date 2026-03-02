@@ -33,7 +33,7 @@ pub struct Vec3 {
 #[doc(alias = "VPADAccStatus")]
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq)]
-pub struct Accelorometer {
+pub struct Accelerometer {
     pub acceleration: Vec3,
     pub magnitude: f32,
     pub variation: f32,
@@ -113,7 +113,7 @@ pub struct Status {
     pub release: Button,
     pub left_stick: Vec2,
     pub right_stick: Vec2,
-    pub accelorometer: Accelorometer,
+    pub accelerometer: Accelerometer,
     pub gyro: Vec3,
     pub angle: Vec3,
     pub _error: u8,
