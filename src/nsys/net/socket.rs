@@ -8,7 +8,7 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 #[derive(Debug, Clone, Copy, IntoPrimitive, TryFromPrimitive)]
 #[non_exhaustive]
 pub enum Error {
-    // Success = 0,
+    Success = 0,
     InsufficientResources = 1,
     TimedOut = 2,
     AlreadyConnected = 3,
@@ -57,6 +57,9 @@ pub enum Error {
     IcmpRedirect = 102,
     IcmpTimeExceeded = 103,
     IcmpParameterProblem = 104,
+
+    /// Used by Cemu to report unhandled errors. Should never occur in hardware.
+    Unhandled = 99999,
 }
 
 pub type FileDescriptor = i32;
@@ -90,8 +93,17 @@ pub enum Protocol {
     Udp = 17,
 }
 
+#[repr(i32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Level {
+    Socket = -1,
+    Ip = Protocol::Ip as i32,
+    Tcp = Protocol::Tcp as i32,
+    Udp = Protocol::Udp as i32,
+}
+
 #[repr(C)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Address {
     pub family: Family,
     pub port: u16,
@@ -128,7 +140,25 @@ bitflags! {
         const NonBlocking = 0x20;
         /// Recieve packet TTL.
         const RecieveTtl = 0x40;
+    }
 
+    #[derive(Debug, Clone, Copy)]
+    #[repr(transparent)]
+    pub struct Options: i32 {
+        /// [Level::Socket]
+        const Broadcast = 0x20;
+        /// [Level::Socket]
+        const ReuseAddress = 0x4;
+        /// [Level::Socket]
+        const NonBlocking = 0x1016;
+        /// [Level::Socket]
+        const ReceiveTimeout = 0x1006;
+        /// [Level::Socket]
+        const SendTimeout = 0x1006;
+        /// [Level::Ip]
+        const TimeToLive = 0x4;
+        /// [Level::Tcp]
+        const NoDelay = 0x2004;
     }
 }
 
@@ -153,7 +183,7 @@ unsafe extern "C" {
     pub unsafe fn accept(
         fd: FileDescriptor,
         addr: *mut Address,
-        addrlen: *mut i32,
+        addrlen: *mut usize,
     ) -> FileDescriptor;
 
     /// Assign an address to a socket.
@@ -188,8 +218,8 @@ unsafe extern "C" {
         buffer: *mut ffi::c_void,
         len: u32,
         flags: Flags,
-        from: *const Address,
-        fromlen: usize,
+        from: *mut Address,
+        fromlen: *mut usize,
     ) -> i32;
 
     /// Send data on a socket connection.
@@ -238,9 +268,27 @@ unsafe extern "C" {
 
     /// Retrieve the address of the peer connected to the specified socket.
     #[link_name = "getpeername"]
-    pub unsafe fn get_peername(fd: FileDescriptor, addr: *mut Address, addrlen: usize) -> i32;
+    pub unsafe fn get_peername(fd: FileDescriptor, addr: *mut Address, addrlen: *mut usize) -> i32;
 
     /// Retrieves the address for the specified socket.
     #[link_name = "getsockname"]
-    pub unsafe fn get_sockname(fd: FileDescriptor, addr: *mut Address, addrlen: usize) -> i32;
+    pub unsafe fn get_sockname(fd: FileDescriptor, addr: *mut Address, addrlen: *mut usize) -> i32;
+
+    #[link_name = "setsockopt"]
+    pub unsafe fn setsockopt(
+        fd: FileDescriptor,
+        level: Level,
+        option: Options,
+        value: *const ffi::c_void,
+        optlen: usize,
+    ) -> i32;
+
+    #[link_name = "getsockopt"]
+    pub unsafe fn getsockopt(
+        fd: FileDescriptor,
+        level: Level,
+        option: Options,
+        value: *mut ffi::c_void,
+        optlen: *mut usize,
+    ) -> i32;
 }
