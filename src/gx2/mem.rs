@@ -33,36 +33,8 @@ pub struct Buffer {
     pub flags: ResourceFlags,
     pub element_size: u32,
     pub element_count: u32,
-    _internal: [u32; 1],
+    pub _internal: [u32; 1],
 }
-
-// impl Drop for Buffer {
-//     fn drop(&mut self) {
-//         unsafe {
-//             destroy_buffer(self, ResourceFlags::empty());
-//         }
-//     }
-// }
-
-// #[bon]
-// impl Buffer {
-//     #[builder]
-//     pub fn new(flags: ResourceFlags, element_size: usize, element_count: usize) -> Self {
-//         let mut s = Self {
-//             flags,
-//             element_size: element_size as u32,
-//             element_count: element_count as u32,
-//             _internal: [0; 1],
-//         };
-
-//         let success = unsafe { create_buffer(&mut s) } != 0;
-//         if !success {
-//             panic!("OOM");
-//         }
-
-//         s
-//     }
-// }
 
 impl UnsafeInit for Buffer {}
 

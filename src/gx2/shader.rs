@@ -3,6 +3,8 @@ use crate::{UnsafeInit, ffi::*};
 use bitfields::bitfield;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
+// As shaders need to be compiled before runtime this optionally adds serde traits so de/serializing is easier.
+
 /// https://www.x.org/docs/AMD/old/R6xx_3D_Registers.pdf
 #[allow(non_camel_case_types)]
 pub mod registers {
@@ -47,11 +49,13 @@ pub mod registers {
         _pad: u32,
     }
 
-    #[repr(u32)]
-    #[derive(Debug, Clone, Copy)]
-    pub enum VGT_PRIMITIVEID_EN {
-        Disabled = 0,
-        Enabled = 1,
+    #[bitfield(u32)]
+    #[derive(Clone, Copy)]
+    pub struct VGT_PRIMITIVEID_EN {
+        #[bits(1)]
+        pub enabled: bool,
+        #[bits(31)]
+        _pad: u32,
     }
 
     #[bitfield(u32)]
@@ -71,12 +75,16 @@ pub mod registers {
         _pad: u32,
     }
 
-    #[repr(C)]
-    #[derive(Debug, Default, Clone, Copy)]
+    #[bitfield(u32)]
+    #[derive(Clone, Copy)]
     pub struct SPI_VS_OUT_ID {
+        #[bits(8)]
         pub semantic_0: u8,
+        #[bits(8)]
         pub semantic_1: u8,
+        #[bits(8)]
         pub semantic_2: u8,
+        #[bits(8)]
         pub semantic_3: u8,
     }
 
@@ -127,7 +135,7 @@ pub mod registers {
 
     #[repr(transparent)]
     #[derive(Debug, Default, Clone, Copy)]
-    pub struct SQ_VTX_SEMANTIC_CLEAR(u32);
+    pub struct SQ_VTX_SEMANTIC_CLEAR(pub u32);
 
     #[bitfield(u32)]
     #[derive(Clone, Copy)]
@@ -387,7 +395,7 @@ pub struct FetchShader {
     pub r#type: FetchShaderType,
     pub regs: FetchShaderRegisters,
     pub size: u32,
-    pub program: *mut c_void,
+    pub program: *const c_void,
     pub num_attribs: u32,
     _num_divisor: u32,
     _divisiors: [u32; 2],
@@ -412,18 +420,18 @@ pub enum ShaderMode {
 pub struct PixelShader {
     pub regs: PixelShaderRegisters,
     pub shader_size: u32,
-    pub shader_ptr: *mut c_void,
+    pub shader_ptr: *const c_void,
     pub shader_mode: ShaderMode,
     pub num_uniform_blocks: u32,
-    pub uniform_blocks: *mut UniformBlock,
+    pub uniform_blocks: *const UniformBlock,
     pub num_uniforms: u32,
-    pub uniform_vars: *mut UniformVar,
+    pub uniform_vars: *const UniformVar,
     pub num_initial_values: u32,
-    pub initial_values: *mut UniformInitialValue,
+    pub initial_values: *const UniformInitialValue,
     pub num_loops: u32,
-    pub loop_vars: *mut c_void,
+    pub loop_vars: *const LoopVar,
     pub num_samplers: u32,
-    pub sampler_vars: *mut SamplerVar,
+    pub sampler_vars: *const SamplerVar,
     pub program: Buffer,
 }
 
@@ -435,20 +443,20 @@ impl UnsafeInit for PixelShader {}
 pub struct VertexShader {
     pub regs: VertexShaderRegisters,
     pub shader_size: u32,
-    pub shader_ptr: *mut c_void,
+    pub shader_ptr: *const c_void,
     pub shader_mode: ShaderMode,
     pub num_uniform_blocks: u32,
-    pub uniform_blocks: *mut UniformBlock,
+    pub uniform_blocks: *const UniformBlock,
     pub num_uniforms: u32,
-    pub uniform_vars: *mut UniformVar,
+    pub uniform_vars: *const UniformVar,
     pub num_initial_values: u32,
-    pub initial_values: *mut UniformInitialValue,
+    pub initial_values: *const UniformInitialValue,
     pub num_loops: u32,
-    pub loop_vars: *mut LoopVar,
+    pub loop_vars: *const LoopVar,
     pub num_samplers: u32,
-    pub sampler_vars: *mut SamplerVar,
+    pub sampler_vars: *const SamplerVar,
     pub num_attribs: u32,
-    pub attrib_vars: *mut AttribVar,
+    pub attrib_vars: *const AttribVar,
     pub ring_itemsize: u32,
     pub has_stream_output: c_bool,
     pub stream_out_vertex_stride: [u32; 4],
