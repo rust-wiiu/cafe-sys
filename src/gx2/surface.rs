@@ -5,8 +5,78 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
 pub enum Format {
+    Invalid = 0x00,
+    UnormR4G4 = 0x02,
+    UnormR4G4B4A4 = 0x0b,
+    UnormR8 = 0x01,
+    UnormR8G8 = 0x07,
     #[default]
-    UnormR8G8B8A8 = 0x01A,
+    UnormR8G8B8A8 = 0x01a,
+    UnormR16 = 0x05,
+    UnormR16G16 = 0x0f,
+    UnormR16G16B16A16 = 0x01f,
+    UnormR5G6B5 = 0x08,
+    UnormR5G5B5A1 = 0x0a,
+    UnormA1B5G5R5 = 0x0c,
+    UnormR24X8 = 0x011,
+    UnormA2B10G10R10 = 0x01b,
+    UnormR10G10B10A2 = 0x019,
+    UnormBC1 = 0x031,
+    UnormBC2 = 0x032,
+    UnormBC3 = 0x033,
+    UnormBC4 = 0x034,
+    UnormBC5 = 0x035,
+    UnormNV12 = 0x081,
+
+    UintR8 = 0x101,
+    UintR8G8 = 0x107,
+    UintR8G8B8A8 = 0x11a,
+    UintR16 = 0x105,
+    UintR16G16 = 0x10f,
+    UintR16G16B16A16 = 0x11f,
+    UintR32 = 0x10d,
+    UintR32G32 = 0x11d,
+    UintR32G32B32A32 = 0x122,
+    UintA2B10G10R10 = 0x11b,
+    UintR10G10B10A2 = 0x119,
+    UintX24G8 = 0x111,
+    UintG8X24 = 0x11c,
+
+    SnormR8 = 0x201,
+    SnormR8G8 = 0x207,
+    SnormR8G8B8A8 = 0x21a,
+    SnormR16 = 0x205,
+    SnormR16G16 = 0x20f,
+    SnormR16G16B16A16 = 0x21f,
+    SnormR10G10B10A2 = 0x219,
+    SnormBC4 = 0x234,
+    SnormBC5 = 0x235,
+
+    SintR8 = 0x301,
+    SintR8G8 = 0x307,
+    SintR8G8B8A8 = 0x31a,
+    SintR16 = 0x305,
+    SintR16G16 = 0x30f,
+    SintR16G16B16A16 = 0x31f,
+    SintR32 = 0x30d,
+    SintR32G32 = 0x31d,
+    SintR32G32B32A32 = 0x322,
+    SintR10G10B10A2 = 0x319,
+
+    SrgbR8G8B8A8 = 0x41a,
+    SrgbBC1 = 0x431,
+    SrgbBC2 = 0x432,
+    SrgbBC3 = 0x433,
+
+    FloatR32 = 0x80e,
+    FloatR32G32 = 0x81e,
+    FloatR32G32B32A32 = 0x823,
+    FloatR16 = 0x806,
+    FloatR16G16 = 0x810,
+    FloatR16G16B16A16 = 0x820,
+    FloatR11G11B10 = 0x816,
+    FloatD24S8 = 0x811,
+    FloatX8X24 = 0x81c,
 }
 
 #[repr(C)]
@@ -155,6 +225,8 @@ bitflags! {
         const NoCpuInvalidate = 1 << 20;
         const NoGpuInvalidate = 1 << 21;
         const Readonly = 1 << 22;
+        const GX2R = 1 << 29;
+        const Locked = 1 << 30;
         const Tv = 1 << 31;
     }
 }

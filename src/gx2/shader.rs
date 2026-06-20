@@ -3,8 +3,6 @@ use crate::{UnsafeInit, ffi::*};
 use bitfields::bitfield;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
-// As shaders need to be compiled before runtime this optionally adds serde traits so de/serializing is easier.
-
 /// https://www.x.org/docs/AMD/old/R6xx_3D_Registers.pdf
 #[allow(non_camel_case_types)]
 pub mod registers {
@@ -136,6 +134,12 @@ pub mod registers {
     #[repr(transparent)]
     #[derive(Debug, Default, Clone, Copy)]
     pub struct SQ_VTX_SEMANTIC_CLEAR(pub u32);
+
+    impl From<u32> for SQ_VTX_SEMANTIC_CLEAR {
+        fn from(value: u32) -> Self {
+            Self(value)
+        }
+    }
 
     #[bitfield(u32)]
     #[derive(Clone, Copy)]
@@ -315,6 +319,12 @@ pub mod registers {
     #[derive(Debug, Default, Clone, Copy)]
     pub struct CB_SHADER_CONTROL(pub u32);
 
+    impl From<u32> for CB_SHADER_CONTROL {
+        fn from(value: u32) -> Self {
+            Self(value)
+        }
+    }
+
     #[bitfield(u32, default = false)]
     #[derive(Clone, Copy)]
     pub struct DB_SHADER_CONTROL {
@@ -373,6 +383,69 @@ pub struct VertexShaderRegisters {
     pub vgt_hos_reuse_depth: registers::VGT_HOS_REUSE_DEPTH,
 }
 
+impl From<[u32; 52]> for VertexShaderRegisters {
+    fn from(value: [u32; 52]) -> Self {
+        Self {
+            sq_pgm_resources_vs: value[0].into(),
+            vgt_primitiveid_en: value[1].into(),
+            spi_vs_out_config: value[2].into(),
+            num_spi_vs_out_id: value[3],
+            spi_vs_out_id: [
+                value[4].into(),
+                value[5].into(),
+                value[6].into(),
+                value[7].into(),
+                value[8].into(),
+                value[9].into(),
+                value[10].into(),
+                value[11].into(),
+                value[12].into(),
+                value[13].into(),
+            ],
+            pa_cl_vs_out_cntl: value[14].into(),
+            sq_vtx_semantic_clear: value[15].into(),
+            num_sq_vtx_semantic: value[16],
+            sq_vtx_semantic: [
+                value[17].into(),
+                value[18].into(),
+                value[19].into(),
+                value[20].into(),
+                value[21].into(),
+                value[22].into(),
+                value[23].into(),
+                value[24].into(),
+                value[25].into(),
+                value[26].into(),
+                value[27].into(),
+                value[28].into(),
+                value[29].into(),
+                value[30].into(),
+                value[31].into(),
+                value[32].into(),
+                value[33].into(),
+                value[34].into(),
+                value[35].into(),
+                value[36].into(),
+                value[37].into(),
+                value[38].into(),
+                value[39].into(),
+                value[40].into(),
+                value[41].into(),
+                value[42].into(),
+                value[43].into(),
+                value[44].into(),
+                value[45].into(),
+                value[46].into(),
+                value[47].into(),
+                value[48].into(),
+            ],
+            vgt_strmout_buffer_en: value[49].into(),
+            vgt_vertex_reuse_block_cntl: value[50].into(),
+            vgt_hos_reuse_depth: value[51].into(),
+        }
+    }
+}
+
 #[repr(C)]
 #[derive(Debug)]
 pub struct PixelShaderRegisters {
@@ -388,6 +461,56 @@ pub struct PixelShaderRegisters {
     pub spi_input_z: registers::SPI_INPUT_Z,
 }
 
+impl From<[u32; 41]> for PixelShaderRegisters {
+    fn from(value: [u32; 41]) -> Self {
+        Self {
+            sq_pgm_resources_ps: value[0].into(),
+            sq_pgm_exports_ps: value[1].into(),
+            spi_ps_in_control_0: value[2].into(),
+            spi_ps_in_control_1: value[3].into(),
+            num_spi_ps_input_cntl: value[4],
+            spi_ps_input_cntls: [
+                value[5].into(),
+                value[6].into(),
+                value[7].into(),
+                value[8].into(),
+                value[9].into(),
+                value[10].into(),
+                value[11].into(),
+                value[12].into(),
+                value[13].into(),
+                value[14].into(),
+                value[15].into(),
+                value[16].into(),
+                value[17].into(),
+                value[18].into(),
+                value[19].into(),
+                value[20].into(),
+                value[21].into(),
+                value[22].into(),
+                value[23].into(),
+                value[24].into(),
+                value[25].into(),
+                value[26].into(),
+                value[27].into(),
+                value[28].into(),
+                value[29].into(),
+                value[30].into(),
+                value[31].into(),
+                value[32].into(),
+                value[33].into(),
+                value[34].into(),
+                value[35].into(),
+                value[36].into(),
+            ],
+            cb_shader_mask: value[37].into(),
+            cb_shader_control: value[38].into(),
+            db_shader_control: value[39].into(),
+            spi_input_z: value[40].into(),
+        }
+    }
+}
+
 /// GX2FetchShader
 #[repr(C, align(64))]
 #[derive(Debug)]
@@ -397,8 +520,8 @@ pub struct FetchShader {
     pub size: u32,
     pub program: *const c_void,
     pub num_attribs: u32,
-    _num_divisor: u32,
-    _divisiors: [u32; 2],
+    pub num_divisor: u32,
+    pub divisiors: [u32; 2],
 }
 
 impl UnsafeInit for FetchShader {}
@@ -435,8 +558,6 @@ pub struct PixelShader {
     pub program: Buffer,
 }
 
-impl UnsafeInit for PixelShader {}
-
 /// GX2VertexShader
 #[repr(C, align(64))]
 #[derive(Debug)]
@@ -463,8 +584,6 @@ pub struct VertexShader {
     pub program: Buffer,
 }
 
-impl UnsafeInit for VertexShader {}
-
 /// GX2UniformBlock
 #[repr(C)]
 #[derive(Debug)]
@@ -474,20 +593,16 @@ pub struct UniformBlock {
     pub size: u32,
 }
 
-impl UnsafeInit for UniformBlock {}
-
 /// GX2UniformVar
 #[repr(C)]
 #[derive(Debug)]
 pub struct UniformVar {
     pub name: *const c_char,
     pub r#type: VarType,
-    pub array_count: u32,
+    pub count: u32,
     pub offset: u32,
-    pub block_index: u32,
+    pub index: u32,
 }
-
-impl UnsafeInit for UniformVar {}
 
 /// GX2VarType
 #[repr(u32)]
@@ -542,8 +657,6 @@ pub struct UniformInitialValue {
     pub offset: u32,
 }
 
-impl UnsafeInit for UniformInitialValue {}
-
 /// GX2LoopVar
 #[repr(C)]
 #[derive(Debug)]
@@ -560,8 +673,6 @@ pub struct SamplerVar {
     pub r#type: SamplerType,
     pub location: u32,
 }
-
-impl UnsafeInit for SamplerVar {}
 
 /// GX2SamplerType
 #[repr(u32)]
@@ -616,13 +727,15 @@ pub enum SamplerType {
 #[repr(C)]
 #[derive(Debug)]
 pub struct AttribVar {
+    /// Name of attribute.
     pub name: *const c_char,
+    /// Variable type.
     pub r#type: VarType,
-    pub array_count: u32,
+    /// Number of elements in an array. Set to one for non-arrays.
+    pub count: u32,
+    /// Attribute location in hardware semantic table.
     pub location: u32,
 }
-
-impl UnsafeInit for AttribVar {}
 
 /// GX2AttribStream
 #[repr(C)]
@@ -637,8 +750,6 @@ pub struct AttribStream {
     pub mask: ComponentSelection,
     pub endian_swap: EndianSwapMode,
 }
-
-impl UnsafeInit for AttribStream {}
 
 /// GX2AttribFormat
 #[repr(u32)]

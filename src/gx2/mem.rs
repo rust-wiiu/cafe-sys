@@ -6,7 +6,16 @@ bitflags! {
     #[repr(transparent)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     pub struct Invalidate : u32 {
+        const AttributeBuffer = 1 << 0;
+        const Texture = 1 << 1;
+        const UniformBlock = 1 << 2;
+        const ConstantBuffer = 1 << 2;
+        const Shader = 1 << 3;
+        const ColorBuffer = 1 << 4;
+        const DepthBuffer = 1 << 5;
         const Cpu = 1 << 6;
+        const StreamOutBuffer = 1 << 7;
+        const ExportBuffer = 1 << 8;
     }
 }
 
@@ -21,6 +30,10 @@ unsafe extern "C" {
     #[link_name = "GX2Invalidate"]
     pub unsafe fn invalidate(mode: Invalidate, buffer: *mut c_void, size: u32);
 
+    /// GX2RInvalidateBuffer
+    #[link_name = "GX2RInvalidateBuffer"]
+    pub unsafe fn invalidate_ex(buffer: *const Buffer, options: ResourceFlags);
+
     /// GX2RSetAllocator
     #[link_name = "GX2RSetAllocator"]
     pub unsafe fn set_allocator(alloc: AllocFn, free: FreeFn);
@@ -33,7 +46,7 @@ pub struct Buffer {
     pub flags: ResourceFlags,
     pub element_size: u32,
     pub element_count: u32,
-    pub _internal: [u32; 1],
+    pub ptr: *mut c_void,
 }
 
 impl UnsafeInit for Buffer {}

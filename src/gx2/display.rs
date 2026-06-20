@@ -1,5 +1,8 @@
-use crate::gx2::surface::{self, DepthBuffer};
-use crate::{ffi::*, gx2::surface::ColorBuffer};
+use crate::{
+    coreinit::time::Time,
+    ffi::*,
+    gx2::surface::{self, ColorBuffer, DepthBuffer},
+};
 use bitflags::bitflags;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
@@ -172,6 +175,15 @@ unsafe extern "C" {
     /// GX2CopyColorBufferToScanBuffer
     #[link_name = "GX2CopyColorBufferToScanBuffer"]
     pub unsafe fn copy_color_to_scan_buffer(buffer: *const ColorBuffer, target: ScanTarget);
+
+    /// GX2GetSwapStatus
+    #[link_name = "GX2GetSwapStatus"]
+    pub unsafe fn swap_status(
+        swaps: *mut u32,
+        flips: *mut u32,
+        last_flip: *mut Time,
+        last_vsync: *mut Time,
+    );
 
     /// GX2SwapScanBuffers
     #[link_name = "GX2SwapScanBuffers"]
