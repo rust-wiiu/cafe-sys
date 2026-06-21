@@ -292,4 +292,12 @@ unsafe extern "C" {
     #[doc(alias = "GX2GetSurfaceMipSliceSize")]
     #[link_name = "GX2GetSurfaceMipSliceSize"]
     pub unsafe fn surface_mip_size(surface: *const Surface, level: MipLevel) -> u32;
+
+    #[doc(alias = "GX2RInvalidateSurface")]
+    #[link_name = "GX2RInvalidateSurface"]
+    pub unsafe fn invalidate_surface(
+        surface: *const Surface,
+        data: SurfaceData,
+        flags: ResourceFlags,
+    );
 }

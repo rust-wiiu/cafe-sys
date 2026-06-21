@@ -68,4 +68,8 @@ unsafe extern "C" {
     /// GX2RUnlockBufferEx
     #[link_name = "GX2RUnlockBufferEx"]
     pub unsafe fn unlock_buffer_ex(buf: *const Buffer, flags: ResourceFlags);
+
+    #[doc(alias = "GX2RInvalidateBuffer")]
+    #[link_name = "GX2RInvalidateBuffer"]
+    pub unsafe fn invalidate_buffer(buf: *const Buffer, flags: ResourceFlags);
 }

@@ -7,7 +7,7 @@
 //! This crate is not affiliated with Nintendo.
 
 #![no_std]
-#![cfg_attr(target_arch = "powerpc", feature(asm_experimental_arch))]
+// #![cfg_attr(target_arch = "powerpc", feature(asm_experimental_arch))]
 
 #[allow(unused_macros)]
 macro_rules! imports_section {

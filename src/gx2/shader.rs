@@ -9,7 +9,7 @@ pub mod registers {
     use super::*;
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SQ_PGM_RESOURCES_FS {
         /// Number of GPRs required to run this program [0..=127]
         #[bits(8)]
@@ -25,7 +25,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SQ_PGM_RESOURCES_VS {
         #[bits(8)]
         pub num_gprs: u8,
@@ -48,7 +48,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct VGT_PRIMITIVEID_EN {
         #[bits(1)]
         pub enabled: bool,
@@ -57,7 +57,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SPI_VS_OUT_CONFIG {
         #[bits(1)]
         pub vs_per_component: bool,
@@ -74,7 +74,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SPI_VS_OUT_ID {
         #[bits(8)]
         pub semantic_0: u8,
@@ -87,7 +87,7 @@ pub mod registers {
     }
 
     #[bitfield(u32, default = false)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct PA_CL_VS_OUT_CNTL {
         #[bits(1)]
         pub clip_dist_ena_0: bool,
@@ -142,7 +142,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SQ_VTX_SEMANTIC {
         #[bits(8)]
         pub semantic_id: u8,
@@ -151,7 +151,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct VGT_STRMOUT_BUFFER_EN {
         #[bits(1)]
         pub buffer_0_en: bool,
@@ -166,7 +166,7 @@ pub mod registers {
     }
 
     #[bitfield(u32, default = false)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct VGT_VERTEX_REUSE_BLOCK_CNTL {
         #[bits(8)]
         pub vtx_reuse_depth: u8,
@@ -175,7 +175,7 @@ pub mod registers {
     }
 
     #[bitfield(u32, default = false)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct VGT_HOS_REUSE_DEPTH {
         #[bits(8)]
         pub reuse_depth: u8,
@@ -184,7 +184,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SQ_PGM_RESOURCES_PS {
         #[bits(8)]
         pub num_gprs: u8,
@@ -209,7 +209,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SQ_PGM_EXPORTS_PS {
         #[bits(4)]
         pub export_mode: u8,
@@ -218,7 +218,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SPI_PS_IN_CONTROL_0 {
         #[bits(6)]
         pub num_interp: u8,
@@ -247,7 +247,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SPI_PS_IN_CONTROL_1 {
         #[bits(1)]
         pub gen_index_pix: bool,
@@ -272,7 +272,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SPI_PS_INPUT_CNTL {
         #[bits(8)]
         pub semantic: u8,
@@ -295,7 +295,7 @@ pub mod registers {
     }
 
     #[bitfield(u32, default = false)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct CB_SHADER_MASK {
         #[bits(4)]
         pub output0_enable: u8,
@@ -326,7 +326,7 @@ pub mod registers {
     }
 
     #[bitfield(u32, default = false)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct DB_SHADER_CONTROL {
         #[bits(1)]
         pub z_export_enable: bool,
@@ -351,7 +351,7 @@ pub mod registers {
     }
 
     #[bitfield(u32)]
-    #[derive(Clone, Copy)]
+    // #[derive(Clone, Copy)]
     pub struct SPI_INPUT_Z {
         #[bits(1)]
         pub provide_z_to_spi: bool,
@@ -937,11 +937,9 @@ impl ComponentSelection {
     pub const fn wxyz() -> Self {
         Self::new(Component::W, Component::X, Component::Y, Component::Z)
     }
-}
 
-impl From<AttribFormat> for ComponentSelection {
-    fn from(value: AttribFormat) -> Self {
-        match value {
+    pub const fn default_for(format: AttribFormat) -> Self {
+        match format {
             AttribFormat::Unorm8
             | AttribFormat::Uint8
             | AttribFormat::Snorm8

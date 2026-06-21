@@ -5,12 +5,14 @@ authors = ["29th-Day"]
 edition = "2024"
 license-file = "LICENSE"
 keywords = ["wiiu", "homebrew"]
+description = "Bindings for the Wii U system APIs"
+repository = "https://github.com/rust-wiiu/cafe-sys"
 
 [lib]
 test = false
 bench = false
 
 [dependencies]
-bitfields = "1.0.2"
-bitflags = "2.10.0"
-num_enum = { version = "0.7.5", default-features = false }
+bitfields = "3.0.0"
+bitflags = "2.13.0"
+num_enum = { version = "0.7.6", default-features = false }
