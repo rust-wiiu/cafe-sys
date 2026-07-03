@@ -1,10 +1,10 @@
 //! GX2
 
+pub mod debug;
 pub mod display;
 pub mod mem;
 pub mod shader;
 pub mod state;
-pub mod surface;
 
 // #[cfg(target_arch = "powerpc")]
 imports_section!(

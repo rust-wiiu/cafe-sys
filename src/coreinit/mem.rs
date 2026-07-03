@@ -1,4 +1,6 @@
-use crate::ffi::{self};
+use core::ffi::c_void;
+
+use crate::ffi::{self, c_bool};
 use bitflags::bitflags;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
@@ -207,4 +209,22 @@ unsafe extern "C" {
     /// MEMFreeToExpHeap
     #[link_name = "MEMFreeToExpHeap"]
     pub unsafe fn free_exp_heap(heap: HeapHandle, ptr: *const ffi::c_void);
+}
+
+unsafe extern "C" {
+    #[doc(alias = "OSEffectiveToPhysical")]
+    #[link_name = "OSEffectiveToPhysical"]
+    pub unsafe fn virt_to_phys(ptr: *mut c_void) -> *mut c_void;
+
+    #[doc(alias = "__OSPhysicalToEffectiveCached")]
+    #[link_name = "__OSPhysicalToEffectiveCached"]
+    pub unsafe fn phys_to_virt_cached(ptr: *mut c_void) -> *mut c_void;
+
+    #[doc(alias = "__OSPhysicalToEffectiveUncached")]
+    #[link_name = "__OSPhysicalToEffectiveUncached"]
+    pub unsafe fn phys_to_virt_uncached(ptr: *mut c_void) -> *mut c_void;
+
+    #[doc(alias = "OSIsAddressValid")]
+    #[link_name = "OSIsAddressValid"]
+    pub unsafe fn is_valid_virt(ptr: *mut c_void) -> c_bool;
 }

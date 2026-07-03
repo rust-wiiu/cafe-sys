@@ -1,4 +1,4 @@
-use super::surface;
+use super::mem;
 use crate::{UnsafeInit, ffi::*};
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
@@ -42,11 +42,11 @@ unsafe extern "C" {
 
     /// GX2SetColorBuffer
     #[link_name = "GX2SetColorBuffer"]
-    pub unsafe fn set_colorbuffer(buffer: *const surface::ColorBuffer, target: RenderTarget);
+    pub unsafe fn set_colorbuffer(buffer: *const mem::ColorBuffer, target: RenderTarget);
 
     /// GX2SetDepthBuffer
     #[link_name = "GX2SetDepthBuffer"]
-    pub unsafe fn set_depthbuffer(buffer: *const surface::DepthBuffer);
+    pub unsafe fn set_depthbuffer(buffer: *const mem::DepthBuffer);
 
     /// GX2SetViewport
     #[link_name = "GX2SetViewport"]

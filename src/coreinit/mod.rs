@@ -5,11 +5,13 @@ use core::ptr;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
 
 pub mod alarm;
+pub mod cache;
 pub mod context;
 pub mod debug;
 pub mod dynload;
 pub mod exception;
 pub mod fast_mutex;
+pub mod font;
 pub mod foreground;
 pub mod interrupts;
 pub mod mem;

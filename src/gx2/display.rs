@@ -1,7 +1,7 @@
 use crate::{
     coreinit::time::Time,
     ffi::*,
-    gx2::surface::{self, ColorBuffer, DepthBuffer},
+    gx2::mem::{self, ColorBuffer, DepthBuffer},
 };
 use bitflags::bitflags;
 use num_enum::{IntoPrimitive, TryFromPrimitive};
@@ -40,6 +40,7 @@ pub enum AspectRatio {
     Widescreen = 1,
 }
 
+#[doc(alias = "GX2TVRenderMode")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
 pub enum TvMode {
@@ -47,6 +48,7 @@ pub enum TvMode {
     Standard480 = 1,
     Wide480 = 2,
     Wide720 = 3,
+    // reserved
     Wide1080 = 5,
 }
 
@@ -111,7 +113,7 @@ unsafe extern "C" {
     #[link_name = "GX2CalcTVSize"]
     pub unsafe fn tv_framebuffer_size(
         mode: TvMode,
-        format: surface::Format,
+        format: mem::Format,
         buffering: Buffering,
         size: *mut u32,
         scale_needed: *mut c_bool,
@@ -121,7 +123,7 @@ unsafe extern "C" {
     #[link_name = "GX2CalcDRCSize"]
     pub unsafe fn drc_framebuffer_size(
         mode: DrcMode,
-        format: surface::Format,
+        format: mem::Format,
         buffering: Buffering,
         size: *mut u32,
         scale_needed: *mut c_bool,
@@ -133,7 +135,7 @@ unsafe extern "C" {
         buffer: *mut c_void,
         size: u32,
         mode: TvMode,
-        format: surface::Format,
+        format: mem::Format,
         buffering: Buffering,
     );
 
@@ -143,7 +145,7 @@ unsafe extern "C" {
         buffer: *mut c_void,
         size: u32,
         mode: DrcMode,
-        format: surface::Format,
+        format: mem::Format,
         buffering: Buffering,
     );
 

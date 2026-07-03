@@ -873,14 +873,12 @@ impl Component {
     pub const B: Self = Self(2);
     pub const W: Self = Self(3);
     pub const A: Self = Self(3);
-    /// Constant 0
-    pub const C0: Self = Self(4);
-    /// Constant 1
-    pub const C1: Self = Self(5);
+    pub const ZERO: Self = Self(4);
+    pub const ONE: Self = Self(5);
 }
 
 /// GX2CompSel
-#[repr(transparent)]
+#[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct ComponentSelection(u32);
 
@@ -895,19 +893,29 @@ impl ComponentSelection {
     }
 
     pub const fn none() -> Self {
-        Self::new(Component::C0, Component::C0, Component::C0, Component::C0)
+        Self::new(
+            Component::ZERO,
+            Component::ZERO,
+            Component::ZERO,
+            Component::ZERO,
+        )
     }
 
     pub const fn x001() -> Self {
-        Self::new(Component::X, Component::C0, Component::C0, Component::C1)
+        Self::new(
+            Component::X,
+            Component::ZERO,
+            Component::ZERO,
+            Component::ONE,
+        )
     }
 
     pub const fn xy01() -> Self {
-        Self::new(Component::X, Component::Y, Component::C0, Component::C1)
+        Self::new(Component::X, Component::Y, Component::ZERO, Component::ONE)
     }
 
     pub const fn xyz1() -> Self {
-        Self::new(Component::X, Component::Y, Component::Z, Component::C1)
+        Self::new(Component::X, Component::Y, Component::Z, Component::ONE)
     }
 
     pub const fn xyzw() -> Self {
@@ -956,9 +964,12 @@ impl ComponentSelection {
             | AttribFormat::Snorm8_8_8_8
             | AttribFormat::Sint8_8_8_8
             | AttribFormat::Float32_32_32_32 => ComponentSelection::xyzw(),
-            _ => {
-                ComponentSelection::new(Component::C0, Component::C0, Component::C0, Component::C1)
-            }
+            _ => ComponentSelection::new(
+                Component::ZERO,
+                Component::ZERO,
+                Component::ZERO,
+                Component::ONE,
+            ),
         }
     }
 }
@@ -1035,11 +1046,11 @@ unsafe extern "C" {
 
     /// GX2SetVertexShader
     #[link_name = "GX2SetVertexShader"]
-    pub unsafe fn set_vertex_shader(fs: *const VertexShader);
+    pub unsafe fn set_vertex_shader(vs: *const VertexShader);
 
     /// GX2SetPixelShader
     #[link_name = "GX2SetPixelShader"]
-    pub unsafe fn set_pixel_shader(fs: *const PixelShader);
+    pub unsafe fn set_pixel_shader(ps: *const PixelShader);
 
     /// GX2RSetAttributeBuffer
     #[link_name = "GX2RSetAttributeBuffer"]
