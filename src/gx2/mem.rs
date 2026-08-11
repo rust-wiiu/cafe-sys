@@ -417,4 +417,20 @@ unsafe extern "C" {
     #[doc(alias = "GX2InitTextureRegs")]
     #[link_name = "GX2InitTextureRegs"]
     pub unsafe fn init_texture_regs(texture: *mut Texture);
+
+    #[doc(alias = "GX2RBeginDisplayListEx")]
+    #[link_name = "GX2RBeginDisplayListEx"]
+    pub unsafe fn begin_command_buffer(
+        buffer: *const Buffer,
+        profiling: c_bool,
+        flags: ResourceFlags,
+    );
+
+    #[doc(alias = "GX2REndDisplayList")]
+    #[link_name = "GX2REndDisplayList"]
+    pub unsafe fn end_command_buffer(buffer: *const Buffer) -> u32;
+
+    #[doc(alias = "GX2RCallDisplayList")]
+    #[link_name = "GX2RCallDisplayList"]
+    pub unsafe fn call_command_buffer(buffer: *const Buffer, size: u32);
 }

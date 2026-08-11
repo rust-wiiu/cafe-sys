@@ -13,6 +13,7 @@ pub mod exception;
 pub mod fast_mutex;
 pub mod font;
 pub mod foreground;
+pub mod fs;
 pub mod interrupts;
 pub mod mem;
 pub mod mutex;

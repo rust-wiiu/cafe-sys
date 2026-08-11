@@ -6,7 +6,7 @@ use num_enum::{IntoPrimitive, TryFromPrimitive};
 #[derive(Debug)]
 pub struct Context([u8; 41216]);
 
-impl UnsafeInit for Context {}
+// impl UnsafeInit for Context {}
 
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]

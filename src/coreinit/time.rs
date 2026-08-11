@@ -4,7 +4,7 @@ pub type Time = u64;
 /// OSTicks
 pub type Ticks = u32;
 
-/// OSCalendarTime
+#[doc(alias = "OSCalendarTime")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct DateTime {

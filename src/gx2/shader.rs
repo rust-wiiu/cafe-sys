@@ -527,6 +527,7 @@ pub struct FetchShader {
 impl UnsafeInit for FetchShader {}
 
 /// GX2ShaderMode
+#[doc(alias = "GX2ShaderMode")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
 pub enum ShaderMode {
@@ -1056,7 +1057,82 @@ unsafe extern "C" {
     #[link_name = "GX2RSetAttributeBuffer"]
     pub unsafe fn set_attribute_buffer(buffer: *const Buffer, slot: u32, stride: u32, offset: u32);
 
+    #[doc(alias = "GX2RSetVertexUniformBlock")]
+    #[link_name = "GX2RSetVertexUniformBlock"]
+    pub unsafe fn set_vertex_uniform_block(buffer: *const Buffer, location: u32, offset: u32);
+
+    //
+    //
+    //
+    #[link_name = "GX2SetVertexUniformBlock"]
+    pub unsafe fn test_uniform_block(location: u32, size: u32, addr: *const c_void);
+    //
+    //
+    //
+
+    #[doc(alias = "GX2SetVertexUniformReg")]
+    #[link_name = "GX2SetVertexUniformReg"]
+    pub unsafe fn set_vertex_uniform(offset_in_u32s: u32, count_in_u32s: u32, value: *const c_void);
+
+    #[doc(alias = "GX2SetPixelTexture")]
+    #[link_name = "GX2SetPixelTexture"]
+    pub unsafe fn set_pixel_texture(texture: *const super::mem::Texture, location: u32);
+
     /// GX2DrawEx
     #[link_name = "GX2DrawEx"]
     pub unsafe fn draw_ex(mode: PrimitiveMode, count: u32, first_vertex: u32, instances: u32);
+
+    #[doc(alias = "GX2SetShaderModeEx")]
+    #[link_name = "GX2SetShaderModeEx"]
+    pub unsafe fn set_shader_mode(
+        mode: ShaderMode,
+        vs_gprs: u32,
+        vs_stack_size: u32,
+        gs_gprs: u32,
+        gs_stack_size: u32,
+        ps_gprs: u32,
+        ps_stack_size: u32,
+    );
+}
+
+#[repr(C)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
+pub struct Sampler {
+    pub regs: [u32; 3],
+}
+
+impl UnsafeInit for Sampler {}
+
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
+pub enum TexClamp {
+    Wrap = 0,
+    Mirror = 1,
+    Clamp = 2,
+    MirrorOnce = 3,
+    ClampHalfBorder = 4,
+    MirrorOnceHalfBorder = 5,
+    ClampBorder = 6,
+    MirrorOnceBorder = 7,
+}
+
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
+pub enum TexXYFilter {
+    Point = 0,
+    Linear = 1,
+}
+
+unsafe extern "C" {
+    #[doc(alias = "GX2InitSampler")]
+    #[link_name = "GX2InitSampler"]
+    pub unsafe fn init_sampler(
+        sampler: *mut Sampler,
+        tex_clamp: TexClamp,
+        tex_xy_filter: TexXYFilter,
+    );
+
+    #[doc(alias = "GX2SetPixelSampler")]
+    #[link_name = "GX2SetPixelSampler"]
+    pub unsafe fn set_pixel_sampler(sampler: *const Sampler, location: u32);
 }
