@@ -1,6 +1,7 @@
-//! uac
+//! USB Audio Class driver
+//!
+//! GamePad USB audio shim, used internally by `mic`.
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "uac",
     [
