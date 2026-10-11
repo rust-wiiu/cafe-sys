@@ -1,6 +1,5 @@
-//! nsysccr
+//! Low-Level DRC Driver (NSYSCCR)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nsysccr",
     [
