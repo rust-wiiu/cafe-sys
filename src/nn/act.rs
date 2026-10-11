@@ -1,6 +1,359 @@
-//! NN ACT
+//! Accounts
 
-// #[cfg(target_arch = "powerpc")]
+use super::Result;
+use crate::ffi;
+
+// TODO: replace with FFLStoreData from nn::ffl
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct FflStoreData(pub ffi::unknown<0x60>);
+
+pub const ACCOUNT_ID_SIZE: usize = 17;
+pub const NFS_PASSWORD_SIZE: usize = 17;
+pub const MII_NAME_SIZE: usize = 11;
+pub const COUNTRY_SIZE: usize = 3;
+
+/// Number of account slots.
+pub const SLOT_NUM: u8 = 12;
+
+/// Account slot, 1 to [SLOT_NUM].
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct SlotNo(pub u8);
+
+impl SlotNo {
+    pub const INVALID: Self = Self(0);
+    /// The current account.
+    pub const CURRENT: Self = Self(254);
+    /// Data shared by all accounts.
+    pub const COMMON: Self = Self(255);
+}
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct PersistentId(pub u32);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct PrincipalId(pub u32);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct SimpleAddressId(pub u32);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct TransferableId(pub u64);
+
+/// ACTLoadOption
+#[doc(alias = "ACTLoadOption")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct LoadOption(pub u32);
+
+/// ACTMiiImageType
+#[doc(alias = "ACTMiiImageType")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct MiiImageType(pub i32);
+
+/// ACTUuid
+#[doc(alias = "ACTUuid")]
+#[repr(C)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Uuid {
+    pub data: [u8; 16],
+}
+
+unsafe extern "C" {
+    /// Initialize
+    #[doc(alias = "Initialize")]
+    #[link_name = "Initialize__Q2_2nn3actFv"]
+    pub unsafe fn init() -> Result;
+
+    /// Finalize
+    #[doc(alias = "Finalize")]
+    #[link_name = "Finalize__Q2_2nn3actFv"]
+    pub unsafe fn deinit() -> Result;
+
+    /// Cancel
+    #[doc(alias = "Cancel")]
+    #[link_name = "Cancel__Q2_2nn3actFv"]
+    pub unsafe fn cancel() -> Result;
+
+    /// GetErrorCode
+    ///
+    /// Converts a result into the error code shown to the user.
+    #[doc(alias = "GetErrorCode")]
+    #[link_name = "GetErrorCode__Q2_2nn3actFRCQ2_2nn6Result"]
+    pub unsafe fn get_error_code(result: *const Result) -> u32;
+
+    /// GetNumOfAccounts
+    #[doc(alias = "GetNumOfAccounts")]
+    #[link_name = "GetNumOfAccounts__Q2_2nn3actFv"]
+    pub unsafe fn get_num_of_accounts() -> u8;
+
+    /// GetSlotNo
+    ///
+    /// Slot of the current account.
+    #[doc(alias = "GetSlotNo")]
+    #[link_name = "GetSlotNo__Q2_2nn3actFv"]
+    pub unsafe fn get_slot_no() -> SlotNo;
+
+    /// GetSlotNoEx
+    #[doc(alias = "GetSlotNoEx")]
+    #[link_name = "GetSlotNoEx__Q2_2nn3actFRC7ACTUuid"]
+    pub unsafe fn get_slot_no_ex(uuid: *const Uuid) -> SlotNo;
+
+    /// GetDefaultAccount
+    #[doc(alias = "GetDefaultAccount")]
+    #[link_name = "GetDefaultAccount__Q2_2nn3actFv"]
+    pub unsafe fn get_default_account() -> SlotNo;
+
+    /// GetParentalControlSlotNo
+    #[doc(alias = "GetParentalControlSlotNo")]
+    #[link_name = "GetParentalControlSlotNo__Q2_2nn3actFv"]
+    pub unsafe fn get_parental_control_slot_no() -> SlotNo;
+
+    /// GetParentalControlSlotNoEx
+    #[doc(alias = "GetParentalControlSlotNoEx")]
+    #[link_name = "GetParentalControlSlotNoEx__Q2_2nn3actFPUcUc"]
+    pub unsafe fn get_parental_control_slot_no_ex(out: *mut SlotNo, slot: SlotNo) -> Result;
+
+    /// IsSlotOccupied
+    #[doc(alias = "IsSlotOccupied")]
+    #[link_name = "IsSlotOccupied__Q2_2nn3actFUc"]
+    pub unsafe fn is_slot_occupied(slot: SlotNo) -> bool;
+
+    /// LoadConsoleAccount
+    #[doc(alias = "LoadConsoleAccount")]
+    #[link_name = "LoadConsoleAccount__Q2_2nn3actFUc13ACTLoadOptionPCcb"]
+    pub unsafe fn load_console_account(
+        slot: SlotNo,
+        option: LoadOption,
+        unk2: *const ffi::c_char,
+        unk3: bool,
+    ) -> Result;
+
+    /// IsCommitted
+    #[doc(alias = "IsCommitted")]
+    #[link_name = "IsCommitted__Q2_2nn3actFv"]
+    pub unsafe fn is_committed() -> bool;
+
+    /// IsCommittedEx
+    #[doc(alias = "IsCommittedEx")]
+    #[link_name = "IsCommittedEx__Q2_2nn3actFUc"]
+    pub unsafe fn is_committed_ex(slot: SlotNo) -> bool;
+
+    /// IsNetworkAccount
+    #[doc(alias = "IsNetworkAccount")]
+    #[link_name = "IsNetworkAccount__Q2_2nn3actFv"]
+    pub unsafe fn is_network_account() -> bool;
+
+    /// IsNetworkAccountEx
+    #[doc(alias = "IsNetworkAccountEx")]
+    #[link_name = "IsNetworkAccountEx__Q2_2nn3actFUc"]
+    pub unsafe fn is_network_account_ex(slot: SlotNo) -> bool;
+
+    /// IsPasswordCacheEnabled
+    #[doc(alias = "IsPasswordCacheEnabled")]
+    #[link_name = "IsPasswordCacheEnabled__Q2_2nn3actFv"]
+    pub unsafe fn is_password_cache_enabled() -> bool;
+
+    /// IsPasswordCacheEnabledEx
+    #[doc(alias = "IsPasswordCacheEnabledEx")]
+    #[link_name = "IsPasswordCacheEnabledEx__Q2_2nn3actFUc"]
+    pub unsafe fn is_password_cache_enabled_ex(slot: SlotNo) -> bool;
+
+    /// IsServerAccountActive
+    #[doc(alias = "IsServerAccountActive")]
+    #[link_name = "IsServerAccountActive__Q2_2nn3actFv"]
+    pub unsafe fn is_server_account_active() -> bool;
+
+    /// IsServerAccountActiveEx
+    #[doc(alias = "IsServerAccountActiveEx")]
+    #[link_name = "IsServerAccountActiveEx__Q2_2nn3actFUc"]
+    pub unsafe fn is_server_account_active_ex(slot: SlotNo) -> bool;
+
+    /// IsServerAccountDeleted
+    #[doc(alias = "IsServerAccountDeleted")]
+    #[link_name = "IsServerAccountDeleted__Q2_2nn3actFv"]
+    pub unsafe fn is_server_account_deleted() -> bool;
+
+    /// IsServerAccountDeletedEx
+    #[doc(alias = "IsServerAccountDeletedEx")]
+    #[link_name = "IsServerAccountDeletedEx__Q2_2nn3actFUc"]
+    pub unsafe fn is_server_account_deleted_ex(slot: SlotNo) -> bool;
+
+    /// HasNfsAccount
+    #[doc(alias = "HasNfsAccount")]
+    #[link_name = "HasNfsAccount__Q2_2nn3actFv"]
+    pub unsafe fn has_nfs_account() -> bool;
+
+    /// GetAccountId
+    ///
+    /// Nintendo Network ID.
+    #[doc(alias = "GetAccountId")]
+    #[link_name = "GetAccountId__Q2_2nn3actFPc"]
+    pub unsafe fn get_account_id(id: *mut [ffi::c_char; ACCOUNT_ID_SIZE]) -> Result;
+
+    /// GetAccountIdEx
+    #[doc(alias = "GetAccountIdEx")]
+    #[link_name = "GetAccountIdEx__Q2_2nn3actFPcUc"]
+    pub unsafe fn get_account_id_ex(
+        id: *mut [ffi::c_char; ACCOUNT_ID_SIZE],
+        slot: SlotNo,
+    ) -> Result;
+
+    /// GetBirthday
+    #[doc(alias = "GetBirthday")]
+    #[link_name = "GetBirthday__Q2_2nn3actFPUsPUcT2"]
+    pub unsafe fn get_birthday(year: *mut u16, month: *mut u8, day: *mut u8) -> Result;
+
+    /// GetBirthdayEx
+    #[doc(alias = "GetBirthdayEx")]
+    #[link_name = "GetBirthdayEx__Q2_2nn3actFPUsPUcT2Uc"]
+    pub unsafe fn get_birthday_ex(
+        year: *mut u16,
+        month: *mut u8,
+        day: *mut u8,
+        slot: SlotNo,
+    ) -> Result;
+
+    /// GetCountry
+    #[doc(alias = "GetCountry")]
+    #[link_name = "GetCountry__Q2_2nn3actFPc"]
+    pub unsafe fn get_country(country: *mut [ffi::c_char; COUNTRY_SIZE]) -> Result;
+
+    /// GetCountryEx
+    #[doc(alias = "GetCountryEx")]
+    #[link_name = "GetCountryEx__Q2_2nn3actFPcUc"]
+    pub unsafe fn get_country_ex(country: *mut [ffi::c_char; COUNTRY_SIZE], slot: SlotNo)
+    -> Result;
+
+    /// GetDeviceHash
+    #[doc(alias = "GetDeviceHash")]
+    #[link_name = "GetDeviceHash__Q2_2nn3actFPUL"]
+    pub unsafe fn get_device_hash(hash: *mut u64) -> Result;
+
+    /// GetMii
+    #[doc(alias = "GetMii")]
+    #[link_name = "GetMii__Q2_2nn3actFP12FFLStoreData"]
+    pub unsafe fn get_mii(mii: *mut FflStoreData) -> Result;
+
+    /// GetMiiEx
+    #[doc(alias = "GetMiiEx")]
+    #[link_name = "GetMiiEx__Q2_2nn3actFP12FFLStoreDataUc"]
+    pub unsafe fn get_mii_ex(mii: *mut FflStoreData, slot: SlotNo) -> Result;
+
+    /// GetMiiImageEx
+    #[doc(alias = "GetMiiImageEx")]
+    #[link_name = "GetMiiImageEx__Q2_2nn3actFPUiPvUi15ACTMiiImageTypeUc"]
+    pub unsafe fn get_mii_image_ex(
+        image_size: *mut u32,
+        buf: *mut ffi::c_void,
+        buf_size: u32,
+        image_type: MiiImageType,
+        slot: SlotNo,
+    ) -> Result;
+
+    /// GetMiiName
+    ///
+    /// UTF-16 encoded.
+    #[doc(alias = "GetMiiName")]
+    #[link_name = "GetMiiName__Q2_2nn3actFPw"]
+    pub unsafe fn get_mii_name(name: *mut [u16; MII_NAME_SIZE]) -> Result;
+
+    /// GetMiiNameEx
+    ///
+    /// UTF-16 encoded.
+    #[doc(alias = "GetMiiNameEx")]
+    #[link_name = "GetMiiNameEx__Q2_2nn3actFPwUc"]
+    pub unsafe fn get_mii_name_ex(name: *mut [u16; MII_NAME_SIZE], slot: SlotNo) -> Result;
+
+    /// GetNfsPassword
+    #[doc(alias = "GetNfsPassword")]
+    #[link_name = "GetNfsPassword__Q2_2nn3actFPc"]
+    pub unsafe fn get_nfs_password(password: *mut [ffi::c_char; NFS_PASSWORD_SIZE]) -> Result;
+
+    /// GetNfsPasswordEx
+    #[doc(alias = "GetNfsPasswordEx")]
+    #[link_name = "GetNfsPasswordEx__Q2_2nn3actFPcUc"]
+    pub unsafe fn get_nfs_password_ex(
+        password: *mut [ffi::c_char; NFS_PASSWORD_SIZE],
+        slot: SlotNo,
+    ) -> Result;
+
+    /// GetPersistentId
+    #[doc(alias = "GetPersistentId")]
+    #[link_name = "GetPersistentId__Q2_2nn3actFv"]
+    pub unsafe fn get_persistent_id() -> PersistentId;
+
+    /// GetPersistentIdEx
+    #[doc(alias = "GetPersistentIdEx")]
+    #[link_name = "GetPersistentIdEx__Q2_2nn3actFUc"]
+    pub unsafe fn get_persistent_id_ex(slot: SlotNo) -> PersistentId;
+
+    /// GetPrincipalId
+    #[doc(alias = "GetPrincipalId")]
+    #[link_name = "GetPrincipalId__Q2_2nn3actFv"]
+    pub unsafe fn get_principal_id() -> PrincipalId;
+
+    /// GetPrincipalIdEx
+    #[doc(alias = "GetPrincipalIdEx")]
+    #[link_name = "GetPrincipalIdEx__Q2_2nn3actFPUiUc"]
+    pub unsafe fn get_principal_id_ex(id: *mut PrincipalId, slot: SlotNo) -> Result;
+
+    /// GetSimpleAddressId
+    #[doc(alias = "GetSimpleAddressId")]
+    #[link_name = "GetSimpleAddressId__Q2_2nn3actFv"]
+    pub unsafe fn get_simple_address_id() -> SimpleAddressId;
+
+    /// GetSimpleAddressIdEx
+    #[doc(alias = "GetSimpleAddressIdEx")]
+    #[link_name = "GetSimpleAddressIdEx__Q2_2nn3actFPUiUc"]
+    pub unsafe fn get_simple_address_id_ex(id: *mut SimpleAddressId, slot: SlotNo) -> Result;
+
+    /// GetTransferableId
+    #[doc(alias = "GetTransferableId")]
+    #[link_name = "GetTransferableId__Q2_2nn3actFUi"]
+    pub unsafe fn get_transferable_id(unk1: u32) -> TransferableId;
+
+    /// GetTransferableIdEx
+    #[doc(alias = "GetTransferableIdEx")]
+    #[link_name = "GetTransferableIdEx__Q2_2nn3actFPULUiUc"]
+    pub unsafe fn get_transferable_id_ex(
+        id: *mut TransferableId,
+        unk1: u32,
+        slot: SlotNo,
+    ) -> Result;
+
+    /// GetUuid
+    #[doc(alias = "GetUuid")]
+    #[link_name = "GetUuid__Q2_2nn3actFP7ACTUuid"]
+    pub unsafe fn get_uuid(uuid: *mut Uuid) -> Result;
+
+    /// GetUuid
+    #[doc(alias = "GetUuid")]
+    #[link_name = "GetUuid__Q2_2nn3actFP7ACTUuidUi"]
+    pub unsafe fn get_uuid_unk(uuid: *mut Uuid, unk1: u32) -> Result;
+
+    /// GetUuidEx
+    #[doc(alias = "GetUuidEx")]
+    #[link_name = "GetUuidEx__Q2_2nn3actFP7ACTUuidUc"]
+    pub unsafe fn get_uuid_ex(uuid: *mut Uuid, slot: SlotNo) -> Result;
+
+    /// GetUuidEx
+    #[doc(alias = "GetUuidEx")]
+    #[link_name = "GetUuidEx__Q2_2nn3actFP7ACTUuidUcUi"]
+    pub unsafe fn get_uuid_ex_unk(uuid: *mut Uuid, slot: SlotNo, unk1: u32) -> Result;
+
+    /// GenerateUuid
+    #[doc(alias = "GenerateUuid")]
+    #[link_name = "GenerateUuid__Q2_2nn3actFP7ACTUuid"]
+    pub unsafe fn generate_uuid(uuid: *mut Uuid) -> Result;
+}
+
 imports_section!(
     "nn_act",
     [
