@@ -7,6 +7,7 @@ pub mod ccr;
 pub mod cmpt;
 pub mod dlp;
 pub mod ec;
+pub mod fp;
 pub mod hai;
 pub mod hpad;
 pub mod idbe;
@@ -26,6 +27,8 @@ pub mod vctl;
 /// NNResult
 ///
 /// Negative values are failures.
+///
+/// The C type is a struct: functions taking it by value receive a pointer to a copy, so bind such parameters as `*const Result`. Returning it by value works as is.
 #[doc(alias = "NNResult")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

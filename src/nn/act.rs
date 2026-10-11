@@ -45,6 +45,10 @@ pub struct SimpleAddressId(pub u32);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TransferableId(pub u64);
 
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct LocalFriendCode(pub u64);
+
 /// ACTLoadOption
 #[doc(alias = "ACTLoadOption")]
 #[repr(transparent)]

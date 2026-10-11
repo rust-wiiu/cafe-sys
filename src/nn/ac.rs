@@ -40,17 +40,17 @@ unsafe extern "C" {
     /// ACIsSuccess
     #[doc(alias = "ACIsSuccess")]
     #[link_name = "ACIsSuccess"]
-    pub unsafe fn is_success(result: Result) -> ffi::c_bool;
+    pub unsafe fn is_success(result: *const Result) -> ffi::c_bool;
 
     /// ACIsFailure
     #[doc(alias = "ACIsFailure")]
     #[link_name = "ACIsFailure"]
-    pub unsafe fn is_failure(result: Result) -> ffi::c_bool;
+    pub unsafe fn is_failure(result: *const Result) -> ffi::c_bool;
 
     /// ACIsRetryRequired
     #[doc(alias = "ACIsRetryRequired")]
     #[link_name = "ACIsRetryRequired"]
-    pub unsafe fn is_retry_required(result: Result) -> ffi::c_bool;
+    pub unsafe fn is_retry_required(result: *const Result) -> ffi::c_bool;
 
     /// ACInitialize
     ///
