@@ -1,6 +1,5 @@
-//! NN BOSS
+//! Background Online Service System / SpotPass
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_boss",
     [
