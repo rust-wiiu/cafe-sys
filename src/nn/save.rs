@@ -1,4 +1,4 @@
-//! NN SAVE
+//! Save Data Management (SAVE)
 //!
 //! Save data access. The functions mirror the FS API, with paths relative to the save directory of an account slot.
 
