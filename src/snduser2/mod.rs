@@ -1,6 +1,12 @@
 //! snduser2
 
-// #[cfg(target_arch = "powerpc")]
+pub mod art;
+pub mod fx;
+pub mod mix;
+pub mod seq;
+pub mod sp;
+pub mod syn;
+
 imports_section!(
     "snduser2",
     [
