@@ -2,18 +2,11 @@
 //!
 //! Distributes a Download Play child to Nintendo 3DS consoles. Functions are static methods of `nn::dlp::Cafe::Server`, see [private] for `ServerPrivate`.
 
-use super::Result;
+use super::{
+    Result,
+    uds::{NodeInformation, UserName},
+};
 use crate::ffi;
-
-// TODO: replace with nn::uds::Cafe::NodeInformation from nn::uds
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct NodeInformation(pub ffi::unknown<0x28>);
-
-// TODO: replace with nn::cfg::CTR::UserName
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct UserName(pub ffi::unknown<0x18>);
 
 /// PollStateChangeFlags
 #[repr(transparent)]

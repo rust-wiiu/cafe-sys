@@ -1,6 +1,277 @@
-//! NN UDS
+//! Local wireless 3DS network (UDS)
+//!
+//! Local wireless networks with Nintendo 3DS systems. Functions are in `nn::uds::Cafe`.
 
-// #[cfg(target_arch = "powerpc")]
+use super::Result;
+use crate::ffi;
+
+// TODO: replace with nn::cfg::CTR::UserName
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct UserName(pub ffi::unknown<0x18>);
+
+/// Size of the work memory for [init].
+pub const WORK_MEMORY_SIZE: u32 = 0x14000;
+
+/// UDS_MAX_NODES
+#[doc(alias = "UDS_MAX_NODES")]
+pub const MAX_NODES: usize = 16;
+
+/// ScrambledLocalFriendCode
+#[repr(C, packed)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ScrambledLocalFriendCode {
+    /// Already descrambled on the Wii U.
+    pub local_friend_code: u64,
+    pub network_node_id: u16,
+    pub xor_key: u16,
+}
+
+/// NodeInformation
+#[repr(C, packed)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct NodeInformation {
+    pub scrambled_local_friend_code: ScrambledLocalFriendCode,
+    pub user_name: UserName,
+    pub network_node_id: u16,
+    _unk: ffi::unknown<0x2>,
+}
+
+/// ConnectionStatus
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ConnectionStatus {
+    pub status: u32,
+    /// Why the status changed.
+    pub reason: u32,
+    pub network_node_id: u16,
+    /// Bitmask of changed nodes.
+    pub changed_nodes: u16,
+    pub nodes: [u16; MAX_NODES],
+    pub total_nodes: u8,
+    /// Including the host.
+    pub max_nodes: u8,
+    pub node_bitmask: u16,
+}
+
+/// EndpointDescriptor
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct EndpointDescriptor(pub u32);
+
+/// PollStateChangeFlags
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct PollStateChangeFlags(pub u8);
+
+impl PollStateChangeFlags {
+    pub const NONE: Self = Self(0);
+    /// Don't block if there is no state change.
+    #[doc(alias = "UDS_POLL_NONBLOCK")]
+    pub const NONBLOCK: Self = Self(1 << 0);
+}
+
+/// ReceiveFlags
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ReceiveFlags(pub u8);
+
+impl ReceiveFlags {
+    pub const NONE: Self = Self(0);
+    /// Don't block if no data is available.
+    #[doc(alias = "UDS_RECEIVE_NONBLOCK")]
+    pub const NONBLOCK: Self = Self(1 << 0);
+}
+
+unsafe extern "C" {
+    /// Initialize
+    ///
+    /// `work_memory` must be [WORK_MEMORY_SIZE] bytes.
+    #[doc(alias = "Initialize")]
+    #[link_name = "Initialize__Q3_2nn3uds4CafeFPvUi"]
+    pub unsafe fn init(work_memory: *mut ffi::c_void, work_memory_size: u32) -> Result;
+
+    /// Initialize
+    #[doc(alias = "Initialize")]
+    #[link_name = "Initialize__Q3_2nn3uds4CafeFPvUiPQ4_2nn3cfg3CTR8UserName"]
+    pub unsafe fn init_with_user_name(
+        work_memory: *mut ffi::c_void,
+        work_memory_size: u32,
+        user_name: *mut UserName,
+    ) -> Result;
+
+    /// Finalize
+    #[doc(alias = "Finalize")]
+    #[link_name = "Finalize__Q3_2nn3uds4CafeFv"]
+    pub unsafe fn deinit();
+
+    /// CreateLocalCommunicationId
+    #[doc(alias = "CreateLocalCommunicationId")]
+    #[link_name = "CreateLocalCommunicationId__Q3_2nn3uds4CafeFUib"]
+    pub unsafe fn create_local_communication_id(unique_id: u32, unk: bool) -> u32;
+
+    /// CreateNetwork
+    #[doc(alias = "CreateNetwork")]
+    #[link_name = "CreateNetwork__Q3_2nn3uds4CafeFUcT1UiPCcT3T1"]
+    pub unsafe fn create_network(
+        id8: u8,
+        max_nodes: u8,
+        local_communication_id: u32,
+        passphrase: *const ffi::c_char,
+        passphrase_size: u32,
+        channel: u8,
+    ) -> Result;
+
+    /// CreateNetwork
+    #[doc(alias = "CreateNetwork")]
+    #[link_name = "CreateNetwork__Q3_2nn3uds4CafeFUcT1UiPCcT3T1PCvT3"]
+    pub unsafe fn create_network_with_app_data(
+        id8: u8,
+        max_nodes: u8,
+        local_communication_id: u32,
+        passphrase: *const ffi::c_char,
+        passphrase_size: u32,
+        channel: u8,
+        app_data: *const ffi::c_void,
+        app_data_size: u32,
+    ) -> Result;
+
+    /// CreateNetwork
+    #[doc(alias = "CreateNetwork")]
+    #[link_name = "CreateNetwork__Q3_2nn3uds4CafeFUcT1UiPCcT3bT1PCvT3"]
+    pub unsafe fn create_network_with_app_data_unk(
+        id8: u8,
+        max_nodes: u8,
+        local_communication_id: u32,
+        passphrase: *const ffi::c_char,
+        passphrase_size: u32,
+        unused: bool,
+        channel: u8,
+        app_data: *const ffi::c_void,
+        app_data_size: u32,
+    ) -> Result;
+
+    /// DestroyNetwork
+    #[doc(alias = "DestroyNetwork")]
+    #[link_name = "DestroyNetwork__Q3_2nn3uds4CafeFv"]
+    pub unsafe fn destroy_network() -> Result;
+
+    /// AllowToConnect
+    #[doc(alias = "AllowToConnect")]
+    #[link_name = "AllowToConnect__Q3_2nn3uds4CafeFv"]
+    pub unsafe fn allow_to_connect() -> Result;
+
+    /// DisallowToConnect
+    #[doc(alias = "DisallowToConnect")]
+    #[link_name = "DisallowToConnect__Q3_2nn3uds4CafeFb"]
+    pub unsafe fn disallow_to_connect(unk: bool) -> Result;
+
+    /// AllowToSpectate
+    #[doc(alias = "AllowToSpectate")]
+    #[link_name = "AllowToSpectate__Q3_2nn3uds4CafeFv"]
+    pub unsafe fn allow_to_spectate() -> Result;
+
+    /// EjectClient
+    #[doc(alias = "EjectClient")]
+    #[link_name = "EjectClient__Q3_2nn3uds4CafeFUs"]
+    pub unsafe fn eject_client(node_id: u16) -> Result;
+
+    /// EjectSpectator
+    #[doc(alias = "EjectSpectator")]
+    #[link_name = "EjectSpectator__Q3_2nn3uds4CafeFv"]
+    pub unsafe fn eject_spectator() -> Result;
+
+    /// GetChannel
+    #[doc(alias = "GetChannel")]
+    #[link_name = "GetChannel__Q3_2nn3uds4CafeFPUc"]
+    pub unsafe fn get_channel(channel: *mut u8) -> Result;
+
+    /// GetConnectionStatus
+    #[doc(alias = "GetConnectionStatus")]
+    #[link_name = "GetConnectionStatus__Q3_2nn3uds4CafeFPQ4_2nn3uds4Cafe16ConnectionStatus"]
+    pub unsafe fn get_connection_status(status: *mut ConnectionStatus) -> Result;
+
+    /// GetNodeInformation
+    #[doc(alias = "GetNodeInformation")]
+    #[link_name = "GetNodeInformation__Q3_2nn3uds4CafeFPQ4_2nn3uds4Cafe15NodeInformationUs"]
+    pub unsafe fn get_node_information(info: *mut NodeInformation, node_id: u16) -> Result;
+
+    /// PollStateChange
+    #[doc(alias = "PollStateChange")]
+    #[link_name = "PollStateChange__Q3_2nn3uds4CafeFUc"]
+    pub unsafe fn poll_state_change(flags: PollStateChangeFlags) -> Result;
+
+    /// SetApplicationDataToBeacon
+    #[doc(alias = "SetApplicationDataToBeacon")]
+    #[link_name = "SetApplicationDataToBeacon__Q3_2nn3uds4CafeFPCvUi"]
+    pub unsafe fn set_application_data_to_beacon(app_data: *const ffi::c_void, size: u32)
+    -> Result;
+
+    /// GetApplicationDataFromBeacon
+    #[doc(alias = "GetApplicationDataFromBeacon")]
+    #[link_name = "GetApplicationDataFromBeacon__Q3_2nn3uds4CafeFPvPUiUi"]
+    pub unsafe fn get_application_data_from_beacon(
+        app_data: *mut ffi::c_void,
+        read_size: *mut u32,
+        size: u32,
+    ) -> Result;
+
+    /// CreateEndpoint
+    #[doc(alias = "CreateEndpoint")]
+    #[link_name = "CreateEndpoint__Q3_2nn3uds4CafeFPQ4_2nn3uds4Cafe18EndpointDescriptor"]
+    pub unsafe fn create_endpoint(endpoint: *mut EndpointDescriptor) -> Result;
+
+    /// DestroyEndpoint
+    #[doc(alias = "DestroyEndpoint")]
+    #[link_name = "DestroyEndpoint__Q3_2nn3uds4CafeFPQ4_2nn3uds4Cafe18EndpointDescriptor"]
+    pub unsafe fn destroy_endpoint(endpoint: *mut EndpointDescriptor) -> Result;
+
+    /// Attach
+    #[doc(alias = "Attach")]
+    #[link_name = "Attach__Q3_2nn3uds4CafeFPQ4_2nn3uds4Cafe18EndpointDescriptorUsUcUi"]
+    pub unsafe fn attach(
+        endpoint: *mut EndpointDescriptor,
+        node_id: u16,
+        data_channel: u8,
+        recv_buffer_size: u32,
+    ) -> Result;
+
+    /// SendTo
+    #[doc(alias = "SendTo")]
+    #[link_name = "SendTo__Q3_2nn3uds4CafeFRCQ4_2nn3uds4Cafe18EndpointDescriptorPCvUiUsUcT5"]
+    pub unsafe fn send_to(
+        endpoint: *const EndpointDescriptor,
+        buf: *const ffi::c_void,
+        size: u32,
+        dest_node_id: u16,
+        data_channel: u8,
+        flags: u8,
+    ) -> Result;
+
+    /// Receive
+    #[doc(alias = "Receive")]
+    #[link_name = "Receive__Q3_2nn3uds4CafeFRCQ4_2nn3uds4Cafe18EndpointDescriptorPvPUiUiUc"]
+    pub unsafe fn receive(
+        endpoint: *const EndpointDescriptor,
+        buf: *mut ffi::c_void,
+        received_size: *mut u32,
+        size: u32,
+        flags: ReceiveFlags,
+    ) -> Result;
+
+    /// ReceiveFrom
+    #[doc(alias = "ReceiveFrom")]
+    #[link_name = "ReceiveFrom__Q3_2nn3uds4CafeFRCQ4_2nn3uds4Cafe18EndpointDescriptorPvPUiPUsUiUc"]
+    pub unsafe fn receive_from(
+        endpoint: *const EndpointDescriptor,
+        buf: *mut ffi::c_void,
+        received_size: *mut u32,
+        node_id: *mut u16,
+        size: u32,
+        flags: ReceiveFlags,
+    ) -> Result;
+}
+
 imports_section!(
     "nn_uds",
     [
