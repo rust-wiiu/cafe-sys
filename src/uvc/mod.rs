@@ -1,6 +1,5 @@
-//! uvc
+//! USB Video Class driver
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "uvc",
     [
