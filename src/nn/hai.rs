@@ -1,6 +1,5 @@
-//! NN HAI
+//! Launcher stub for Wii titles (HAI = Hybrid Application Interface?)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_hai",
     [
