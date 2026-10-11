@@ -1,6 +1,5 @@
-//! NN IDBE
+//! Icon DataBase (IDBE)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_idbe",
     [
