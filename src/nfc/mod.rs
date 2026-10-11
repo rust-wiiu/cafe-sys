@@ -117,7 +117,7 @@ pub struct Uid {
 /// NFCTagInfo
 #[doc(alias = "NFCTagInfo")]
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TagInfo {
     pub uid_size: u8,
     pub uid: [u8; MAX_UID_SIZE],
