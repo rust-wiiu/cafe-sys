@@ -4,12 +4,10 @@
 //!
 //! Not every function is mapped to its original name in the ABI, but it's link name should be noted in the documentation of the symbol.
 //!
-//! This crate is not affiliated with Nintendo.
+//! This code is not affiliated with Nintendo.
 
 #![no_std]
-// #![cfg_attr(target_arch = "powerpc", feature(asm_experimental_arch))]
 
-#[allow(unused_macros)]
 macro_rules! imports_section {
     // Main entry point
     ($name:literal, [$($func:literal),*], [$($data:literal),*]) => {
@@ -22,6 +20,9 @@ macro_rules! imports_section {
         ::core::arch::global_asm!(
             concat!(".section .fimport_", $name, ", \"ax\""),
             ".align 4",
+            concat!(".weak __fimport_", $name),
+            concat!(".hidden __fimport_", $name),
+            concat!("__fimport_", $name, ":"),
             ".long 1",
             ".long 0x00000000",
             concat!(".string \"", $name, "\""),
@@ -30,9 +31,10 @@ macro_rules! imports_section {
         $(
             ::core::arch::global_asm!(
                 concat!(".section .fimport_", $name, ".", $func, ", \"ax\""),
-                concat!(".global ", $func),
+                concat!(".weak ", $func),
                 concat!(".type ", $func, ", @function"),
                 concat!($func, ":"),
+                concat!(".reloc ., R_PPC_NONE, __fimport_", $name),
                 ".long 0x0",
                 ".long 0x0",
             );
@@ -45,6 +47,9 @@ macro_rules! imports_section {
         ::core::arch::global_asm!(
             concat!(".section .dimport_", $name, ", \"a\""),
             ".align 4",
+            concat!(".weak __dimport_", $name),
+            concat!(".hidden __dimport_", $name),
+            concat!("__dimport_", $name, ":"),
             ".long 1",
             ".long 0x00000000",
             concat!(".string \"", $name, "\""),
@@ -53,9 +58,10 @@ macro_rules! imports_section {
         $(
             ::core::arch::global_asm!(
                 concat!(".section .dimport_", $name, ".", $data, ", \"a\""),
-                concat!(".global ", $data),
+                concat!(".weak ", $data),
                 concat!(".type ", $data, ", @object"),
                 concat!($data, ":"),
+                concat!(".reloc ., R_PPC_NONE, __dimport_", $name),
                 ".long 0x0",
                 ".long 0x0",
             );
@@ -64,7 +70,6 @@ macro_rules! imports_section {
     (@dimport $name:literal,) => {};
 }
 
-/// Should only be used on "#[[repr(C)]]" structs.
 pub trait UnsafeInit: Sized {
     /// Zero-initializes the struct, allows the user to set specific fields via a mutable reference, then returns the fully initialized type.
     ///
@@ -100,7 +105,7 @@ pub mod ffi {
 
     /// Bytes inside a struct with unknown use
     #[repr(transparent)]
-    #[derive(Debug, Clone, Copy, PartialEq)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct unknown<const N: usize>([u8; N]);
 
     impl<const N: usize> unknown<N> {
@@ -130,39 +135,7 @@ pub mod mic;
 pub mod nfc;
 pub mod nio_prof;
 pub mod nlibnss;
-pub mod nlibnss2;
-// pub mod nn_ac;
-// pub mod nn_acp;
-// pub mod nn_act;
-// pub mod nn_aoc;
-// pub mod nn_boss;
-// pub mod nn_ccr;
-// pub mod nn_cmpt;
-// pub mod nn_dlp;
-// pub mod nn_ec;
-// pub mod nn_fp;
-// pub mod nn_hai;
-// pub mod nn_hpad;
-// pub mod nn_idbe;
-// pub mod nn_ndm;
-// pub mod nn_nets2;
-// pub mod nn_nfp;
-// pub mod nn_nim;
-// pub mod nn_olv;
-// pub mod nn_pdm;
-// pub mod nn_save;
-// pub mod nn_sl;
-// pub mod nn_spm;
-// pub mod nn_temp;
-// pub mod nn_uds;
-// pub mod nn_vctl;
 pub mod nn;
-// pub mod nsysccr;
-// pub mod nsyshid;
-// pub mod nsyskbd;
-// pub mod nsysnet;
-// pub mod nsysuhs;
-// pub mod nsysuvd;
 pub mod nsys;
 pub mod ntag;
 pub mod padscore;
@@ -173,13 +146,10 @@ pub mod swkbd;
 pub mod sysapp;
 pub mod tcl;
 pub mod tve;
-pub mod uac;
-// pub mod uac_rpl;
+// pub mod uac;     // Only one of `uac` and `uac_rpl` can be linked, their exports overlap.
+pub mod uac_rpl;
 pub mod usb_mic;
 pub mod uvc;
 pub mod uvd;
 pub mod vpad;
 pub mod vpadbase;
-
-// #[cfg(all(feature = "uac", feature = "uac_rpl"))]
-// compile_error!("Cannot enable both 'uac' and 'uac_rpl' features simultaneously.");
