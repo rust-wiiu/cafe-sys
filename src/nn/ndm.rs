@@ -1,6 +1,5 @@
-//! NN NDM
+//! Network Daemon Manager (NDM)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_ndm",
     [
