@@ -1,289 +1,216 @@
 //! proc_ui
 
-use crate::ffi::*;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+use crate::coreinit::time::Time;
+use crate::ffi;
 
-/// Called just before releasing the foreground. The callback must call [ready_to_release][crate::coreinit::foreground::ready_to_release].
+/// ProcUISaveCallback
 ///
-/// ProcUISaveCallbackFunction
-pub type SaveCallbackFn = unsafe extern "C" fn();
+/// Called just before the foreground is released. Must call [ready_to_release][crate::coreinit::foreground::ready_to_release].
+#[doc(alias = "ProcUISaveCallback")]
+pub type SaveCallback = Option<unsafe extern "C" fn()>;
 
-/// Called just before releasing the foreground. The callback must call [ready_to_release][crate::coreinit::foreground::ready_to_release].
+/// ProcUISaveCallbackEx
 ///
-/// Return `0` to indicate success. Return any non-zero value to indicate a failure.
-///
-/// ProcUISaveCallbackFunctionEx
-pub type SaveCallbackFnEx = unsafe extern "C" fn(data: *mut c_void) -> u32;
+/// Called just before the foreground is released. Must call [ready_to_release][crate::coreinit::foreground::ready_to_release]. Return 0 on success.
+#[doc(alias = "ProcUISaveCallbackEx")]
+pub type SaveCallbackEx = Option<unsafe extern "C" fn(data: *mut ffi::c_void) -> u32>;
 
-/// Called periodically while in background.
+/// ProcUICallback
 ///
-/// ProcUICallbackFunction
-pub type BackgroundCallbackFn = unsafe extern "C" fn(data: *mut c_void) -> u32;
-
-/// Called when a specific message is received
-///
-/// Return `0` to indicate success. Return any non-zero value to indicate a failure.
-///
-/// ProcUICallbackFunction
-pub type MessageCallbackFn = Option<unsafe extern "C" fn(data: *mut c_void) -> u32>;
+/// Return 0 on success.
+#[doc(alias = "ProcUICallback")]
+pub type Callback = Option<unsafe extern "C" fn(data: *mut ffi::c_void) -> u32>;
 
 /// ProcUIStatus
 #[doc(alias = "ProcUIStatus")]
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, IntoPrimitive, TryFromPrimitive)]
-pub enum Status {
-    /// Process is currently in the foreground.
-    #[doc(alias = "PROCUI_STATUS_IN_FOREGROUND")]
-    Foreground = 0,
-    /// Process is currently in the background. This is only possible if ... is set to non-blocking.
-    #[doc(alias = "PROCUI_STATUS_IN_FOREGROUND")]
-    Background = 1,
-    /// Process needs to release the foreground. Upon receiving this, [drawing_done] should be called to release the foreground.
-    #[doc(alias = "PROCUI_STATUS_RELEASE_FOREGROUND")]
-    Releasing = 2,
-    /// Process needs to exit.
-    #[doc(alias = "PROCUI_STATUS_EXITING")]
-    Exit = 3,
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Status(pub u32);
+
+impl Status {
+    /// All resources may be used.
+    pub const IN_FOREGROUND: Self = Self(0);
+    /// Only limited resources may be used. Only returned in non-blocking mode.
+    pub const IN_BACKGROUND: Self = Self(1);
+    /// The foreground must be released by calling [draw_done_release].
+    pub const RELEASE_FOREGROUND: Self = Self(2);
+    /// All resources, including ProcUI, must be released and the process must exit.
+    pub const EXITING: Self = Self(3);
 }
 
-/// ProcUIMessage
+/// ProcUICallbackType
 #[doc(alias = "ProcUICallbackType")]
 #[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, IntoPrimitive, TryFromPrimitive)]
-pub enum Message {
-    /// Process moved to foreground.
-    #[doc(alias = "PROCUI_CALLBACK_ACQUIRE")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum CallbackType {
+    /// The foreground was acquired.
     Acquire = 0,
-    /// Process must move to background.
-    #[doc(alias = "PROCUI_CALLBACK_RELEASE")]
+    /// The foreground must be released.
     Release = 1,
-    /// Process must exit.
-    #[doc(alias = "PROCUI_CALLBACK_EXIT")]
+    /// The process must exit.
     Exit = 2,
-    /// Process may start using networking.
-    #[doc(alias = "PROCUI_CALLBACK_NET_IO_START")]
+    /// Networking may be used.
     NetIoStart = 3,
-    /// Process must stop using networking.
-    #[doc(alias = "PROCUI_CALLBACK_NET_IO_STOP")]
+    /// Networking must stop being used.
     NetIoStop = 4,
-    /// Home Button has been pressed and ignored.
-    #[doc(alias = "PROCUI_CALLBACK_HOME_BUTTON_DENIED")]
+    /// The HOME button was pressed but denied.
     HomeButtonDenied = 5,
 }
 
-// #[cfg(target_arch = "powerpc")]
-unsafe extern "C" {
-    /// Returns the amount of memory required by ProcUI to handle the specified number of callbacks.
-    ///
-    /// This function should only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
-    /// ProcUICalcMemorySize
-    #[link_name = "ProcUICalcMemorySize"]
-    pub unsafe fn required_memory_size(num_callbacks: u32) -> u32;
+/// ProcUI status code.
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Error(pub i32);
 
-    /// Clears all callbacks the process has registered.
+impl Error {
+    pub const SUCCESS: Self = Self(0);
+    pub const INVALID_HEAP: Self = Self(-1);
+}
+
+unsafe extern "C" {
+    /// ProcUICalcMemorySize
     ///
-    /// This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
+    /// Returns the memory needed by [set_memory_pool] for `num_callbacks` callbacks. Call [set_callback_stack_size] first.
+    #[doc(alias = "ProcUICalcMemorySize")]
+    #[link_name = "ProcUICalcMemorySize"]
+    pub unsafe fn calc_memory_size(num_callbacks: u32) -> u32;
+
     /// ProcUIClearCallbacks
+    ///
+    /// Only call from the main thread.
+    #[doc(alias = "ProcUIClearCallbacks")]
     #[link_name = "ProcUIClearCallbacks"]
     pub unsafe fn clear_callbacks();
 
-    /// Indicates that the system can proceed to release the foreground.
-    ///
-    /// This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUIDrawDoneRelease
+    ///
+    /// Call after receiving [Status::RELEASE_FOREGROUND] to let the system release the foreground. Only call from the main thread.
+    #[doc(alias = "ProcUIDrawDoneRelease")]
     #[link_name = "ProcUIDrawDoneRelease"]
-    pub unsafe fn drawing_done();
+    pub unsafe fn draw_done_release();
 
-    /// Checks if the application is currently in the foreground.
-    ///
-    /// # Symbol
-    ///
     /// ProcUIInForeground
+    #[doc(alias = "ProcUIInForeground")]
     #[link_name = "ProcUIInForeground"]
-    pub unsafe fn in_foreground() -> c_bool;
+    pub unsafe fn in_foreground() -> ffi::c_bool;
 
-    /// Checks if the system is currently shutting down.
-    ///
-    /// During shutdown, the application may first receive a message to release the foreground.
-    ///
-    /// # Symbol
-    ///
     /// ProcUIInShutdown
+    #[doc(alias = "ProcUIInShutdown")]
     #[link_name = "ProcUIInShutdown"]
-    pub unsafe fn in_shutdown() -> c_bool;
+    pub unsafe fn in_shutdown() -> ffi::c_bool;
 
-    /// Initializes the resoureces needed by the ProcUI library. See [init_ex] for more information.
-    ///
-    /// The thread which calls [init] / [init_ex] becomes the main thread of the application. This function is equivalent to calling [init_ex] with no `data` and returning `0` from the callback.
-    ///
-    /// # Symbol
-    ///
     /// ProcUIInit
+    ///
+    /// The calling thread becomes the main thread.
+    #[doc(alias = "ProcUIInit")]
     #[link_name = "ProcUIInit"]
-    pub unsafe fn init(callback: SaveCallbackFn);
+    pub unsafe fn init(callback: SaveCallback);
 
-    /// Initializes the resoureces needed by the ProcUI library.
-    ///
-    /// The thread which calls [init] / [init_ex] becomes the main thread of the application. On initialization, this creates a callback thread for each core. The `data` pointer is passed to the callback and must therefore be valid for the entire programs lifetime.
-    ///
-    /// # Symbol
-    ///
     /// ProcUIInitEx
+    ///
+    /// The calling thread becomes the main thread. `data` is passed to `callback` and must stay valid until [shutdown].
+    #[doc(alias = "ProcUIInitEx")]
     #[link_name = "ProcUIInitEx"]
-    pub unsafe fn init_ex(callback: SaveCallbackFnEx, data: *mut c_void);
+    pub unsafe fn init_ex(callback: SaveCallbackEx, data: *mut ffi::c_void);
 
-    /// Checks if ProcUI has been initialized and running.
-    ///
-    /// # Symbol
-    ///
     /// ProcUIIsRunning
+    #[doc(alias = "ProcUIIsRunning")]
     #[link_name = "ProcUIIsRunning"]
-    pub unsafe fn is_running() -> c_bool;
+    pub unsafe fn is_running() -> ffi::c_bool;
 
-    /// Handle system messages.
-    ///
-    /// If in blocking mode and moved into background, the system will automatically manage a thread on core 2 which will handle system messages. If in non-blocking mode, the [main thread][init] must be on core 2 and system messages must be manually handled. Blocking mode is recommended.
-    ///
-    /// This function should be called periodically, at best every frame. This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUIProcessMessages
+    ///
+    /// Call every frame from the main thread. In blocking mode the call blocks while in the background. In non-blocking mode the main thread must run on core 2.
+    #[doc(alias = "ProcUIProcessMessages")]
     #[link_name = "ProcUIProcessMessages"]
-    pub unsafe fn process_messages(blocking: c_bool) -> Status;
+    pub unsafe fn process_messages(block: ffi::c_bool) -> Status;
 
-    /// Registers a function to be called periodically while in the background.
-    ///
-    /// This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUIRegisterBackgroundCallback
+    ///
+    /// Calls `callback` every `ticks_to_delay` while in the background. Only call from the main thread.
+    #[doc(alias = "ProcUIRegisterBackgroundCallback")]
     #[link_name = "ProcUIRegisterBackgroundCallback"]
     pub unsafe fn register_background_callback(
-        func: BackgroundCallbackFn,
-        data: *mut c_void,
-        ticks_to_delay: u64,
+        callback: Callback,
+        data: *mut ffi::c_void,
+        ticks_to_delay: Time,
     );
 
-    /// Registers a callback for when a specific system message is received.
-    ///
-    /// This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUIRegisterCallback
+    ///
+    /// Only call from the main thread.
+    #[doc(alias = "ProcUIRegisterCallback")]
     #[link_name = "ProcUIRegisterCallback"]
     pub unsafe fn register_callback(
-        message: Message,
-        func: MessageCallbackFn,
-        data: *mut c_void,
+        kind: CallbackType,
+        callback: Callback,
+        data: *mut ffi::c_void,
         priority: i32,
     );
 
-    /// Registers a callback to run on a specified core for when a specific system message is received.
-    ///
-    /// This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUIRegisterCallbackCore
+    ///
+    /// Same as [register_callback], but runs `callback` on `core`.
+    #[doc(alias = "ProcUIRegisterCallbackCore")]
     #[link_name = "ProcUIRegisterCallbackCore"]
     pub unsafe fn register_callback_core(
-        message: Message,
-        func: MessageCallbackFn,
-        data: *mut c_void,
+        kind: CallbackType,
+        callback: Callback,
+        data: *mut ffi::c_void,
         priority: i32,
-        core: u32,
+        core: ffi::c_int,
     );
 
-    /// Sets the area to use when saving and restoring the foreground bucket.
-    ///
-    /// Don't use this function.
-    ///
-    /// # Symbol
-    ///
     /// ProcUISetBucketStorage
+    ///
+    /// Area used to save and restore the foreground bucket.
+    #[doc(alias = "ProcUISetBucketStorage")]
     #[link_name = "ProcUISetBucketStorage"]
-    #[deprecated]
-    pub unsafe fn set_foreground_storage(data: c_void, size: u32);
+    pub unsafe fn set_bucket_storage(data: *mut ffi::c_void, size: u32);
 
-    /// Set the stack size for the callback threads.
-    ///
-    /// The default stack size is `8 * 1024`.
-    ///
-    /// [set_callback_stack_size] must never be called after [calc_memory_size]. If [calc_memory_size] and [set_memory_pool] are never called, [set_callback_stack_size] may be called before or after [init] / [init_ex].
-    ///
-    /// This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUISetCallbackStackSize
+    ///
+    /// Stack size of the callback threads, 8 KiB by default. Must be called before [calc_memory_size]. Only call from the main thread.
+    #[doc(alias = "ProcUISetCallbackStackSize")]
     #[link_name = "ProcUISetCallbackStackSize"]
-    pub unsafe fn set_callback_stack_size();
+    pub unsafe fn set_callback_stack_size(size: u32);
 
-    /// Sets the area to use when saving and restoring the MEM1 bucket.
-    ///
-    /// Don't use this function.
-    ///
-    /// # Symbol
-    ///
     /// ProcUISetMEM1Storage
+    ///
+    /// Area used to save and restore MEM1.
+    #[doc(alias = "ProcUISetMEM1Storage")]
     #[link_name = "ProcUISetMEM1Storage"]
-    #[deprecated]
-    pub unsafe fn set_mem1_storage(data: c_void, size: u32);
+    pub unsafe fn set_mem1_storage(data: *mut ffi::c_void, size: u32);
 
-    /// Modifies ProcUI to use predefined memory as opposed to allocate from the default heap.
-    ///
-    /// [set_callback_stack_size] must be called before [set_memory_pool]. [set_memory_pool] may only be called before [init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUISetMemoryPool
+    ///
+    /// Uses `memory` instead of the default heap. Must be called before [init]. See [calc_memory_size].
+    #[doc(alias = "ProcUISetMemoryPool")]
     #[link_name = "ProcUISetMemoryPool"]
-    pub unsafe fn set_memory_pool() -> i32;
+    pub unsafe fn set_memory_pool(memory: *mut ffi::c_void, size: u32) -> Error;
 
-    /// Registers a function to be called immediately before the foreground is released. Can only be used with [init_ex].
-    ///
-    /// This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUISetSaveCallback
+    ///
+    /// Only call from the main thread.
+    #[doc(alias = "ProcUISetSaveCallback")]
     #[link_name = "ProcUISetSaveCallback"]
-    pub unsafe fn set_save_callback(func: SaveCallbackFnEx, data: *mut c_void);
+    pub unsafe fn set_save_callback(callback: SaveCallbackEx, data: *mut ffi::c_void);
 
-    /// Calls all exit callbacks and cleans up the threads.
-    ///
-    /// This function must only be called from the [main thread][init].
-    ///
-    /// # Symbol
-    ///
     /// ProcUIShutdown
+    ///
+    /// Calls the exit callbacks and stops the callback threads. Only call from the main thread.
+    #[doc(alias = "ProcUIShutdown")]
     #[link_name = "ProcUIShutdown"]
     pub unsafe fn shutdown();
 
-    /// Allows multiple threads to handle system messages. This function may be used by sub-loops that handle graphics commands.
-    ///
-    /// This function must be valid to run in the background. If in blocking mode, blocks thread when in background.
-    ///
-    /// # Symbol
-    ///
     /// ProcUISubProcessMessages
+    ///
+    /// Same as [process_messages], but can be called from threads other than the main thread, e.g. sub-loops issuing graphics commands.
+    #[doc(alias = "ProcUISubProcessMessages")]
     #[link_name = "ProcUISubProcessMessages"]
-    pub unsafe fn sub_process_messages(blocking: c_bool) -> Status;
+    pub unsafe fn sub_process_messages(block: ffi::c_bool) -> Status;
 }
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "proc_ui",
     [
