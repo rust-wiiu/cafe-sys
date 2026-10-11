@@ -1,8 +1,8 @@
 //! cafe-sys
 //!
-//! This crates provides bindings to the system libraries of the Cafe operating system for the Nintendo Wii U™.
+//! This crate provides bindings to the system libraries of the Cafe operating system for the Nintendo Wii U™.
 //!
-//! Not every function is mapped to its original name in the ABI, but it's link name should be noted in the documentation of the symbol.
+//! Not every function is mapped to its original name in the ABI, but its link name should be noted in the documentation of the symbol.
 //!
 //! This code is not affiliated with Nintendo.
 
@@ -11,7 +11,9 @@
 macro_rules! imports_section {
     // Main entry point
     ($name:literal, [$($func:literal),*], [$($data:literal),*]) => {
+        #[cfg(target_arch = "powerpc")]
         imports_section!(@fimport $name, $($func),*);
+        #[cfg(target_arch = "powerpc")]
         imports_section!(@dimport $name, $($data),*);
     };
 

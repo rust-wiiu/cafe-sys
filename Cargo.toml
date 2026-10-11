@@ -7,6 +7,9 @@ license = "MIT"
 keywords = ["wiiu", "homebrew"]
 description = "Bindings for the Wii U system APIs"
 repository = "https://github.com/rust-wiiu/cafe-sys"
+readme = "README.md"
+categories = ["external-ffi-bindings", "no-std", "os"]
+rust-version = "1.85"
 
 [lib]
 test = false
