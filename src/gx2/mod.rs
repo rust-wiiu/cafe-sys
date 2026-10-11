@@ -1,12 +1,32 @@
 //! GX2
+//!
+//! Graphics library for the Wii U GPU.
 
+pub mod aperture;
+pub mod clear;
+pub mod context;
 pub mod debug;
 pub mod display;
+pub mod display_list;
+pub mod draw;
+pub mod enums;
+pub mod event;
 pub mod mem;
+pub mod perf;
+pub mod query;
+pub mod r;
+pub mod registers;
+pub mod sampler;
+pub mod semaphore;
 pub mod shader;
 pub mod state;
+pub mod surface;
+pub mod swap;
+pub mod temp;
+pub mod tessellation;
+pub mod texture;
+pub mod uda;
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "gx2",
     [

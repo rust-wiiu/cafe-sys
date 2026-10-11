@@ -1,209 +1,220 @@
-use crate::{
-    coreinit::time::Time,
-    ffi::*,
-    gx2::mem::{self, ColorBuffer, DepthBuffer},
+//! GX2 display setup
+
+use super::enums::{
+    AspectRatio, BufferingMode, DrcRenderMode, SurfaceFormat, TvRenderMode, TvScanMode,
 };
-use bitflags::bitflags;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+use crate::ffi;
 
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
-pub enum DrcMode {
-    Disabled = 0,
-    Single = 1,
-    Double = 2,
+/// GX2DRCConnectReason
+///
+/// Reason passed to a [DrcConnectCallback].
+#[doc(alias = "GX2_DRC_ATTACH", alias = "GX2_DRC_DETACH")]
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct DrcConnectReason(pub i32);
+
+impl DrcConnectReason {
+    pub const DETACH: Self = Self(0);
+    pub const ATTACH: Self = Self(1);
 }
 
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
-pub enum ScanMode {
-    /// 720x576 interlaced | 576I
-    PAL = 1,
-    /// 720x480 interlaced | 480I
-    NTSC = 2,
-    /// 720x480 progressive | 480P
-    NTSCp = 3,
-    /// 1280x720 progressive | 720P
-    HD = 4,
-    /// 1920x1080 interlaced | 1080I
-    FHDi = 6,
-    /// 1920x1080 progressive | 1080P
-    FHD = 7,
+/// GX2DRCEncodingHint
+#[doc(alias = "GX2DRCEncodingHint")]
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct DrcEncodingHint(pub u32);
+
+impl DrcEncodingHint {
+    pub const INVALIDATE: Self = Self(0x1);
+    pub const MOTION_VECTOR: Self = Self(0x4);
 }
 
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
-pub enum AspectRatio {
-    /// 4:3
-    Standard = 0,
-    /// 16:9
-    Widescreen = 1,
-}
+impl core::ops::BitOr for DrcEncodingHint {
+    type Output = Self;
 
-#[doc(alias = "GX2TVRenderMode")]
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
-pub enum TvMode {
-    Disabled = 0,
-    Standard480 = 1,
-    Wide480 = 2,
-    Wide720 = 3,
-    // reserved
-    Wide1080 = 5,
-}
-
-#[repr(u32)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
-pub enum Buffering {
-    /// DEBUG ONLY - DO NOT USE
-    #[deprecated]
-    Single = 1,
-    #[default]
-    Double = 2,
-    #[deprecated]
-    Triple = 3,
-}
-
-bitflags! {
-    #[repr(transparent)]
-    #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-    pub struct ClearMode : u32 {
-        const None = 0;
-        const Depth = 1;
-        const Stencil = 2;
-        const DReg = 4;
-        const SReg = 8;
-        const Both = Self::Depth.bits() | Self::Stencil.bits();
-        const DSReg = Self::DReg.bits() | Self::SReg.bits();
-        const DepthDReg = Self::Depth.bits() | Self::DReg.bits();
-        const StencilSReg = Self::Stencil.bits() | Self::SReg.bits();
-        const BothDSReg = Self::Both.bits() | Self::DSReg.bits();
+    #[inline]
+    fn bitor(self, rhs: Self) -> Self {
+        Self(self.0 | rhs.0)
     }
 }
 
-#[repr(u32)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
-pub enum SwapInterval {
-    #[default]
-    VSync60Hz = 1,
-}
+/// GX2DRCConnectCallback
+///
+/// Called when the DRC on `channel` connects or disconnects. Cleared on process switch.
+#[doc(alias = "GX2DRCConnectCallback", alias = "GX2DRCConnectCB")]
+pub type DrcConnectCallback = Option<unsafe extern "C" fn(channel: i32, reason: DrcConnectReason)>;
 
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, IntoPrimitive, TryFromPrimitive)]
-pub enum ScanTarget {
-    Tv = 1,
-    Drc = 4,
-}
-
-// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
-    /// GX2GetSystemDRCMode
-    #[link_name = "GX2GetSystemDRCMode"]
-    pub unsafe fn drc_mode() -> DrcMode;
+    /// GX2SetTVEnable
+    #[doc(alias = "GX2SetTVEnable")]
+    #[link_name = "GX2SetTVEnable"]
+    pub unsafe fn set_tv_enable(enable: ffi::c_bool);
 
-    /// GX2GetSystemTVScanMode
-    #[link_name = "GX2GetSystemTVScanMode"]
-    pub unsafe fn scan_mode() -> ScanMode;
-
-    /// GX2GetSystemTVAspectRatio
-    #[link_name = "GX2GetSystemTVAspectRatio"]
-    pub unsafe fn aspect_ratio() -> AspectRatio;
+    /// GX2SetDRCEnable
+    #[doc(alias = "GX2SetDRCEnable")]
+    #[link_name = "GX2SetDRCEnable"]
+    pub unsafe fn set_drc_enable(enable: ffi::c_bool);
 
     /// GX2CalcTVSize
+    ///
+    /// Size of the TV scan buffer, and whether the system has to scale it to the TV resolution.
+    #[doc(alias = "GX2CalcTVSize")]
     #[link_name = "GX2CalcTVSize"]
-    pub unsafe fn tv_framebuffer_size(
-        mode: TvMode,
-        format: mem::Format,
-        buffering: Buffering,
+    pub unsafe fn calc_tv_size(
+        mode: TvRenderMode,
+        format: SurfaceFormat,
+        buffering: BufferingMode,
         size: *mut u32,
-        scale_needed: *mut c_bool,
+        scale_needed: *mut ffi::c_bool,
     );
 
     /// GX2CalcDRCSize
+    ///
+    /// Size of the DRC scan buffer, and whether the system has to scale it.
+    #[doc(alias = "GX2CalcDRCSize")]
     #[link_name = "GX2CalcDRCSize"]
-    pub unsafe fn drc_framebuffer_size(
-        mode: DrcMode,
-        format: mem::Format,
-        buffering: Buffering,
+    pub unsafe fn calc_drc_size(
+        mode: DrcRenderMode,
+        format: SurfaceFormat,
+        buffering: BufferingMode,
         size: *mut u32,
-        scale_needed: *mut c_bool,
+        scale_needed: *mut ffi::c_bool,
     );
 
     /// GX2SetTVBuffer
+    ///
+    /// `buffer` must be aligned to [SCAN_BUFFER_ALIGNMENT][super::enums::SCAN_BUFFER_ALIGNMENT] and [calc_tv_size] bytes.
+    #[doc(alias = "GX2SetTVBuffer")]
     #[link_name = "GX2SetTVBuffer"]
     pub unsafe fn set_tv_buffer(
-        buffer: *mut c_void,
+        buffer: *mut ffi::c_void,
         size: u32,
-        mode: TvMode,
-        format: mem::Format,
-        buffering: Buffering,
+        mode: TvRenderMode,
+        format: SurfaceFormat,
+        buffering: BufferingMode,
     );
 
     /// GX2SetDRCBuffer
+    ///
+    /// `buffer` must be aligned to [SCAN_BUFFER_ALIGNMENT][super::enums::SCAN_BUFFER_ALIGNMENT] and [calc_drc_size] bytes.
+    #[doc(alias = "GX2SetDRCBuffer")]
     #[link_name = "GX2SetDRCBuffer"]
     pub unsafe fn set_drc_buffer(
-        buffer: *mut c_void,
+        buffer: *mut ffi::c_void,
         size: u32,
-        mode: DrcMode,
-        format: mem::Format,
-        buffering: Buffering,
+        mode: DrcRenderMode,
+        format: SurfaceFormat,
+        buffering: BufferingMode,
     );
 
-    /// GX2SetSwapInterval
-    #[link_name = "GX2SetSwapInterval"]
-    pub unsafe fn set_swap_interval(swap_interval: SwapInterval);
+    /// GX2SetTVScale
+    ///
+    /// Size of the rendered area of the TV scan buffer, scaled to the full output.
+    #[doc(alias = "GX2SetTVScale")]
+    #[link_name = "GX2SetTVScale"]
+    pub unsafe fn set_tv_scale(width: u32, height: u32);
 
-    /// GX2WaitForVsync
-    #[link_name = "GX2WaitForVsync"]
-    pub unsafe fn wait_for_vsync();
+    /// GX2SetDRCScale
+    ///
+    /// Size of the rendered area of the DRC scan buffer, scaled to the full output.
+    #[doc(alias = "GX2SetDRCScale")]
+    #[link_name = "GX2SetDRCScale"]
+    pub unsafe fn set_drc_scale(width: u32, height: u32);
 
-    /// GX2DrawDone
-    #[link_name = "GX2DrawDone"]
-    pub unsafe fn draw_done() -> bool;
+    /// GX2GetSystemTVAspectRatio
+    #[doc(alias = "GX2GetSystemTVAspectRatio")]
+    #[link_name = "GX2GetSystemTVAspectRatio"]
+    pub unsafe fn get_system_tv_aspect_ratio() -> AspectRatio;
 
-    /// GX2ClearColor
-    #[link_name = "GX2ClearColor"]
-    pub unsafe fn clear_color(buffer: *mut ColorBuffer, r: f32, g: f32, b: f32, a: f32);
+    /// GX2GetSystemTVScanMode
+    #[doc(alias = "GX2GetSystemTVScanMode")]
+    #[link_name = "GX2GetSystemTVScanMode"]
+    pub unsafe fn get_system_tv_scan_mode() -> TvScanMode;
 
-    /// GX2ClearDepthStencilEx
-    #[link_name = "GX2ClearDepthStencilEx"]
-    pub unsafe fn clear_depth_stencil_ex(
-        buffer: *mut DepthBuffer,
-        depth: f32,
-        stencil: u8,
-        mode: ClearMode,
-    );
+    /// GX2GetSystemDRCMode
+    #[doc(alias = "GX2GetSystemDRCMode")]
+    #[link_name = "GX2GetSystemDRCMode"]
+    pub unsafe fn get_system_drc_mode() -> DrcRenderMode;
 
-    /// GX2CopyColorBufferToScanBuffer
-    #[link_name = "GX2CopyColorBufferToScanBuffer"]
-    pub unsafe fn copy_color_to_scan_buffer(buffer: *const ColorBuffer, target: ScanTarget);
+    /// GX2GetSystemDRCScanMode
+    #[doc(alias = "GX2GetSystemDRCScanMode")]
+    #[link_name = "GX2GetSystemDRCScanMode"]
+    pub unsafe fn get_system_drc_scan_mode() -> DrcRenderMode;
 
-    /// GX2GetSwapStatus
-    #[link_name = "GX2GetSwapStatus"]
-    pub unsafe fn swap_status(
-        swaps: *mut u32,
-        flips: *mut u32,
-        last_flip: *mut Time,
-        last_vsync: *mut Time,
-    );
+    /// GX2GetSystemTVStereoDisplayCapability
+    #[doc(alias = "GX2GetSystemTVStereoDisplayCapability")]
+    #[link_name = "GX2GetSystemTVStereoDisplayCapability"]
+    pub unsafe fn get_system_tv_stereo_display_capability() -> u32;
 
-    /// GX2SwapScanBuffers
-    #[link_name = "GX2SwapScanBuffers"]
-    pub unsafe fn swap_scan_buffers();
+    /// GX2SetTVStereoMode
+    #[doc(alias = "GX2SetTVStereoMode")]
+    #[link_name = "GX2SetTVStereoMode"]
+    pub unsafe fn set_tv_stereo_mode(mode: u32);
 
-    /// GX2SetTVEnable
-    #[link_name = "GX2SetTVEnable"]
-    pub unsafe fn enable_tv(enable: bool);
+    /// GX2SetDRCConnectCallback
+    ///
+    /// Returns the previous callback. Must be registered again after a process switch.
+    #[doc(alias = "GX2SetDRCConnectCallback")]
+    #[link_name = "GX2SetDRCConnectCallback"]
+    pub unsafe fn set_drc_connect_callback(
+        channel: i32,
+        callback: DrcConnectCallback,
+    ) -> DrcConnectCallback;
 
-    /// GX2SetDRCEnable
-    #[link_name = "GX2SetDRCEnable"]
-    pub unsafe fn enable_drc(enable: bool);
+    /// GX2IsVideoOutReady
+    #[doc(alias = "GX2IsVideoOutReady")]
+    #[link_name = "GX2IsVideoOutReady"]
+    pub unsafe fn is_video_out_ready() -> ffi::c_bool;
 
-    /// GX2BeginDisplayListEx
-    #[link_name = "GX2BeginDisplayListEx"]
-    pub unsafe fn begin_display_list(buffer: *mut c_void, size: u32, profiling: c_bool);
+    /// GX2SetVideoEncodingHint
+    ///
+    /// Hints the DRC video encoder, e.g. with a global motion vector in units of 4 pixels pointing from the new to the old frame.
+    #[doc(alias = "GX2SetVideoEncodingHint")]
+    #[link_name = "GX2SetVideoEncodingHint"]
+    pub unsafe fn set_video_encoding_hint(
+        hint: DrcEncodingHint,
+        motion_vector_x: i8,
+        motion_vector_y: i8,
+    ) -> ffi::c_bool;
 
-    /// GX2EndDisplayList
-    #[link_name = "GX2EndDisplayList"]
-    pub unsafe fn end_display_list(buffer: *mut c_void) -> u32;
+    /// GX2GetDRCVerticalInfo
+    ///
+    /// Current vertical count of the DRC, and the field (0 or 1) in 30 Hz mode.
+    #[doc(alias = "GX2GetDRCVerticalInfo")]
+    #[link_name = "GX2GetDRCVerticalInfo"]
+    pub unsafe fn get_drc_vertical_info(vcount: *mut u32, vphase: *mut u32);
+
+    /// GX2SetTVGamma
+    #[doc(alias = "GX2SetTVGamma")]
+    #[link_name = "GX2SetTVGamma"]
+    pub unsafe fn set_tv_gamma(gamma: f32);
+
+    /// GX2GetTVGamma
+    ///
+    /// Gamma set by the application.
+    #[doc(alias = "GX2GetTVGamma")]
+    #[link_name = "GX2GetTVGamma"]
+    pub unsafe fn get_tv_gamma(gamma: *mut f32);
+
+    /// GX2GetTVGammaEx
+    #[doc(alias = "GX2GetTVGammaEx")]
+    #[link_name = "GX2GetTVGammaEx"]
+    pub unsafe fn get_tv_gamma_ex(gamma: *mut f32);
+
+    /// GX2SetDRCGamma
+    #[doc(alias = "GX2SetDRCGamma")]
+    #[link_name = "GX2SetDRCGamma"]
+    pub unsafe fn set_drc_gamma(gamma: f32);
+
+    /// GX2GetDRCGamma
+    ///
+    /// Gamma set by the application.
+    #[doc(alias = "GX2GetDRCGamma")]
+    #[link_name = "GX2GetDRCGamma"]
+    pub unsafe fn get_drc_gamma(gamma: *mut f32);
+
+    /// GX2GetDRCGammaEx
+    #[doc(alias = "GX2GetDRCGammaEx")]
+    #[link_name = "GX2GetDRCGammaEx"]
+    pub unsafe fn get_drc_gamma_ex(gamma: *mut f32);
 }
