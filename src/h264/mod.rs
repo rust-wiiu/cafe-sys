@@ -6,10 +6,10 @@ use crate::ffi;
 #[doc(alias = "H264DEC_BUFFER_ALIGNMENT")]
 pub const BUFFER_ALIGNMENT: u32 = 256;
 
-/// H264DEC_ERR_*
+/// H264Error
 ///
 /// The result of [execute] additionally carries the decode status in the lower 8 bits, see [Error::STATUS_MASK].
-#[doc(alias = "H264DEC_ERR")]
+#[doc(alias = "H264Error")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub i32);
@@ -35,8 +35,8 @@ impl Error {
     pub const STATUS_MASK: Self = Self(0x000000FF);
 }
 
-/// H264DEC_PARAM_ID_*
-#[doc(alias = "H264DEC_PARAM_ID")]
+/// H264Parameter
+#[doc(alias = "H264Parameter")]
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ParamId {
@@ -71,8 +71,8 @@ pub enum Profile {
     High = 100,
 }
 
-/// VUIParameters
-#[doc(alias = "VUIParameters")]
+/// H264DecodedVuiParameters
+#[doc(alias = "H264DecodedVuiParameters")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct VuiParameters {
@@ -110,8 +110,8 @@ pub struct VuiParameters {
     pub max_dec_frame_buffering: i16,
 }
 
-/// H264DECResult
-#[doc(alias = "H264DECResult")]
+/// H264DecodeResult
+#[doc(alias = "H264DecodeResult")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DecodeResult {
@@ -138,8 +138,8 @@ pub struct DecodeResult {
     pub reserved: ffi::unknown<0x28>,
 }
 
-/// H264DECOutput
-#[doc(alias = "H264DECOutput")]
+/// H264DecodeOutput
+#[doc(alias = "H264DecodeOutput")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Output {
@@ -149,8 +149,11 @@ pub struct Output {
     pub user_memory: *mut ffi::c_void,
 }
 
-/// Callback set with [ParamId::FptrOutput]. Receives a `*mut` [Output].
-pub type OutputCallback = Option<unsafe extern "C" fn(output: *mut ffi::c_void) -> ffi::c_int>;
+/// H264DECFptrOutputFn
+///
+/// Set with [ParamId::FptrOutput].
+#[doc(alias = "H264DECFptrOutputFn")]
+pub type OutputCallback = Option<unsafe extern "C" fn(output: *mut Output) -> ffi::c_int>;
 
 unsafe extern "C" {
     /// H264DECInitParam

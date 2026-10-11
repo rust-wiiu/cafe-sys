@@ -26,8 +26,8 @@ pub const YUV_BUFFER_ALIGNMENT: u32 = 256;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Handle(pub ffi::c_int);
 
-/// CAMERA_ERROR
-#[doc(alias = "CAMERA_ERROR")]
+/// CAMError
+#[doc(alias = "CAMError")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub ffi::c_int);
@@ -107,8 +107,8 @@ pub enum TileMode {
     Linear = 0,
 }
 
-/// CAMERA_EVENT_TYPE
-#[doc(alias = "CAMERA_EVENT_TYPE")]
+/// CamEventType
+#[doc(alias = "CamEventType")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct EventType(pub u32);
@@ -128,8 +128,8 @@ pub enum DisplayMode {
     LocalLoopback = 1,
 }
 
-/// DRC_CAMERA_FPS
-#[doc(alias = "DRC_CAMERA_FPS")]
+/// CamFps
+#[doc(alias = "CamFps")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Fps {
@@ -149,8 +149,8 @@ pub enum PowerLineFrequency {
     Hz60 = 2,
 }
 
-/// CAMERA_STREAM_TYPE
-#[doc(alias = "CAMERA_STREAM_TYPE")]
+/// CamStreamType
+#[doc(alias = "CamStreamType")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum StreamType {
@@ -178,8 +178,8 @@ pub struct StateInfo {
     pub res: ffi::c_int,
 }
 
-/// Camera_Event_Handler_Input
-#[doc(alias = "Camera_Event_Handler_Input")]
+/// CAMEventData
+#[doc(alias = "CAMEventData")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EventHandlerInput {
