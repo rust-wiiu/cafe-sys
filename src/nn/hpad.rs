@@ -148,7 +148,7 @@ unsafe extern "C" {
     ///
     /// Always fills 16 buffers, regardless of `count`. Returns the number of buffers read, or a negative error.
     #[doc(alias = "HPADRead")]
-    #[link_name = "__rplwrap_HPADRead"]
+    #[link_name = "HPADRead"]
     pub unsafe fn read(chan: Channel, buffers: *mut [Status; 16], count: i32) -> i32;
 
     /// HPADControlMotor
@@ -257,7 +257,7 @@ imports_section!(
         "HPADSetPowerSupplyCallback",
         "HPADSetSamplingCallback",
         "HPADShutdown",
-        "__rplwrap_HPADRead"
+        "HPADRead"
     ],
     []
 );

@@ -355,12 +355,12 @@ unsafe extern "C" {
     ///
     /// Reads the `meta.xml` of an installed title.
     #[doc(alias = "ACPGetTitleMetaXml")]
-    #[link_name = "__rplwrap_ACPGetTitleMetaXml"]
+    #[link_name = "ACPGetTitleMetaXml"]
     pub unsafe fn get_title_meta_xml(title_id: u64, meta: *mut MetaXml) -> Error;
 
     /// ACPGetTitleSaveMetaXml
     #[doc(alias = "ACPGetTitleSaveMetaXml")]
-    #[link_name = "__rplwrap_ACPGetTitleSaveMetaXml"]
+    #[link_name = "ACPGetTitleSaveMetaXml"]
     pub unsafe fn get_title_save_meta_xml(
         title_id: u64,
         meta: *mut MetaXml,
@@ -614,8 +614,8 @@ imports_section!(
         "TurnOnDrcLedTest__Q2_2nn3acpFUcUiQ3_2nn3acp13DrcLedPattern",
         "TurnOnDrcLed__Q2_2nn3acpFUiQ3_2nn3acp13DrcLedPattern",
         "WaitExternalStorage__Q2_2nn3acpFv",
-        "__rplwrap_ACPGetTitleMetaXml",
-        "__rplwrap_ACPGetTitleSaveMetaXml"
+        "ACPGetTitleMetaXml",
+        "ACPGetTitleSaveMetaXml"
     ],
     []
 );
