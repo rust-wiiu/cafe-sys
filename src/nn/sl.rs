@@ -1,6 +1,5 @@
-//! NN SL
+//! System Launcher (SL)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_sl",
     [
