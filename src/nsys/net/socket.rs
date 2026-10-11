@@ -1,294 +1,846 @@
 //! socket
+//!
+//! BSD style sockets (IPv4 only) and name resolution.
+//!
+//! Functions return `-1` on failure, use [last_error] to get the [Error].
 
 use crate::ffi;
-use bitflags::bitflags;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
-
-#[repr(i32)]
-#[derive(Debug, Clone, Copy, IntoPrimitive, TryFromPrimitive)]
-#[non_exhaustive]
-pub enum Error {
-    Success = 0,
-    InsufficientResources = 1,
-    TimedOut = 2,
-    AlreadyConnected = 3,
-    OperationNotSupported = 4,
-    ConnectionAborted = 5,
-    WouldBlock = 6,
-    ConnectionRefused = 7,
-    ConnectionReset = 8,
-    NotConnected = 9,
-    AlreadyInProgress = 10,
-    InvalidOperation = 11,
-    MessageTooLarge = 12,
-    BrokenPipe = 13,
-    DestinationAddressRequired = 14,
-    Shutdown = 15,
-    ProtocolOptionNotSupported = 16,
-    OutOfBandDataPending = 17,
-    InsufficientMemory = 18,
-    AddressNotAvailable = 19,
-    AddressInUse = 20,
-    AddressFamilyNotSupported = 21,
-    InProgress = 22,
-    IpLayerError = 23,
-    NotASocket = 24,
-    IoError = 27,
-    TooManyReferences = 28,
-    BadAddress = 29,
-    NetworkUnreachable = 30,
-    ProtocolNotSupported = 31,
-    ProtocolTypeMismatch = 32,
-
-    GenericError = 41,
-    FailedToOpenResourceManager = 42,
-    LibraryNotInitialized = 43,
-    Busy = 44,
-    Unknown = 45,
-    InternalApiError = 46,
-    InvalidErrorCode = 47,
-    NoResources = 48,
-    BadFileDescriptor = 49,
-    Aborted = 50,
-    TooManySockets = 51,
-
-    IcmpDestinationUnreachable = 100,
-    IcmpSourceQuench = 101,
-    IcmpRedirect = 102,
-    IcmpTimeExceeded = 103,
-    IcmpParameterProblem = 104,
-
-    /// Used by Cemu to report unhandled errors. Should never occur in hardware.
-    Unhandled = 99999,
-}
 
 pub type FileDescriptor = i32;
-pub type IPv4Address = u32;
 
-#[repr(u16)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-pub enum Family {
-    #[default]
-    /// AF_INET
-    IPv4 = 2,
+/// socklen_t
+#[doc(alias = "socklen_t")]
+pub type SockLen = i32;
+
+/// SO_* error codes
+#[doc(alias = "SO_ERROR")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Error(pub i32);
+
+impl Error {
+    pub const SUCCESS: Self = Self(0);
+    pub const ENOBUFS: Self = Self(1);
+    pub const ETIMEDOUT: Self = Self(2);
+    pub const EISCONN: Self = Self(3);
+    pub const EOPNOTSUPP: Self = Self(4);
+    pub const ECONNABORTED: Self = Self(5);
+    pub const EWOULDBLOCK: Self = Self(6);
+    pub const ECONNREFUSED: Self = Self(7);
+    pub const ECONNRESET: Self = Self(8);
+    pub const ENOTCONN: Self = Self(9);
+    pub const EALREADY: Self = Self(10);
+    pub const EINVAL: Self = Self(11);
+    pub const EMSGSIZE: Self = Self(12);
+    pub const EPIPE: Self = Self(13);
+    pub const EDESTADDRREQ: Self = Self(14);
+    pub const ESHUTDOWN: Self = Self(15);
+    pub const ENOPROTOOPT: Self = Self(16);
+    pub const EHAVEOOB: Self = Self(17);
+    pub const ENOMEM: Self = Self(18);
+    pub const EADDRNOTAVAIL: Self = Self(19);
+    pub const EADDRINUSE: Self = Self(20);
+    pub const EAFNOSUPPORT: Self = Self(21);
+    pub const EINPROGRESS: Self = Self(22);
+    /// Error in the IP layer.
+    pub const ELOWER: Self = Self(23);
+    pub const ENOTSOCK: Self = Self(24);
+    pub const EIEIO: Self = Self(27);
+    pub const ETOOMANYREFS: Self = Self(28);
+    pub const EFAULT: Self = Self(29);
+    pub const ENETUNREACH: Self = Self(30);
+    pub const EPROTONOSUPPORT: Self = Self(31);
+    pub const EPROTOTYPE: Self = Self(32);
+    /// Generic error.
+    #[doc(alias = "SO_ERROR")]
+    pub const GENERIC: Self = Self(41);
+    pub const ENOLIBRM: Self = Self(42);
+    /// The library is not initialized.
+    pub const ELIBNOTREADY: Self = Self(43);
+    pub const EBUSY: Self = Self(44);
+    pub const EUNKNOWN: Self = Self(45);
+    pub const EAPIERROR: Self = Self(46);
+    pub const ERANGEINVALID: Self = Self(47);
+    pub const ENORESOURCES: Self = Self(48);
+    pub const EBADFD: Self = Self(49);
+    pub const EABORTED: Self = Self(50);
+    /// Too many sockets.
+    pub const EMFILE: Self = Self(51);
+    #[doc(alias = "SO_ICMP_EDESTIN")]
+    pub const ICMP_DESTINATION_UNREACHABLE: Self = Self(100);
+    #[doc(alias = "SO_ICMP_ESOURCEQ")]
+    pub const ICMP_SOURCE_QUENCH: Self = Self(101);
+    #[doc(alias = "SO_ICMP_EREDIR")]
+    pub const ICMP_REDIRECT: Self = Self(102);
+    #[doc(alias = "SO_ICMP_ETIMEX")]
+    pub const ICMP_TIME_EXCEEDED: Self = Self(103);
+    #[doc(alias = "SO_ICMP_EPARAM")]
+    pub const ICMP_PARAMETER_PROBLEM: Self = Self(104);
 }
 
+/// AF_*
+#[doc(alias = "AF")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Family(pub i32);
+
+impl Family {
+    pub const UNSPEC: Self = Self(0);
+    pub const INET: Self = Self(2);
+}
+
+/// SOCK_*
+#[doc(alias = "SOCK")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Type(pub i32);
+
+impl Type {
+    pub const STREAM: Self = Self(1);
+    #[doc(alias = "SOCK_DGRAM")]
+    pub const DATAGRAM: Self = Self(2);
+}
+
+/// IPPROTO_*
+#[doc(alias = "IPPROTO")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Protocol(pub i32);
+
+impl Protocol {
+    pub const IP: Self = Self(0);
+    pub const TCP: Self = Self(6);
+    pub const UDP: Self = Self(17);
+}
+
+/// Option level for [get_sockopt] and [set_sockopt].
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Level(pub i32);
+
+impl Level {
+    #[doc(alias = "SOL_SOCKET")]
+    pub const SOCKET: Self = Self(-1);
+    pub const IP: Self = Self(0);
+    pub const TCP: Self = Self(6);
+    pub const UDP: Self = Self(17);
+}
+
+/// Option for [get_sockopt] and [set_sockopt].
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct SockOpt(pub i32);
+
+impl SockOpt {
+    // Level::SOCKET
+    #[doc(alias = "SO_REUSEADDR")]
+    pub const REUSEADDR: Self = Self(0x00004);
+    #[doc(alias = "SO_KEEPALIVE")]
+    pub const KEEPALIVE: Self = Self(0x00008);
+    #[doc(alias = "SO_DONTROUTE")]
+    pub const DONTROUTE: Self = Self(0x00010);
+    #[doc(alias = "SO_BROADCAST")]
+    pub const BROADCAST: Self = Self(0x00020);
+    /// Takes a [Linger].
+    #[doc(alias = "SO_LINGER")]
+    pub const LINGER: Self = Self(0x00080);
+    #[doc(alias = "SO_OOBINLINE")]
+    pub const OOBINLINE: Self = Self(0x00100);
+    #[doc(alias = "SO_TCPSACK")]
+    pub const TCPSACK: Self = Self(0x00200);
+    #[doc(alias = "SO_WINSCALE")]
+    pub const WINSCALE: Self = Self(0x00400);
+    #[doc(alias = "SO_HDRINCL")]
+    pub const HDRINCL: Self = Self(0x02000);
+    #[doc(alias = "SO_RUSRBUF")]
+    pub const RUSRBUF: Self = Self(0x10000);
+    #[doc(alias = "SO_SNDBUF")]
+    pub const SNDBUF: Self = Self(0x1001);
+    #[doc(alias = "SO_RCVBUF")]
+    pub const RCVBUF: Self = Self(0x1002);
+    #[doc(alias = "SO_LASTERROR")]
+    pub const LASTERROR: Self = Self(0x1007);
+    #[doc(alias = "SO_TYPE")]
+    pub const TYPE: Self = Self(0x1008);
+    #[doc(alias = "SO_HOPCNT")]
+    pub const HOPCNT: Self = Self(0x1009);
+    #[doc(alias = "SO_MAXMSG")]
+    pub const MAXMSG: Self = Self(0x1010);
+    #[doc(alias = "SO_RXDATA")]
+    pub const RXDATA: Self = Self(0x1011);
+    #[doc(alias = "SO_TXDATA")]
+    pub const TXDATA: Self = Self(0x1012);
+    #[doc(alias = "SO_MYADDR")]
+    pub const MYADDR: Self = Self(0x1013);
+    /// Non-blocking IO.
+    #[doc(alias = "SO_NBIO")]
+    pub const NBIO: Self = Self(0x1014);
+    /// Blocking IO.
+    #[doc(alias = "SO_BIO")]
+    pub const BIO: Self = Self(0x1015);
+    #[doc(alias = "SO_NONBLOCK")]
+    pub const NONBLOCK: Self = Self(0x1016);
+    #[doc(alias = "SO_KEEPIDLE")]
+    pub const KEEPIDLE: Self = Self(0x1019);
+    #[doc(alias = "SO_KEEPINTVL")]
+    pub const KEEPINTVL: Self = Self(0x101A);
+    #[doc(alias = "SO_KEEPCNT")]
+    pub const KEEPCNT: Self = Self(0x101B);
+
+    // Level::IP
+    pub const IP_TOS: Self = Self(3);
+    pub const IP_TTL: Self = Self(4);
+
+    // Level::TCP
+    pub const TCP_ACKDELAYTIME: Self = Self(0x2001);
+    pub const TCP_NOACKDELAY: Self = Self(0x2002);
+    pub const TCP_MAXSEG: Self = Self(0x2003);
+    pub const TCP_NODELAY: Self = Self(0x2004);
+    /// Number of outstanding unacknowledged segments.
+    pub const TCP_ACKFREQUENCY: Self = Self(0x2005);
+}
+
+/// MSG_*
+#[doc(alias = "MSG")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct MsgFlags(pub i32);
+
+impl MsgFlags {
+    pub const NONE: Self = Self(0);
+    /// Out-of-band data.
+    pub const OOB: Self = Self(0x01);
+    /// Don't remove the data from the receive buffer.
+    pub const PEEK: Self = Self(0x02);
+    /// Don't route via a gateway.
+    pub const DONTROUTE: Self = Self(0x04);
+    pub const NEWPIPE: Self = Self(0x08);
+    /// The data completes a record.
+    pub const EOR: Self = Self(0x10);
+    /// Don't block.
+    pub const DONTWAIT: Self = Self(0x20);
+    /// Receive the TTL with [recvfrom_ex].
+    pub const IP_RECVTTL: Self = Self(0x40);
+}
+
+impl core::ops::BitOr for MsgFlags {
+    type Output = Self;
+    fn bitor(self, rhs: Self) -> Self {
+        Self(self.0 | rhs.0)
+    }
+}
+
+/// SHUT_*
+#[doc(alias = "SHUT")]
 #[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Type {
-    /// SOCK_STREAM
-    Stream = 1,
-    /// SOCK_DGRAM
-    Datagram = 2,
-}
-
-#[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Protocol {
-    #[doc(alias = "IPPROTO_IP")]
-    Ip = 0,
-    #[doc(alias = "IPPROTO_TCP")]
-    Tcp = 6,
-    #[doc(alias = "IPPROTO_UDP")]
-    Udp = 17,
-}
-
-#[repr(i32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Level {
-    Socket = -1,
-    Ip = Protocol::Ip as i32,
-    Tcp = Protocol::Tcp as i32,
-    Udp = Protocol::Udp as i32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Address {
-    pub family: Family,
-    pub port: u16,
-    pub address: IPv4Address,
-    pub zero: [u8; 8],
-}
-
-#[repr(i32)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Shutdown {
-    /// Reads disallowed; write-only.
+    /// Disallow reads.
     Read = 0,
-    /// Writes disallowed; read-only.
+    /// Disallow writes.
     Write = 1,
-    /// Reads and writes disallowed.
     ReadWrite = 2,
 }
 
-bitflags! {
-    #[derive(Debug, Default, Clone, Copy)]
-    #[repr(transparent)]
-    pub struct Flags : i32 {
-        /// Process out-of-band data (supported by [SocketType::Stream]).
-        const OutOfBand = 0x01;
-        /// Peek at incoming message i.e. do not remove it from buffer.
-        const Peek = 0x02;
-        /// Do not use a gateway / routing table to send the packet.
-        const DontRoute = 0x04;
-        /// Create a new pipe for [recvfrom] call.
-        const NewPipe = 0x08;
-        /// Data completes a record (if supported by socket).
-        const CompletesRecord = 0x10;
-        /// Do not block thread if no data is available.
-        const NonBlocking = 0x20;
-        /// Recieve packet TTL.
-        const RecieveTtl = 0x40;
-    }
+/// SOLIB_OPT_*
+#[doc(alias = "SOLIB_OPT")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct LibOpt(pub i32);
 
-    #[derive(Debug, Clone, Copy)]
-    #[repr(transparent)]
-    pub struct Options: i32 {
-        /// [Level::Socket]
-        const Broadcast = 0x20;
-        /// [Level::Socket]
-        const ReuseAddress = 0x4;
-        /// [Level::Socket]
-        const NonBlocking = 0x1016;
-        /// [Level::Socket]
-        const ReceiveTimeout = 0x1006;
-        /// [Level::Socket]
-        const SendTimeout = 0x1006;
-        /// [Level::Ip]
-        const TimeToLive = 0x4;
-        /// [Level::Tcp]
-        const NoDelay = 0x2004;
+impl LibOpt {
+    pub const AVOID_CLOSE_ALL: Self = Self(0x3000);
+    pub const SOCKFD_TBL_INIT_COUNT: Self = Self(0x3001);
+    /// Takes one of the `SOCKBUF_CONSUMPTION_*` values.
+    pub const SOCKBUF_CONSUMPTION: Self = Self(0x3002);
+}
+
+#[doc(alias = "SO_SOCKBUF_CONSUMPTTION_LOW")]
+pub const SOCKBUF_CONSUMPTION_LOW: i32 = 0x01;
+#[doc(alias = "SO_SOCKBUF_CONSUMPTTION_MED")]
+pub const SOCKBUF_CONSUMPTION_MED: i32 = 0x02;
+#[doc(alias = "SO_SOCKBUF_CONSUMPTTION_HIGH")]
+pub const SOCKBUF_CONSUMPTION_HIGH: i32 = 0x04;
+#[doc(alias = "SO_SOCKBUF_CONSUMPTTION_MAX")]
+pub const SOCKBUF_CONSUMPTION_MAX: i32 = 0x08;
+
+pub const INADDR_ANY: u32 = 0;
+
+/// Number of sockets an [FdSet] can hold.
+pub const FD_SETSIZE: usize = 32;
+
+/// in_addr
+#[doc(alias = "in_addr")]
+#[repr(C)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct InAddr {
+    /// Network byte order.
+    pub addr: u32,
+}
+
+/// sockaddr
+#[doc(alias = "sockaddr")]
+#[repr(C)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct SockAddr {
+    pub family: u16,
+    pub data: [u8; 14],
+}
+
+/// sockaddr_in
+///
+/// Same size as [SockAddr], cast the pointer to pass it.
+#[doc(alias = "sockaddr_in")]
+#[repr(C)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct SockAddrIn {
+    pub family: u16,
+    /// Network byte order.
+    pub port: u16,
+    pub addr: InAddr,
+    pub zero: [u8; 8],
+}
+
+/// linger
+#[doc(alias = "linger")]
+#[repr(C)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Linger {
+    pub onoff: ffi::c_int,
+    /// Seconds.
+    pub linger: ffi::c_int,
+}
+
+/// timeval
+#[doc(alias = "timeval")]
+#[repr(C)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct TimeVal {
+    pub sec: ffi::c_long,
+    pub usec: ffi::c_long,
+}
+
+/// fd_set
+///
+/// One bit per socket, see [FD_SETSIZE].
+#[doc(alias = "fd_set")]
+#[repr(C)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct FdSet {
+    pub bits: ffi::c_ulong,
+}
+
+/// recvfrom_multi_buffers
+#[doc(alias = "recvfrom_multi_buffers")]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct RecvFromMultiBuffers {
+    pub buf: *mut ffi::c_void,
+    pub buf_len: ffi::c_uint,
+    pub froms: *mut SockAddr,
+    pub froms_len: ffi::c_uint,
+    pub results: *mut ffi::c_int,
+    pub results_len: ffi::c_uint,
+}
+
+/// sendto_multi_ex_buffers
+#[doc(alias = "sendto_multi_ex_buffers")]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct SendToMultiExBuffers {
+    pub buf: *mut ffi::c_void,
+    pub buf_len: ffi::c_uint,
+    pub datagram_lens: *mut ffi::c_int,
+    pub datagram_lens_len: ffi::c_uint,
+    pub dests: *mut SockAddr,
+    pub dests_len: ffi::c_uint,
+    pub results: *mut ffi::c_int,
+    pub results_len: ffi::c_uint,
+}
+
+/// hostent
+#[doc(alias = "hostent")]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct HostEnt {
+    pub name: *mut ffi::c_char,
+    pub aliases: *mut *mut ffi::c_char,
+    pub addr_type: ffi::c_int,
+    pub length: ffi::c_int,
+    pub addr_list: *mut *mut ffi::c_char,
+}
+
+/// AI_*
+#[doc(alias = "AI")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct AiFlags(pub i32);
+
+impl AiFlags {
+    pub const NONE: Self = Self(0);
+    pub const PASSIVE: Self = Self(0x01);
+    pub const CANONNAME: Self = Self(0x02);
+    pub const NUMERICHOST: Self = Self(0x04);
+    pub const NUMERICSERV: Self = Self(0x08);
+}
+
+impl core::ops::BitOr for AiFlags {
+    type Output = Self;
+    fn bitor(self, rhs: Self) -> Self {
+        Self(self.0 | rhs.0)
     }
 }
 
-// #[cfg(target_arch = "powerpc")]
+/// addrinfo
+#[doc(alias = "addrinfo")]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct AddrInfo {
+    pub flags: AiFlags,
+    pub family: Family,
+    pub sock_type: Type,
+    pub protocol: Protocol,
+    pub addr_len: SockLen,
+    pub canon_name: *mut ffi::c_char,
+    pub addr: *mut SockAddr,
+    pub next: *mut AddrInfo,
+}
+
+/// EAI_*
+#[doc(alias = "EAI")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct AiError(pub i32);
+
+impl AiError {
+    pub const SUCCESS: Self = Self(0);
+    pub const ADDRFAMILY: Self = Self(1);
+    pub const AGAIN: Self = Self(2);
+    pub const BADFLAGS: Self = Self(3);
+    pub const FAIL: Self = Self(4);
+    pub const FAMILY: Self = Self(5);
+    pub const MEMORY: Self = Self(6);
+    pub const NODATA: Self = Self(7);
+    pub const NONAME: Self = Self(8);
+    pub const SERVICE: Self = Self(9);
+    pub const SOCKTYPE: Self = Self(10);
+    pub const SYSTEM: Self = Self(11);
+    pub const BADHINTS: Self = Self(12);
+    pub const PROTOCOL: Self = Self(13);
+    pub const OVERFLOW: Self = Self(14);
+    pub const INPROGRESS: Self = Self(15);
+}
+
+/// NI_*
+#[doc(alias = "NI")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct NiFlags(pub i32);
+
+impl NiFlags {
+    pub const NONE: Self = Self(0);
+    pub const NOFQDN: Self = Self(0x01);
+    pub const NUMERICHOST: Self = Self(0x02);
+    pub const NAMEREQD: Self = Self(0x04);
+    pub const NUMERICSERV: Self = Self(0x08);
+    pub const DGRAM: Self = Self(0x10);
+}
+
+impl core::ops::BitOr for NiFlags {
+    type Output = Self;
+    fn bitor(self, rhs: Self) -> Self {
+        Self(self.0 | rhs.0)
+    }
+}
+
+pub const NI_MAXHOST: usize = 1025;
+pub const NI_MAXSERV: usize = 32;
+
+/// h_errno values
+#[doc(alias = "h_errno")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct HostError(pub i32);
+
+impl HostError {
+    #[doc(alias = "NETDB_INTERNAL")]
+    pub const INTERNAL: Self = Self(-1);
+    #[doc(alias = "NETDB_SUCCESS")]
+    pub const SUCCESS: Self = Self(0);
+    pub const HOST_NOT_FOUND: Self = Self(1);
+    pub const TRY_AGAIN: Self = Self(2);
+    pub const NO_RECOVERY: Self = Self(3);
+    pub const NO_DATA: Self = Self(4);
+}
+
+/// Allocator for the resolver, see [set_resolver_allocator].
+pub type ResolverAlloc = Option<unsafe extern "C" fn(size: u32) -> *mut ffi::c_void>;
+
+/// Deallocator for the resolver, see [set_resolver_allocator].
+pub type ResolverFree = Option<unsafe extern "C" fn(ptr: *mut ffi::c_void)>;
+
 unsafe extern "C" {
-    /// Initializes the socket library.
-    #[doc(alias = "socket_lib_init")]
+    /// socket_lib_init
+    #[doc(alias("socket_lib_init", "SOInit"))]
     #[link_name = "socket_lib_init"]
-    pub unsafe fn init() -> i32;
+    pub unsafe fn init() -> ffi::c_int;
 
-    /// Deinitializes the socket library.
-    #[doc(alias = "socket_lib_finish")]
+    /// socket_lib_finish
+    #[doc(alias("socket_lib_finish", "SOFinish"))]
     #[link_name = "socket_lib_finish"]
-    pub unsafe fn deinit() -> i32;
+    pub unsafe fn deinit() -> ffi::c_int;
 
-    #[doc(alias = "socketlasterr")]
+    /// socketlasterr
+    ///
+    /// Error of the last failed call on this thread.
+    #[doc(alias("socketlasterr", "SOLastError"))]
     #[link_name = "socketlasterr"]
     pub unsafe fn last_error() -> Error;
 
-    /// Accept a pending connection on a socket.
+    /// socket
+    #[doc(alias = "SOSocket")]
+    #[link_name = "socket"]
+    pub unsafe fn socket(family: Family, sock_type: Type, protocol: Protocol) -> FileDescriptor;
+
+    /// socketclose
+    ///
+    /// A call blocked on the socket in another thread returns with an error.
+    #[doc(alias("socketclose", "SOClose"))]
+    #[link_name = "socketclose"]
+    pub unsafe fn close(fd: FileDescriptor) -> ffi::c_int;
+
+    /// accept
+    #[doc(alias = "SOAccept")]
     #[link_name = "accept"]
     pub unsafe fn accept(
         fd: FileDescriptor,
-        addr: *mut Address,
-        addrlen: *mut usize,
+        addr: *mut SockAddr,
+        addr_len: *mut SockLen,
     ) -> FileDescriptor;
 
-    /// Assign an address to a socket.
+    /// bind
+    #[doc(alias = "SOBind")]
     #[link_name = "bind"]
-    pub unsafe fn bind(fd: FileDescriptor, addr: *const Address, addrlen: usize) -> i32;
+    pub unsafe fn bind(fd: FileDescriptor, addr: *const SockAddr, addr_len: SockLen) -> ffi::c_int;
 
-    /// Initiaite a connection on a socket.
+    /// connect
+    #[doc(alias = "SOConnect")]
     #[link_name = "connect"]
-    pub unsafe fn connect(fd: FileDescriptor, addr: *const Address, addrlen: usize) -> i32;
+    pub unsafe fn connect(
+        fd: FileDescriptor,
+        addr: *const SockAddr,
+        addr_len: SockLen,
+    ) -> ffi::c_int;
 
-    /// Listen for connections on a socket. Only applies to [SocketType::Stream] sockets.
+    /// listen
+    #[doc(alias = "SOListen")]
     #[link_name = "listen"]
-    pub unsafe fn listen(fd: FileDescriptor, backlog: i32) -> i32;
+    pub unsafe fn listen(fd: FileDescriptor, backlog: ffi::c_int) -> ffi::c_int;
 
-    /// Receive data on socket connection
+    /// shutdown
+    #[doc(alias = "SOShutdown")]
+    #[link_name = "shutdown"]
+    pub unsafe fn shutdown(fd: FileDescriptor, how: Shutdown) -> ffi::c_int;
+
+    /// recv
     ///
-    /// Identical to [recvfrom] with a null pointer as `from`.
-    ///
-    /// Returns number of bytes received on success. Returns `-1` on failure and sets [last_error] appropriately. Returns `0` when the peer has performaned an orderly shutdown.
+    /// Returns the number of bytes received, 0 if the peer closed the connection.
+    #[doc(alias = "SORecv")]
     #[link_name = "recv"]
-    pub unsafe fn recv(fd: FileDescriptor, buffer: *mut ffi::c_void, len: u32, flags: Flags)
-    -> i32;
+    pub unsafe fn recv(
+        fd: FileDescriptor,
+        buf: *mut ffi::c_void,
+        len: ffi::c_int,
+        flags: MsgFlags,
+    ) -> ffi::c_int;
 
-    /// Receive data on socket connection
+    /// recvfrom
     ///
-    /// For [SocketType::Datagram], it returns the same address as [get_peername]. For [SocketType::Stream], it does not return the address of the sender. Identical to [recv] with a null pointer as `from`.
-    ///
-    /// Returns number of bytes received on success. Returns `-1` on failure and sets [last_error] appropriately. Returns `0` when the peer has performaned an orderly shutdown.
+    /// Returns the number of bytes received, 0 if the peer closed the connection.
+    #[doc(alias = "SORecvFrom")]
     #[link_name = "recvfrom"]
     pub unsafe fn recvfrom(
         fd: FileDescriptor,
-        buffer: *mut ffi::c_void,
-        len: u32,
-        flags: Flags,
-        from: *mut Address,
-        fromlen: *mut usize,
-    ) -> i32;
+        buf: *mut ffi::c_void,
+        len: ffi::c_int,
+        flags: MsgFlags,
+        from: *mut SockAddr,
+        from_len: *mut SockLen,
+    ) -> ffi::c_int;
 
-    /// Send data on a socket connection.
+    /// recvfrom_ex
+    #[doc(alias = "SORecvFromEx")]
+    #[link_name = "recvfrom_ex"]
+    pub unsafe fn recvfrom_ex(
+        fd: FileDescriptor,
+        buf: *mut ffi::c_void,
+        len: ffi::c_int,
+        flags: MsgFlags,
+        from: *mut SockAddr,
+        from_len: *mut SockLen,
+        msg: *mut u8,
+        msg_len: ffi::c_int,
+    ) -> ffi::c_int;
+
+    /// recvfrom_multi
+    #[doc(alias = "SORecvFromMulti")]
+    #[link_name = "recvfrom_multi"]
+    pub unsafe fn recvfrom_multi(
+        fd: FileDescriptor,
+        flags: MsgFlags,
+        bufs: *mut RecvFromMultiBuffers,
+        datagram_len: ffi::c_int,
+        datagram_count: ffi::c_int,
+        timeout: *mut TimeVal,
+    ) -> ffi::c_int;
+
+    /// send
     ///
-    /// This fuction will block if no message space is available on the socket. Identical to [sendto] with a null pointer as `dest_addr`.
-    ///
-    /// Returns number of bytes sent on success. Returns `-1` on failure and sets [last_error] appropriately.
+    /// Blocks if the send buffer is full. Returns the number of bytes sent.
+    #[doc(alias = "SOSend")]
     #[link_name = "send"]
     pub unsafe fn send(
         fd: FileDescriptor,
-        buffer: *const ffi::c_void,
-        len: u32,
-        flags: Flags,
-    ) -> i32;
+        buf: *const ffi::c_void,
+        len: ffi::c_int,
+        flags: MsgFlags,
+    ) -> ffi::c_int;
 
-    /// Send data on a socket connection to a specified address.
+    /// sendto
     ///
-    /// This fuction will block if no message space is available on the socket. Identical to [send] with a null pointer as `dest_addr`.
-    ///
-    /// Returns number of bytes sent on success. Returns `-1` on failure and sets [last_error] appropriately.
+    /// Blocks if the send buffer is full. Returns the number of bytes sent.
+    #[doc(alias = "SOSendTo")]
     #[link_name = "sendto"]
     pub unsafe fn sendto(
         fd: FileDescriptor,
-        buffer: *const ffi::c_void,
-        len: u32,
-        flags: Flags,
-        dest: *const Address,
-        destlen: usize,
-    ) -> i32;
+        buf: *const ffi::c_void,
+        len: ffi::c_int,
+        flags: MsgFlags,
+        dest: *const SockAddr,
+        dest_len: SockLen,
+    ) -> ffi::c_int;
 
-    /// Shut down all or part of a full-duplex connection on the specified socket.
+    /// sendto_multi
     ///
-    /// Returns `0` on success. Returns `-1` on failure and sets [last_error] appropriately.
-    #[link_name = "shutdown"]
-    pub unsafe fn shutdown(fd: FileDescriptor, how: Shutdown) -> i32;
+    /// Sends the same datagram to `dest_count` addresses.
+    #[doc(alias = "SOSendToMulti")]
+    #[link_name = "sendto_multi"]
+    pub unsafe fn sendto_multi(
+        fd: FileDescriptor,
+        buf: *const ffi::c_void,
+        len: ffi::c_int,
+        flags: MsgFlags,
+        dests: *const SockAddr,
+        dest_count: ffi::c_int,
+    ) -> ffi::c_int;
 
-    /// Creates a communication endpoint and returns a descriptor for that endpoint.
-    #[link_name = "socket"]
-    pub unsafe fn socket(family: Family, r#type: Type, proto: Protocol) -> FileDescriptor;
+    /// sendto_multi_ex
+    #[doc(alias = "SOSendToMultiEx")]
+    #[link_name = "sendto_multi_ex"]
+    pub unsafe fn sendto_multi_ex(
+        fd: FileDescriptor,
+        flags: MsgFlags,
+        bufs: *mut SendToMultiExBuffers,
+        datagram_count: ffi::c_int,
+    ) -> ffi::c_int;
 
-    /// Closes the specified socket.
+    /// select
     ///
-    /// The a thread is currently blocking on the socket in another thread, the blocked call will return with an error code.
-    #[link_name = "socketclose"]
-    pub unsafe fn close(fd: FileDescriptor) -> i32;
+    /// Returns the number of ready sockets.
+    #[doc(alias = "SOSelect")]
+    #[link_name = "select"]
+    pub unsafe fn select(
+        nfds: ffi::c_int,
+        read: *mut FdSet,
+        write: *mut FdSet,
+        except: *mut FdSet,
+        timeout: *mut TimeVal,
+    ) -> ffi::c_int;
 
-    /// Retrieve the address of the peer connected to the specified socket.
+    /// getpeername
+    #[doc(alias("getpeername", "SOGetPeerName"))]
     #[link_name = "getpeername"]
-    pub unsafe fn get_peername(fd: FileDescriptor, addr: *mut Address, addrlen: *mut usize) -> i32;
+    pub unsafe fn get_peername(
+        fd: FileDescriptor,
+        addr: *mut SockAddr,
+        addr_len: *mut SockLen,
+    ) -> ffi::c_int;
 
-    /// Retrieves the address for the specified socket.
+    /// getsockname
+    #[doc(alias("getsockname", "SOGetSockName"))]
     #[link_name = "getsockname"]
-    pub unsafe fn get_sockname(fd: FileDescriptor, addr: *mut Address, addrlen: *mut usize) -> i32;
-
-    #[link_name = "setsockopt"]
-    pub unsafe fn setsockopt(
+    pub unsafe fn get_sockname(
         fd: FileDescriptor,
-        level: Level,
-        option: Options,
-        value: *const ffi::c_void,
-        optlen: usize,
-    ) -> i32;
+        addr: *mut SockAddr,
+        addr_len: *mut SockLen,
+    ) -> ffi::c_int;
 
+    /// getsockopt
+    #[doc(alias("getsockopt", "SOGetSockOpt"))]
     #[link_name = "getsockopt"]
-    pub unsafe fn getsockopt(
+    pub unsafe fn get_sockopt(
         fd: FileDescriptor,
         level: Level,
-        option: Options,
+        option: SockOpt,
         value: *mut ffi::c_void,
-        optlen: *mut usize,
-    ) -> i32;
+        value_len: *mut SockLen,
+    ) -> ffi::c_int;
+
+    /// setsockopt
+    #[doc(alias("setsockopt", "SOSetSockOpt"))]
+    #[link_name = "setsockopt"]
+    pub unsafe fn set_sockopt(
+        fd: FileDescriptor,
+        level: Level,
+        option: SockOpt,
+        value: *const ffi::c_void,
+        value_len: SockLen,
+    ) -> ffi::c_int;
+
+    /// getsocklibopt
+    #[doc(alias("getsocklibopt", "SOGetLibOpt"))]
+    #[link_name = "getsocklibopt"]
+    pub unsafe fn get_lib_opt(option: LibOpt, value: *mut ffi::c_int) -> ffi::c_int;
+
+    /// setsocklibopt
+    #[doc(alias("setsocklibopt", "SOSetLibOpt"))]
+    #[link_name = "setsocklibopt"]
+    pub unsafe fn set_lib_opt(option: LibOpt, value: ffi::c_int) -> ffi::c_int;
+
+    /// set_multicast_state
+    #[link_name = "set_multicast_state"]
+    pub unsafe fn set_multicast_state(enabled: ffi::c_bool) -> ffi::c_int;
+
+    /// htonl
+    #[doc(alias = "SOHtoNl")]
+    #[link_name = "htonl"]
+    pub unsafe fn htonl(value: u32) -> u32;
+
+    /// htons
+    #[doc(alias = "SOHtoNs")]
+    #[link_name = "htons"]
+    pub unsafe fn htons(value: u16) -> u16;
+
+    /// ntohl
+    #[doc(alias = "SONtoHl")]
+    #[link_name = "ntohl"]
+    pub unsafe fn ntohl(value: u32) -> u32;
+
+    /// ntohs
+    #[doc(alias = "SONtoHs")]
+    #[link_name = "ntohs"]
+    pub unsafe fn ntohs(value: u16) -> u16;
+
+    /// inet_aton
+    ///
+    /// Returns nonzero on success.
+    #[doc(alias = "SOInetAtoN")]
+    #[link_name = "inet_aton"]
+    pub unsafe fn inet_aton(text: *const ffi::c_char, addr: *mut InAddr) -> ffi::c_int;
+
+    /// inet_ntoa
+    ///
+    /// The C function takes the [InAddr] by value, which the ABI passes as a pointer.
+    /// The result is in a static buffer.
+    #[doc(alias = "SOInetNtoA")]
+    #[link_name = "inet_ntoa"]
+    pub unsafe fn inet_ntoa(addr: *const InAddr) -> *mut ffi::c_char;
+
+    /// inet_ntoa_r
+    ///
+    /// The C function takes the [InAddr] by value, which the ABI passes as a pointer.
+    #[doc(alias = "SOInetNtoA_r")]
+    #[link_name = "inet_ntoa_r"]
+    pub unsafe fn inet_ntoa_r(addr: *const InAddr, buf: *mut ffi::c_char) -> *mut ffi::c_char;
+
+    /// inet_ntop
+    #[doc(alias = "SOInetNtoP")]
+    #[link_name = "inet_ntop"]
+    pub unsafe fn inet_ntop(
+        family: Family,
+        src: *const ffi::c_void,
+        dst: *mut ffi::c_char,
+        size: SockLen,
+    ) -> *const ffi::c_char;
+
+    /// inet_pton
+    #[doc(alias = "SOInetPtoN")]
+    #[link_name = "inet_pton"]
+    pub unsafe fn inet_pton(
+        family: Family,
+        src: *const ffi::c_char,
+        dst: *mut ffi::c_void,
+    ) -> ffi::c_int;
+
+    /// gethostbyname
+    #[doc(alias("gethostbyname", "SOGetHostByName"))]
+    #[link_name = "gethostbyname"]
+    pub unsafe fn get_host_by_name(name: *const ffi::c_char) -> *mut HostEnt;
+
+    /// gethostbyaddr
+    #[doc(alias("gethostbyaddr", "SOGetHostByAddr"))]
+    #[link_name = "gethostbyaddr"]
+    pub unsafe fn get_host_by_addr(
+        addr: *const ffi::c_void,
+        len: ffi::c_int,
+        family: Family,
+    ) -> *mut HostEnt;
+
+    /// getaddrinfo
+    #[doc(alias("getaddrinfo", "SOGetAddrInfo"))]
+    #[link_name = "getaddrinfo"]
+    pub unsafe fn get_addr_info(
+        node: *const ffi::c_char,
+        service: *const ffi::c_char,
+        hints: *const AddrInfo,
+        result: *mut *mut AddrInfo,
+    ) -> AiError;
+
+    /// getaddrinfo_rs
+    #[doc(alias("getaddrinfo_rs", "SOGetAddrInfoRSU"))]
+    #[link_name = "getaddrinfo_rs"]
+    pub unsafe fn get_addr_info_rs(
+        node: *const ffi::c_char,
+        service: *const ffi::c_char,
+        hints: *const AddrInfo,
+        result: *mut *mut AddrInfo,
+    ) -> AiError;
+
+    /// freeaddrinfo
+    #[doc(alias("freeaddrinfo", "SOFreeAddrInfo"))]
+    #[link_name = "freeaddrinfo"]
+    pub unsafe fn free_addr_info(info: *mut AddrInfo);
+
+    /// getnameinfo
+    #[doc(alias("getnameinfo", "SOGetNameInfo"))]
+    #[link_name = "getnameinfo"]
+    pub unsafe fn get_name_info(
+        addr: *const SockAddr,
+        addr_len: SockLen,
+        node: *mut ffi::c_char,
+        node_len: SockLen,
+        service: *mut ffi::c_char,
+        service_len: SockLen,
+        flags: NiFlags,
+    ) -> AiError;
+
+    /// gai_strerror
+    #[doc(alias = "SOGaiStrerror")]
+    #[link_name = "gai_strerror"]
+    pub unsafe fn gai_strerror(error: AiError) -> *const ffi::c_char;
+
+    /// get_h_errno
+    ///
+    /// Error of the last `get_host_by_*` call.
+    #[link_name = "get_h_errno"]
+    pub unsafe fn get_h_errno() -> *mut HostError;
+
+    /// set_resolver_allocator
+    #[doc(alias = "SOResolverRegisterAllocator")]
+    #[link_name = "set_resolver_allocator"]
+    pub unsafe fn set_resolver_allocator(alloc: ResolverAlloc, free: ResolverFree) -> ffi::c_int;
+
+    /// clear_resolver_cache
+    #[link_name = "clear_resolver_cache"]
+    pub unsafe fn clear_resolver_cache();
 }

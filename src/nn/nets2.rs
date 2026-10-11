@@ -2,24 +2,10 @@
 //!
 //! Socket memory, ICMP and NSSL helpers used together with nsysnet.
 
-use crate::{ffi, nsys::net::socket::Address};
-
-// TODO: replace with NSSLContextHandle from nsysnet nssl
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct NsslContextHandle(pub i32);
-
-// TODO: replace with NSSLError from nsysnet nssl
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct NsslError(pub i32);
-
-// TODO: replace with NSSLCrlType from nsysnet nssl
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum NsslCrlType {
-    Der = 0,
-}
+use crate::{
+    ffi,
+    nsys::net::{nssl, socket::SockAddr},
+};
 
 /// SOMemOptRequest
 #[doc(alias = "SOMemOptRequest")]
@@ -45,24 +31,6 @@ impl MemOptFlags {
     pub const NONE: Self = Self(0);
     /// Splits the memory 50/50 between small and big buffers instead of 80/20.
     pub const BIG_BUFFERS: Self = Self(1 << 0);
-}
-
-/// NSSL_CTX_FLAG_*
-#[doc(alias = "NSSL_CTX_FLAG")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ContextFlags(pub u32);
-
-impl ContextFlags {
-    pub const CRL_CHECK_LEAF: Self = Self(0x1);
-    pub const CRL_CHECK_CHAIN: Self = Self(0x2);
-}
-
-impl core::ops::BitOr for ContextFlags {
-    type Output = Self;
-    fn bitor(self, rhs: Self) -> Self {
-        Self(self.0 | rhs.0)
-    }
 }
 
 unsafe extern "C" {
@@ -95,7 +63,7 @@ unsafe extern "C" {
         handle: ffi::c_int,
         data: *const ffi::c_void,
         len: ffi::c_int,
-        dest: *const Address,
+        dest: *const SockAddr,
         dest_len: ffi::c_int,
         timeout: ffi::c_uint,
         flags: ffi::c_int,
@@ -117,30 +85,35 @@ unsafe extern "C" {
     #[doc(alias = "NSSLAddCRLExternal")]
     #[link_name = "NSSLAddCRLExternal"]
     pub unsafe fn add_crl_external(
-        context: NsslContextHandle,
+        context: nssl::ContextHandle,
         crl: *const u8,
         crl_len: ffi::c_int,
-        crl_type: NsslCrlType,
-    ) -> NsslError;
+        crl_type: nssl::CrlType,
+    ) -> nssl::Error;
 
     /// NSSLContextSetFlags
     #[doc(alias = "NSSLContextSetFlags")]
     #[link_name = "NSSLContextSetFlags"]
-    pub unsafe fn context_set_flags(context: NsslContextHandle, flags: ContextFlags) -> NsslError;
+    pub unsafe fn context_set_flags(
+        context: nssl::ContextHandle,
+        flags: nssl::ContextFlags,
+    ) -> nssl::Error;
 
     /// NSSLContextClearFlags
     #[doc(alias = "NSSLContextClearFlags")]
     #[link_name = "NSSLContextClearFlags"]
-    pub unsafe fn context_clear_flags(context: NsslContextHandle, flags: ContextFlags)
-    -> NsslError;
+    pub unsafe fn context_clear_flags(
+        context: nssl::ContextHandle,
+        flags: nssl::ContextFlags,
+    ) -> nssl::Error;
 
     /// NSSLContextGetFlags
     #[doc(alias = "NSSLContextGetFlags")]
     #[link_name = "NSSLContextGetFlags"]
     pub unsafe fn context_get_flags(
-        context: NsslContextHandle,
-        flags: *mut ContextFlags,
-    ) -> NsslError;
+        context: nssl::ContextHandle,
+        flags: *mut nssl::ContextFlags,
+    ) -> nssl::Error;
 }
 
 imports_section!(

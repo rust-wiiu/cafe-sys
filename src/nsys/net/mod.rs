@@ -1,8 +1,9 @@
-//! nsysnet
+//! Networking (NET)
 
+pub mod netconf;
+pub mod nssl;
 pub mod socket;
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nsysnet",
     [
