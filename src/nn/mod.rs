@@ -70,6 +70,10 @@ impl Result {
     /// Only meaningful for legacy results.
     #[inline]
     pub const fn summary(self) -> i32 {
-        if self.is_legacy() { (self.0 >> 10) & 0xF } else { 0 }
+        if self.is_legacy() {
+            (self.0 >> 10) & 0xF
+        } else {
+            0
+        }
     }
 }

@@ -93,8 +93,9 @@ pub struct SeqInStream {
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeqOutStream {
-    pub write:
-        Option<unsafe extern "C" fn(p: *mut ffi::c_void, buf: *const ffi::c_void, size: usize) -> usize>,
+    pub write: Option<
+        unsafe extern "C" fn(p: *mut ffi::c_void, buf: *const ffi::c_void, size: usize) -> usize,
+    >,
 }
 
 /// ICompressProgress
@@ -104,7 +105,8 @@ pub struct SeqOutStream {
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CompressProgress {
-    pub progress: Option<unsafe extern "C" fn(p: *mut ffi::c_void, in_size: u64, out_size: u64) -> Error>,
+    pub progress:
+        Option<unsafe extern "C" fn(p: *mut ffi::c_void, in_size: u64, out_size: u64) -> Error>,
 }
 
 unsafe extern "C" {

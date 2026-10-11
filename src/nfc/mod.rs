@@ -160,7 +160,8 @@ pub struct ReadT2TResult {
 
 /// NFCCallbackFn
 #[doc(alias = "NFCCallbackFn")]
-pub type Callback = Option<unsafe extern "C" fn(chan: Channel, error: Error, context: *mut ffi::c_void)>;
+pub type Callback =
+    Option<unsafe extern "C" fn(chan: Channel, error: Error, context: *mut ffi::c_void)>;
 
 /// NFCTagDetectCallbackFn
 #[doc(alias = "NFCTagDetectCallbackFn")]
@@ -244,7 +245,12 @@ pub type ReadT2TCallback = Option<
 /// NFCGetTagInfoCallbackFn
 #[doc(alias = "NFCGetTagInfoCallbackFn")]
 pub type GetTagInfoCallback = Option<
-    unsafe extern "C" fn(chan: Channel, error: Error, tag_info: *mut TagInfo, context: *mut ffi::c_void),
+    unsafe extern "C" fn(
+        chan: Channel,
+        error: Error,
+        tag_info: *mut TagInfo,
+        context: *mut ffi::c_void,
+    ),
 >;
 
 /// NFCGetTagInfoMultiCallbackFn
@@ -318,7 +324,11 @@ unsafe extern "C" {
     /// NFCAntennaCheck
     #[doc(alias = "NFCAntennaCheck")]
     #[link_name = "NFCAntennaCheck"]
-    pub unsafe fn antenna_check(chan: Channel, callback: Callback, context: *mut ffi::c_void) -> Error;
+    pub unsafe fn antenna_check(
+        chan: Channel,
+        callback: Callback,
+        context: *mut ffi::c_void,
+    ) -> Error;
 
     /// NFCDetect
     ///
