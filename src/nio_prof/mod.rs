@@ -1,6 +1,5 @@
 //! nIO prof
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nio_prof",
     [
