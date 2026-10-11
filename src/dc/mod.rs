@@ -1,6 +1,5 @@
 //! DC
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "dc",
     [
