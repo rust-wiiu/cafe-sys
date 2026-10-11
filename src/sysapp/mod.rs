@@ -4,8 +4,7 @@
 
 use crate::ffi;
 
-// TODO: replace with FFLStoreData from nn::ffl
-pub use crate::nn::act::FflStoreData;
+use crate::nn::ffl::StoreData;
 
 /// SYS_ERROR
 #[doc(alias = "SYS_ERROR")]
@@ -194,7 +193,7 @@ pub struct SettingsArgs {
 pub struct MiiMakerArgs {
     pub std_args: StandardArgsIn,
     pub slot_id: u32,
-    pub mii: *mut FflStoreData,
+    pub mii: *mut StoreData,
 }
 
 /// SysVodArgs
@@ -506,15 +505,11 @@ unsafe extern "C" {
 /// Functions meant for system applications.
 pub mod private {
     use super::{
-        BrowserArgsWithCallback, DeserializeArg, EShopArgs, Error, FflStoreData, Pfid,
-        SettingsJumpTo, StandardArgs, StandardArgsIn, StandardArgsOut, SystemAppId,
+        BrowserArgsWithCallback, DeserializeArg, EShopArgs, Error, Pfid, SettingsJumpTo,
+        StandardArgs, StandardArgsIn, StandardArgsOut, SystemAppId,
     };
     use crate::ffi;
-
-    // TODO: replace with MCPRegion from coreinit::mcp
-    #[repr(transparent)]
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-    pub struct McpRegion(pub u32);
+    use crate::nn::ffl::StoreData;
 
     /// _SysAppMiiMakerArgs
     #[doc(alias = "_SysAppMiiMakerArgs")]
@@ -524,7 +519,7 @@ pub mod private {
         pub std_args: StandardArgsIn,
         pub mode: u32,
         pub slot_id: u32,
-        pub mii: *mut FflStoreData,
+        pub mii: *mut StoreData,
     }
 
     /// SysAppSettingsArgs
@@ -681,7 +676,7 @@ pub mod private {
         #[link_name = "_SYSGetSystemApplicationTitleIdByProdArea"]
         pub unsafe fn get_system_application_title_id_by_prod_area(
             id: SystemAppId,
-            prod_area: McpRegion,
+            prod_area: crate::coreinit::mcp::Region,
         ) -> u64;
     }
 }

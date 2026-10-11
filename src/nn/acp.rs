@@ -2,10 +2,7 @@
 
 use crate::ffi;
 
-// TODO: replace with MCPTitleListType from coreinit::mcp
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TitleListType(pub ffi::unknown<0x61>);
+use crate::coreinit::mcp::TitleListType;
 
 /// ACPResult
 #[doc(alias = "ACPResult")]

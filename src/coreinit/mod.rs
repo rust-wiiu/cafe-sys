@@ -1,79 +1,66 @@
-//! Coreinit
-
-use crate::ffi;
-use core::ptr;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
+//! coreinit
+//!
+//! Core OS library: threads, synchronization, memory, file system, time and system services.
 
 pub mod alarm;
+pub mod atomic;
+pub mod bsp;
 pub mod cache;
+pub mod clipboard;
+pub mod codegen;
+pub mod condition;
 pub mod context;
+pub mod copy_data;
+pub mod core;
+pub mod coroutine;
+pub mod cos_report;
 pub mod debug;
 pub mod dynload;
+pub mod energy_saver;
+pub mod env;
+pub mod event;
 pub mod exception;
+pub mod exit;
+pub mod fast_condition;
 pub mod fast_mutex;
-pub mod font;
+pub mod fiber;
 pub mod foreground;
 pub mod fs;
+pub mod fsa;
+pub mod hio;
+pub mod im;
+pub mod internal;
 pub mod interrupts;
+pub mod ios;
+pub mod ipc_buf_pool;
+pub mod kernel;
+pub mod launch;
+pub mod mcp;
 pub mod mem;
+pub mod memory;
+pub mod memory_map;
+pub mod message_queue;
 pub mod mutex;
+pub mod performance_monitor;
+pub mod ppc;
+pub mod rendezvous;
+pub mod saved_frame;
 pub mod scheduler;
+pub mod screen;
+pub mod semaphore;
+pub mod smd;
 pub mod spinlock;
+pub mod stopwatch;
 pub mod system;
+pub mod system_info;
+pub mod task_queue;
 pub mod thread;
+pub mod thread_queue;
 pub mod time;
+pub mod title;
+pub mod transition;
+pub mod user_config;
 
-/// Generic Queue
-///
-/// Most queues share a memory layout (in coreinit).
-#[repr(C)]
-#[derive(Clone)]
-pub struct Queue<T> {
-    pub head: *mut T,
-    pub tail: *mut T,
-    pub parent: *mut ffi::c_void,
-    _unk: ffi::unknown<0x4>,
-}
-
-impl<T> Queue<T> {
-    pub const fn new() -> Self {
-        Self {
-            head: ptr::null_mut(),
-            tail: ptr::null_mut(),
-            parent: ptr::null_mut(),
-            _unk: ffi::unknown::zero(),
-        }
-    }
-}
-
-/// Generic Link
-///
-/// Most links share a memory layout (in coreinit).
-#[repr(C)]
-#[derive(Clone)]
-pub struct Link<T> {
-    pub next: *mut T,
-    pub prev: *mut T,
-}
-
-impl<T> Link<T> {
-    pub const fn new() -> Self {
-        Self {
-            next: ptr::null_mut(),
-            prev: ptr::null_mut(),
-        }
-    }
-}
-
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, IntoPrimitive, TryFromPrimitive)]
-pub enum Cpu {
-    Core0 = 0,
-    Core1 = 1,
-    Core2 = 2,
-}
-
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "coreinit",
     [

@@ -2,7 +2,7 @@
 //!
 //! NFC tags with the NTAG format. Builds on [nfc](crate::nfc). Timeouts are in milliseconds.
 
-use crate::{ffi, nfc, nn::act::FflStoreData, vpad::Channel};
+use crate::{ffi, nfc, nn::ffl::StoreData, vpad::Channel};
 
 /// NTAGError
 #[doc(alias = "NTAGError")]
@@ -127,7 +127,7 @@ pub struct InfoT2T {
     pub font_region: u8,
     /// UTF-16.
     pub name: [u16; 10],
-    pub mii: FflStoreData,
+    pub mii: StoreData,
     pub country: u8,
     pub setup_date: u16,
     pub last_write_date: u16,
@@ -181,7 +181,7 @@ pub struct RawSection1 {
 #[repr(C, packed)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RawSection2 {
-    pub mii: FflStoreData,
+    pub mii: StoreData,
     pub title_id: u64,
     pub application_area_writes: u16,
     pub access_id: u32,

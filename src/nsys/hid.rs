@@ -78,7 +78,7 @@ pub type Callback = Option<
 /// HIDClient
 #[doc(alias = "HIDClient")]
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy)]
 pub struct Client {
     pub next: *mut Client,
     pub attach_callback: AttachCallback,

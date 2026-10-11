@@ -1,79 +1,158 @@
-use super::{
-    Cpu, Link, Queue,
-    alarm::Alarm,
-    context::Context,
-    exception::ExceptionCallbackFn,
-    fast_mutex::{FastMutex, FastMutexQueue},
-    mutex::{Mutex, MutexQueue},
-    time::Time,
-};
+//! Thread
+//!
+//! Threads are scheduled per core by priority, 0 is the highest and 31 the lowest.
+
+use super::alarm::Alarm;
+use super::context::Context;
+use super::exception::ExceptionCallback;
+use super::fast_mutex::{FastMutex, FastMutexQueue};
+use super::mutex::{Mutex, MutexQueue};
+use super::thread_queue::{ThreadLink, ThreadQueue};
+use super::time::Time;
 use crate::ffi;
-use bitflags::bitflags;
-use num_enum::{IntoPrimitive, TryFromPrimitive};
 
-bitflags! {
-    #[repr(transparent)]
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct ThreadState : u8 {
-        const None = 0;
-        const Ready = 1 << 0;
-        const Running = 1 << 1;
-        const Waiting = 1 << 2;
-        const Moribund = 1 << 3;
-    }
+/// OS_THREAD_TAG
+///
+/// Value of [Thread::tag].
+pub const THREAD_TAG: u32 = 0x74487244;
+/// OS_THREAD_SPECIFIC_MAX
+///
+/// Number of thread specific values, see [get_specific].
+pub const SPECIFIC_MAX: usize = 16;
+/// OS_PRIORITY_MIN
+///
+/// Highest priority.
+pub const PRIORITY_MIN: i32 = 0;
+/// OS_PRIORITY_APP_DEFAULT
+pub const PRIORITY_DEFAULT: i32 = 16;
+/// OS_PRIORITY_MAX
+///
+/// Lowest priority.
+pub const PRIORITY_MAX: i32 = 31;
+/// OS_THREAD_QUANTUM_INFINITE
+pub const QUANTUM_INFINITE: u32 = 0;
+/// OS_THREAD_QUANTUM_MIN_MICROSECONDS
+pub const QUANTUM_MIN_MICROSECONDS: u32 = 10;
+/// OS_THREAD_QUANTUM_MAX_MICROSECONDS
+pub const QUANTUM_MAX_MICROSECONDS: u32 = 0xFFFFF;
 
-    #[repr(transparent)]
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct ThreadAttributes : u8 {
-        const AffinityCpu0 = 1 << 0;
-        const AffinityCpu1 = 1 << 1;
-        const AffinityCpu2 = 1 << 2;
-        const AffinityAny = Self::AffinityCpu0.bits() | Self::AffinityCpu1.bits() | Self::AffinityCpu2.bits();
-        const Detached = 1 << 3;
-        const StackUsage = 1 << 5;
-        const Unknown = 1 << 7;
-    }
+/// OSThreadState
+#[doc(alias = "OSThreadState")]
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ThreadState(pub u8);
 
-    #[repr(transparent)]
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct ThreadType : u32 {
-        const Driver = 0;
-        const IO = 1;
-        const App = 2;
-    }
+impl ThreadState {
+    pub const NONE: Self = Self(0);
+    pub const READY: Self = Self(1 << 0);
+    pub const RUNNING: Self = Self(1 << 1);
+    /// Waiting, e.g. on a mutex.
+    pub const WAITING: Self = Self(1 << 2);
+    /// About to terminate.
+    pub const MORIBUND: Self = Self(1 << 3);
+}
 
-    #[repr(transparent)]
-    #[derive(Debug, Clone, Copy, PartialEq)]
-    pub struct ThreadRequest : u32 {
-        const None = 0;
-        const Suspend = 1;
-        const Cancel = 2;
+/// OSThreadAttributes
+///
+/// Core affinity and creation flags.
+#[doc(alias = "OSThreadAttributes", alias = "OS_THREAD_ATTRIB")]
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ThreadAttributes(pub u8);
+
+impl ThreadAttributes {
+    pub const NONE: Self = Self(0);
+    pub const AFFINITY_CPU0: Self = Self(1 << 0);
+    pub const AFFINITY_CPU1: Self = Self(1 << 1);
+    pub const AFFINITY_CPU2: Self = Self(1 << 2);
+    pub const AFFINITY_ANY: Self = Self(0b111);
+    /// Starts the thread detached, see [detach].
+    pub const DETACHED: Self = Self(1 << 3);
+    pub const PINNED_AFFINITY: Self = Self(1 << 4);
+    /// Tracks stack usage, see [check_stack_usage].
+    pub const STACK_USAGE: Self = Self(1 << 6);
+    pub const NAME_SENT: Self = Self(1 << 7);
+}
+
+impl core::ops::BitOr for ThreadAttributes {
+    type Output = Self;
+
+    #[inline]
+    fn bitor(self, rhs: Self) -> Self {
+        Self(self.0 | rhs.0)
     }
 }
 
-/// OSThreadQueue
-pub type ThreadQueue = Queue<Thread>;
+/// OSThreadRequest
+#[doc(alias = "OSThreadRequest")]
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ThreadRequest(pub u32);
 
-/// OSThreadLink
-pub type ThreadLink = Link<Thread>;
+impl ThreadRequest {
+    pub const NONE: Self = Self(0);
+    pub const SUSPEND: Self = Self(1);
+    pub const CANCEL: Self = Self(2);
+}
+
+/// OSThreadType
+#[doc(alias = "OSThreadType")]
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ThreadType(pub u32);
+
+impl ThreadType {
+    pub const DRIVER: Self = Self(0);
+    pub const IO: Self = Self(1);
+    pub const APP: Self = Self(2);
+}
+
+/// OS_THREAD_CANCEL
+///
+/// Reasons the thread cannot be cancelled, see [Thread::cancel_state].
+#[doc(alias = "OS_THREAD_CANCEL")]
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct CancelState(pub u32);
+
+impl CancelState {
+    pub const ENABLED: Self = Self(0);
+    pub const DISABLED_USER: Self = Self(1 << 0);
+    pub const DISABLED_MUTEX: Self = Self(1 << 16);
+    pub const DISABLED_SPINLOCK: Self = Self(1 << 17);
+    pub const DISABLED_STACK: Self = Self(1 << 18);
+    pub const DISABLED_FAST_MUTEX: Self = Self(1 << 19);
+}
 
 /// OSThreadEntryPointFn
-pub type ThreadEntryPointFn =
-    Option<unsafe extern "C" fn(argc: i32, argv: *mut *const ffi::c_char) -> i32>;
+///
+/// The return value is the exit value of the thread.
+#[doc(alias = "OSThreadEntryPointFn", alias = "OSThread_Proc")]
+pub type ThreadEntry =
+    Option<unsafe extern "C" fn(int_arg: ffi::c_int, ptr_arg: *mut ffi::c_void) -> ffi::c_int>;
 
 /// OSThreadCleanupCallbackFn
-pub type ThreadCleanupCallbackFn =
-    Option<unsafe extern "C" fn(thread: *mut Thread, stack: *mut ffi::c_void)>;
+///
+/// Called on the terminating thread before it ends.
+#[doc(alias = "OSThreadCleanupCallbackFn", alias = "OSThreadCleanupCallback")]
+pub type CleanupCallback =
+    Option<unsafe extern "C" fn(thread: *mut Thread, stack_end: *mut ffi::c_void)>;
 
 /// OSThreadDeallocatorFn
-pub type ThreadDeallocatorFn =
-    Option<unsafe extern "C" fn(thread: *mut Thread, stack: *mut ffi::c_void)>;
+///
+/// Called after the thread ended, to free the thread and its stack.
+#[doc(alias = "OSThreadDeallocatorFn", alias = "OSThreadDeallocator")]
+pub type Deallocator =
+    Option<unsafe extern "C" fn(thread: *mut Thread, stack_end: *mut ffi::c_void)>;
 
 /// OSThreadGHSExceptionHandling
-#[repr(C, packed)]
-#[derive(Clone)]
-pub struct ThreadGHSExceptionHandling {
-    _unk: ffi::unknown<0x68>,
+///
+/// Per-thread C runtime state.
+#[doc(alias = "OSThreadGHSExceptionHandling")]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct GhsExceptionHandling {
+    _crt: ffi::unknown<0x68>,
     pub eh_globals: *mut ffi::c_void,
     pub eh_mem_manage: [*mut ffi::c_void; 9],
     pub eh_store_globals: [*mut ffi::c_void; 6],
@@ -81,270 +160,376 @@ pub struct ThreadGHSExceptionHandling {
 }
 
 /// OSTLSSection
+#[doc(alias = "OSTLSSection", alias = "OSTLSBlock")]
 #[repr(C)]
-#[derive(Clone)]
-pub struct TlsSection {
-    pub data: *mut ffi::c_void,
-    _unk: ffi::unknown<0x4>,
-}
-
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, IntoPrimitive, TryFromPrimitive)]
-pub enum SpecificID {
-    Specific0 = 0,
-    Specific1 = 1,
-    Specific2 = 2,
-    Specific3 = 3,
-    Specific4 = 4,
-    Specific5 = 5,
-    Specific6 = 6,
-    Specific7 = 7,
-    Specific8 = 8,
-    Specific9 = 9,
-    Specific10 = 10,
-    Specific11 = 11,
-    Specific12 = 12,
-    Specific13 = 13,
-    Reserved0 = 14,
-    Reserved1 = 15,
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct TlsBlock {
+    pub address: *mut ffi::c_void,
+    pub status: i32,
 }
 
 /// OSThread
+#[doc(alias = "OSThread")]
 #[repr(C, align(8))]
-#[derive(Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Thread {
     pub context: Context,
+    /// [THREAD_TAG].
     pub tag: u32,
     pub state: ThreadState,
     pub attr: ThreadAttributes,
     pub id: u16,
+    /// Increased by [suspend].
     pub suspend_counter: i32,
+    /// Current priority, possibly boosted.
     pub priority: i32,
     pub base_priority: i32,
     pub exit_value: i32,
     pub core_run_queue: [*mut ThreadQueue; 3],
-    pub core_run_queue_link: [*mut ThreadLink; 3],
+    pub core_run_queue_link: [ThreadLink; 3],
+    /// Queue the thread is waiting on.
     pub queue: *mut ThreadQueue,
     pub link: ThreadLink,
+    /// Threads waiting to join this thread.
     pub join_queue: ThreadQueue,
+    /// Mutex the thread is waiting to lock.
     pub mutex: *mut Mutex,
+    /// Mutexes owned by the thread.
     pub mutex_queue: MutexQueue,
     pub active_link: ThreadLink,
+    /// Highest address of the stack.
     pub stack_start: *mut ffi::c_void,
+    /// Lowest address of the stack.
     pub stack_end: *mut ffi::c_void,
-    pub entry_point: ThreadEntryPointFn,
-    pub ghs_exception_handling: ThreadGHSExceptionHandling,
-    pub alarm_canceled: ffi::c_bool,
-    pub specific: [*const ffi::c_void; 0x10],
-    pub r#type: ThreadType,
+    pub entry_point: ThreadEntry,
+    pub ghs_exception_handling: GhsExceptionHandling,
+    pub alarm_cancelled: ffi::c_bool,
+    pub specific: [*mut ffi::c_void; SPECIFIC_MAX],
+    pub kind: ThreadType,
     pub name: *const ffi::c_char,
-    pub wait_event_timeout_alaram: *mut Alarm,
+    pub wait_event_timeout_alarm: *mut Alarm,
     pub user_stack_pointer: *mut ffi::c_void,
-    pub cleanup_callback: ThreadCleanupCallbackFn,
-    pub deallocator: ThreadDeallocatorFn,
-    pub cancel_state: ffi::c_bool,
+    pub cleanup_callback: CleanupCallback,
+    pub deallocator: Deallocator,
+    pub cancel_state: CancelState,
     pub request_flag: ThreadRequest,
     pub need_suspend: i32,
     pub suspend_result: i32,
+    /// Threads waiting for this thread to suspend.
     pub suspend_queue: ThreadQueue,
-    _unk0: ffi::unknown<0x4>,
     pub run_quantum_ticks: i64,
     pub core_time_consumed_ns: u64,
     pub wake_count: u64,
-    _unk1: ffi::unknown<0x8>, // OSTime
-    _unk2: ffi::unknown<0x8>, // OSTime
-    _unk3: ffi::unknown<0x8>, // OSTime
-    pub dsi_callback: [ExceptionCallbackFn; 3],
-    pub isi_callback: [ExceptionCallbackFn; 3],
-    pub program_callback: [ExceptionCallbackFn; 3],
-    pub perf_mon_callback: [ExceptionCallbackFn; 3],
+    pub sum_wake_delta: Time,
+    pub awakened_time: Time,
+    pub min_wake_delta: Time,
+    pub max_wake_delta: Time,
+    pub dsi_callback: [ExceptionCallback; 3],
+    pub isi_callback: [ExceptionCallback; 3],
+    pub program_callback: [ExceptionCallback; 3],
+    pub perf_mon_callback: [ExceptionCallback; 3],
+    /// Allows synchronization objects on the stack in debug mode.
     pub stack_sync_obj_allowed: ffi::c_bool,
-    pub tls_section_count: u16,
-    _unk4: ffi::unknown<0x2>,
-    pub tls_sections: *mut TlsSection,
+    pub tls_section_count: i16,
+    pub tls_status: i16,
+    pub tls_sections: *mut TlsBlock,
+    /// Fast mutex the thread is waiting to lock.
     pub fast_mutex: *mut FastMutex,
     pub contended_fast_mutexes: FastMutexQueue,
-    pub fast_mutex_queue: FastMutexQueue,
-    pub align_callback: [ExceptionCallbackFn; 3],
-    pub reserved: [u32; 5],
+    pub owned_fast_mutexes: FastMutexQueue,
+    pub align_callback: [ExceptionCallback; 3],
+    _reserved: ffi::unknown<0x14>,
 }
 
-/// OSThreadSimpleQueue
-#[repr(C)]
-#[derive(Clone)]
-pub struct ThreadSimpleQueue {
-    pub head: *mut Thread,
-    pub tail: *mut Thread,
-}
-
-// #[cfg(target_arch = "powerpc")]
 unsafe extern "C" {
-
-    /// OSCancelThread
-    #[link_name = "OSCancelThread"]
-    pub unsafe fn cancel(thread: *mut Thread);
-
-    /// OSCheckActiveThreads
-    #[link_name = "OSCheckActiveThreads"]
-    pub unsafe fn active_threads() -> i32;
-
-    /// OSCheckThreadStackUsage
-    #[link_name = "OSCheckThreadStackUsage"]
-    pub unsafe fn stack_usage(thread: *mut Thread) -> i32;
-
-    /// OSClearThreadStackUsage
-    #[link_name = "OSClearThreadStackUsage"]
-    pub unsafe fn disable_stack_tracking(thread: *mut Thread);
-
-    /// OSContinueThread
-    #[link_name = "OSContinueThread"]
-    pub unsafe fn resume(thread: *mut Thread);
-
     /// OSCreateThread
+    ///
+    /// Creates a suspended thread, start it with [resume]. `stack` is the highest address of the stack. Returns false on failure.
+    #[doc(alias = "OSCreateThread")]
     #[link_name = "OSCreateThread"]
     pub unsafe fn create(
         thread: *mut Thread,
-        entry: ThreadEntryPointFn,
-        argc: i32,
-        argv: *mut *const ffi::c_char,
+        entry: ThreadEntry,
+        int_arg: ffi::c_int,
+        ptr_arg: *mut ffi::c_void,
         stack: *mut ffi::c_void,
         stack_size: u32,
         priority: i32,
         attributes: ThreadAttributes,
     ) -> ffi::c_bool;
 
+    /// OSCreateThreadType
+    ///
+    /// Same as [create] with a [ThreadType].
+    #[doc(alias = "OSCreateThreadType")]
+    #[link_name = "OSCreateThreadType"]
+    pub unsafe fn create_type(
+        thread: *mut Thread,
+        entry: ThreadEntry,
+        int_arg: ffi::c_int,
+        ptr_arg: *mut ffi::c_void,
+        stack: *mut ffi::c_void,
+        stack_size: u32,
+        priority: i32,
+        attributes: ThreadAttributes,
+        kind: ThreadType,
+    ) -> ffi::c_bool;
+
+    /// OSRunThread
+    ///
+    /// Runs `entry` on an existing terminated thread.
+    #[doc(alias = "OSRunThread")]
+    #[link_name = "OSRunThread"]
+    pub unsafe fn run(
+        thread: *mut Thread,
+        entry: ThreadEntry,
+        int_arg: ffi::c_int,
+        ptr_arg: *mut ffi::c_void,
+    ) -> ffi::c_bool;
+
+    /// OSExitThread
+    #[doc(alias = "OSExitThread")]
+    #[link_name = "OSExitThread"]
+    pub unsafe fn exit(value: ffi::c_int) -> !;
+
+    /// OSJoinThread
+    ///
+    /// Waits for `thread` to terminate. `value` (nullable) receives its exit value.
+    #[doc(alias = "OSJoinThread")]
+    #[link_name = "OSJoinThread"]
+    pub unsafe fn join(thread: *mut Thread, value: *mut ffi::c_int) -> ffi::c_bool;
+
     /// OSDetachThread
+    ///
+    /// The thread is released on termination and cannot be joined.
+    #[doc(alias = "OSDetachThread")]
     #[link_name = "OSDetachThread"]
     pub unsafe fn detach(thread: *mut Thread);
 
-    /// OSExitThread
-    #[link_name = "OSExitThread"]
-    pub unsafe fn exit(result: i32);
+    /// OSCancelThread
+    #[doc(alias = "OSCancelThread")]
+    #[link_name = "OSCancelThread"]
+    pub unsafe fn cancel(thread: *mut Thread);
 
-    /// OSGetActiveThreadLink
-    #[link_name = "OSGetActiveThreadLink"]
-    pub unsafe fn active_link(thread: *mut Thread, link: *mut ThreadLink);
+    /// OSTestThreadCancel
+    ///
+    /// Terminates the current thread if a cancel is pending.
+    #[doc(alias = "OSTestThreadCancel")]
+    #[link_name = "OSTestThreadCancel"]
+    pub unsafe fn test_cancel();
 
-    /// OSGetCurrentThread
-    #[link_name = "OSGetCurrentThread"]
-    pub unsafe fn current() -> *mut Thread;
+    /// OSSetThreadCancelState
+    ///
+    /// Returns the previous state.
+    #[doc(alias = "OSSetThreadCancelState")]
+    #[link_name = "OSSetThreadCancelState"]
+    pub unsafe fn set_cancel_state(enabled: ffi::c_bool) -> ffi::c_bool;
 
-    /// OSGetDefaultThread
-    #[link_name = "OSGetDefaultThread"]
-    pub unsafe fn default(core: Cpu) -> *mut Thread;
+    /// OSResumeThread
+    ///
+    /// Decrements the suspend count and returns the previous count.
+    #[doc(alias = "OSResumeThread")]
+    #[link_name = "OSResumeThread"]
+    pub unsafe fn resume(thread: *mut Thread) -> i32;
 
-    /// OSGetStackPointer
-    #[link_name = "OSGetStackPointer"]
-    pub unsafe fn stack_pointer() -> u32;
+    /// OSSuspendThread
+    ///
+    /// Increments the suspend count and returns the previous count.
+    #[doc(alias = "OSSuspendThread")]
+    #[link_name = "OSSuspendThread"]
+    pub unsafe fn suspend(thread: *mut Thread) -> i32;
 
-    /// OSGetThreadAffinity
-    #[link_name = "OSGetThreadAffinity"]
-    pub unsafe fn get_affinity(thread: *mut Thread) -> u32;
+    /// __OSSuspendThreadNolock
+    #[doc(alias = "__OSSuspendThreadNolock")]
+    #[link_name = "__OSSuspendThreadNolock"]
+    pub unsafe fn suspend_no_lock(thread: *mut Thread);
 
-    /// OSGetThreadName
-    #[link_name = "OSGetThreadName"]
-    pub unsafe fn get_name(thread: *mut Thread) -> *const ffi::c_char;
-
-    /// OSGetThreadPriority
-    #[link_name = "OSGetThreadPriority"]
-    pub unsafe fn get_priority(thread: *mut Thread) -> i32;
-
-    /// OSGetThreadSpecific
-    #[link_name = "OSGetThreadSpecific"]
-    pub unsafe fn get_specific(id: SpecificID) -> *mut ffi::c_void;
+    /// OSContinueThread
+    ///
+    /// Resumes a suspended thread regardless of its suspend count.
+    #[doc(alias = "OSContinueThread")]
+    #[link_name = "OSContinueThread"]
+    pub unsafe fn continue_(thread: *mut Thread);
 
     /// OSIsThreadSuspended
+    #[doc(alias = "OSIsThreadSuspended")]
     #[link_name = "OSIsThreadSuspended"]
     pub unsafe fn is_suspended(thread: *mut Thread) -> ffi::c_bool;
 
     /// OSIsThreadTerminated
+    #[doc(alias = "OSIsThreadTerminated")]
     #[link_name = "OSIsThreadTerminated"]
     pub unsafe fn is_terminated(thread: *mut Thread) -> ffi::c_bool;
 
-    /// OSJoinThread
-    #[link_name = "OSJoinThread"]
-    pub unsafe fn join(thread: *mut Thread, result: *mut i32) -> ffi::c_bool;
-
-    /// OSResumeThread
-    #[link_name = "OSResumeThread"]
-    pub unsafe fn try_resume(thread: *mut Thread) -> i32;
-
-    /// OSRunThread
-    #[link_name = "OSRunThread"]
-    pub unsafe fn reuse(
-        thread: *mut Thread,
-        entry: ThreadEntryPointFn,
-        argc: i32,
-        argv: *mut *const ffi::c_char,
-    ) -> ffi::c_bool;
-
-    /// OSSetThreadAffinity
-    #[link_name = "OSSetThreadAffinity"]
-    pub unsafe fn set_affinity(thread: *mut Thread, affinity: u32) -> ffi::c_bool;
-
-    /// OSSetThreadCancelState
-    #[link_name = "OSSetThreadCancelState"]
-    pub unsafe fn set_cancel_state(state: ffi::c_bool) -> ffi::c_bool;
-
-    /// OSSetThreadCleanupCallback
-    #[link_name = "OSSetThreadCleanupCallback"]
-    pub unsafe fn set_cleanup_callback(
-        thread: *mut Thread,
-        callback: ThreadCleanupCallbackFn,
-    ) -> ThreadCleanupCallbackFn;
-
-    /// OSSetThreadDeallocator
-    #[link_name = "OSSetThreadDeallocator"]
-    pub unsafe fn set_deallocator(
-        thread: *mut Thread,
-        deallocator: ThreadDeallocatorFn,
-    ) -> ThreadDeallocatorFn;
-
-    /// OSSetThreadName
-    #[link_name = "OSSetThreadName"]
-    pub unsafe fn set_name(thread: *mut Thread, name: *const ffi::c_char);
-
-    /// OSSetThreadPriority
-    #[link_name = "OSSetThreadPriority"]
-    pub unsafe fn set_priority(thread: *mut Thread, priority: i32) -> ffi::c_bool;
-
-    /// OSSetThreadRunQuantum
-    #[link_name = "OSSetThreadRunQuantum"]
-    pub unsafe fn set_run_quantum(thread: *mut Thread, quantum: u32) -> ffi::c_bool;
-
-    /// OSSetThreadSpecific
-    #[link_name = "OSSetThreadSpecific"]
-    pub unsafe fn set_specific(id: SpecificID, value: *mut ffi::c_void);
-
-    /// OSSetThreadStackUsage
-    #[link_name = "OSSetThreadStackUsage"]
-    pub unsafe fn enable_stack_tracking(thread: *mut Thread) -> ffi::c_bool;
+    /// OSYieldThread
+    #[doc(alias = "OSYieldThread")]
+    #[link_name = "OSYieldThread"]
+    pub unsafe fn yield_();
 
     /// OSSleepThread
+    ///
+    /// Sleeps the current thread on `queue` until [wakeup].
+    #[doc(alias = "OSSleepThread")]
     #[link_name = "OSSleepThread"]
-    pub unsafe fn sleep_until_wakeup(queue: *mut ThreadQueue);
-
-    /// OSSleepTicks
-    #[link_name = "OSSleepTicks"]
-    pub unsafe fn sleep(ticks: Time);
-
-    /// OSSuspendThread
-    #[link_name = "OSSuspendThread"]
-    pub unsafe fn suspend(thread: *mut Thread) -> u32;
-
-    /// __OSSuspendThreadNolock
-    #[link_name = "__OSSuspendThreadNolock"]
-    pub unsafe fn suspend_no_lock(thread: *mut Thread);
-
-    /// OSTestThreadCancel
-    #[link_name = "OSTestThreadCancel"]
-    pub unsafe fn test_cancel();
+    pub unsafe fn sleep(queue: *mut ThreadQueue);
 
     /// OSWakeupThread
+    ///
+    /// Wakes all threads sleeping on `queue`.
+    #[doc(alias = "OSWakeupThread")]
     #[link_name = "OSWakeupThread"]
     pub unsafe fn wakeup(queue: *mut ThreadQueue);
 
-    /// OSYieldThread
-    #[link_name = "OSYieldThread"]
-    pub unsafe fn yield_now();
+    /// OSSleepTicks
+    #[doc(alias = "OSSleepTicks")]
+    #[link_name = "OSSleepTicks"]
+    pub unsafe fn sleep_ticks(ticks: Time);
+
+    /// OSGetCurrentThread
+    #[doc(alias = "OSGetCurrentThread")]
+    #[link_name = "OSGetCurrentThread"]
+    pub unsafe fn get_current() -> *mut Thread;
+
+    /// OSGetDefaultThread
+    ///
+    /// The main thread of core `core_id`.
+    #[doc(alias = "OSGetDefaultThread")]
+    #[link_name = "OSGetDefaultThread"]
+    pub unsafe fn get_default(core_id: u32) -> *mut Thread;
+
+    /// OSGetThreadPriority
+    #[doc(alias = "OSGetThreadPriority")]
+    #[link_name = "OSGetThreadPriority"]
+    pub unsafe fn get_priority(thread: *mut Thread) -> i32;
+
+    /// OSSetThreadPriority
+    #[doc(alias = "OSSetThreadPriority")]
+    #[link_name = "OSSetThreadPriority"]
+    pub unsafe fn set_priority(thread: *mut Thread, priority: i32) -> ffi::c_bool;
+
+    /// OSGetThreadAffinity
+    #[doc(alias = "OSGetThreadAffinity")]
+    #[link_name = "OSGetThreadAffinity"]
+    pub unsafe fn get_affinity(thread: *mut Thread) -> ThreadAttributes;
+
+    /// OSSetThreadAffinity
+    ///
+    /// Only the affinity bits of `affinity` are used.
+    #[doc(alias = "OSSetThreadAffinity")]
+    #[link_name = "OSSetThreadAffinity"]
+    pub unsafe fn set_affinity(thread: *mut Thread, affinity: ThreadAttributes) -> ffi::c_bool;
+
+    /// OSGetThreadName
+    #[doc(alias = "OSGetThreadName")]
+    #[link_name = "OSGetThreadName"]
+    pub unsafe fn get_name(thread: *const Thread) -> *const ffi::c_char;
+
+    /// OSSetThreadName
+    ///
+    /// `name` is not copied.
+    #[doc(alias = "OSSetThreadName")]
+    #[link_name = "OSSetThreadName"]
+    pub unsafe fn set_name(thread: *mut Thread, name: *const ffi::c_char);
+
+    /// OSSetThreadRunQuantum
+    ///
+    /// Time slice in microseconds, [QUANTUM_INFINITE] or between [QUANTUM_MIN_MICROSECONDS] and [QUANTUM_MAX_MICROSECONDS].
+    #[doc(alias = "OSSetThreadRunQuantum")]
+    #[link_name = "OSSetThreadRunQuantum"]
+    pub unsafe fn set_run_quantum(thread: *mut Thread, quantum_us: u32) -> ffi::c_bool;
+
+    /// OSGetThreadSpecific
+    ///
+    /// `index` is below [SPECIFIC_MAX].
+    #[doc(alias = "OSGetThreadSpecific")]
+    #[link_name = "OSGetThreadSpecific"]
+    pub unsafe fn get_specific(index: i32) -> *mut ffi::c_void;
+
+    /// OSSetThreadSpecific
+    #[doc(alias = "OSSetThreadSpecific")]
+    #[link_name = "OSSetThreadSpecific"]
+    pub unsafe fn set_specific(index: i32, value: *mut ffi::c_void);
+
+    /// OSSetThreadCleanupCallback
+    ///
+    /// Returns the previous callback.
+    #[doc(alias = "OSSetThreadCleanupCallback")]
+    #[link_name = "OSSetThreadCleanupCallback"]
+    pub unsafe fn set_cleanup_callback(
+        thread: *mut Thread,
+        callback: CleanupCallback,
+    ) -> CleanupCallback;
+
+    /// OSSetThreadDeallocator
+    ///
+    /// Returns the previous deallocator.
+    #[doc(alias = "OSSetThreadDeallocator")]
+    #[link_name = "OSSetThreadDeallocator"]
+    pub unsafe fn set_deallocator(thread: *mut Thread, deallocator: Deallocator) -> Deallocator;
+
+    /// OSGetThreadCoreTime
+    ///
+    /// Time `thread` ran on the cores in `affinity`.
+    #[doc(alias = "OSGetThreadCoreTime")]
+    #[link_name = "OSGetThreadCoreTime"]
+    pub unsafe fn get_core_time(thread: *const Thread, affinity: ThreadAttributes) -> Time;
+
+    /// OSGetActiveThreadLink
+    #[doc(alias = "OSGetActiveThreadLink")]
+    #[link_name = "OSGetActiveThreadLink"]
+    pub unsafe fn get_active_thread_link(thread: *mut Thread, link: *mut ThreadLink)
+    -> ffi::c_bool;
+
+    /// OSCheckActiveThreads
+    ///
+    /// Returns the number of active threads.
+    #[doc(alias = "OSCheckActiveThreads")]
+    #[link_name = "OSCheckActiveThreads"]
+    pub unsafe fn check_active_threads() -> i32;
+
+    /// OSGetStackPointer
+    #[doc(alias = "OSGetStackPointer")]
+    #[link_name = "OSGetStackPointer"]
+    pub unsafe fn get_stack_pointer() -> u32;
+
+    /// OSGetUserStackPointer
+    #[doc(alias = "OSGetUserStackPointer")]
+    #[link_name = "OSGetUserStackPointer"]
+    pub unsafe fn get_user_stack_pointer(thread: *mut Thread) -> u32;
+
+    /// OSClearStack
+    ///
+    /// Fills the unused part of the current stack with `value`.
+    #[doc(alias = "OSClearStack")]
+    #[link_name = "OSClearStack"]
+    pub unsafe fn clear_stack(value: u8);
+
+    /// OSSetThreadStackUsage
+    ///
+    /// Starts tracking the stack usage of `thread`.
+    #[doc(alias = "OSSetThreadStackUsage")]
+    #[link_name = "OSSetThreadStackUsage"]
+    pub unsafe fn set_stack_usage(thread: *mut Thread) -> ffi::c_bool;
+
+    /// OSClearThreadStackUsage
+    #[doc(alias = "OSClearThreadStackUsage")]
+    #[link_name = "OSClearThreadStackUsage"]
+    pub unsafe fn clear_stack_usage(thread: *mut Thread);
+
+    /// OSCheckThreadStackUsage
+    ///
+    /// Returns the maximum stack usage in bytes.
+    #[doc(alias = "OSCheckThreadStackUsage")]
+    #[link_name = "OSCheckThreadStackUsage"]
+    pub unsafe fn check_stack_usage(thread: *mut Thread) -> i32;
+
+    /// __OSBoostThreadPriority
+    #[doc(alias = "__OSBoostThreadPriority")]
+    #[link_name = "__OSBoostThreadPriority"]
+    pub unsafe fn boost_priority(thread: *mut Thread);
+
+    /// __OSDeboostThreadPrioriy
+    #[doc(alias = "__OSDeboostThreadPrioriy")]
+    #[link_name = "__OSDeboostThreadPrioriy"]
+    pub unsafe fn deboost_priority(thread: *mut Thread);
 }

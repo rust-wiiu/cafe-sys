@@ -2,6 +2,7 @@
 //!
 //! On-screen keyboard with an optional input form, drawn by the application each frame.
 
+use crate::coreinit::fs;
 use crate::ffi;
 
 /// cUnfixedStringLengthMax
@@ -514,9 +515,6 @@ pub struct SoundObj {
     _private: [u8; 0],
 }
 
-// TODO: replace with FSClient from coreinit::fs
-pub use crate::nn::save::FsClient;
-
 const _: () = {
     assert!(size_of::<KeyboardCondition>() == 0x8);
     assert!(size_of::<UserWord>() == 0x64);
@@ -535,7 +533,7 @@ unsafe extern "C" {
         work_memory: *mut u8,
         region: RegionType,
         load_off_flags: LoadOffFlags,
-        fs_client: *mut FsClient,
+        fs_client: *mut fs::Client,
     );
 
     /// SwkbdDestroy

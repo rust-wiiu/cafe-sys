@@ -2,9 +2,7 @@
 //!
 //! Scratch directories on internal or USB storage. The functions mirror the FS API, with paths relative to a TEMP directory.
 
-use super::save::{
-    FsAsyncData, FsClient, FsCmdBlock, FsDirHandle, FsErrorFlag, FsFileHandle, FsMode, FsStat,
-};
+use crate::coreinit::fs;
 use crate::ffi;
 
 /// TEMPStatus
@@ -62,48 +60,48 @@ unsafe extern "C" {
     #[doc(alias = "TEMPChangeDir")]
     #[link_name = "TEMPChangeDir"]
     pub unsafe fn change_dir(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPChangeDirAsync
     #[doc(alias = "TEMPChangeDirAsync")]
     #[link_name = "TEMPChangeDirAsync"]
     pub unsafe fn change_dir_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPChangeOthersMode
     #[doc(alias = "TEMPChangeOthersMode")]
     #[link_name = "TEMPChangeOthersMode"]
     pub unsafe fn change_others_mode(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        mode: FsMode,
-        error_mask: FsErrorFlag,
+        mode: fs::Mode,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPChangeOthersModeAsync
     #[doc(alias = "TEMPChangeOthersModeAsync")]
     #[link_name = "TEMPChangeOthersModeAsync"]
     pub unsafe fn change_others_mode_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        mode: FsMode,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        mode: fs::Mode,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPCreateAndInitTempDir
@@ -135,48 +133,48 @@ unsafe extern "C" {
     #[doc(alias = "TEMPGetFreeSpaceSize")]
     #[link_name = "TEMPGetFreeSpaceSize"]
     pub unsafe fn get_free_space_size(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         size: *mut u64,
-        error_mask: FsErrorFlag,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPGetFreeSpaceSizeAsync
     #[doc(alias = "TEMPGetFreeSpaceSizeAsync")]
     #[link_name = "TEMPGetFreeSpaceSizeAsync"]
     pub unsafe fn get_free_space_size_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         size: *mut u64,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPGetStat
     #[doc(alias = "TEMPGetStat")]
     #[link_name = "TEMPGetStat"]
     pub unsafe fn get_stat(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPGetStatAsync
     #[doc(alias = "TEMPGetStatAsync")]
     #[link_name = "TEMPGetStatAsync"]
     pub unsafe fn get_stat_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPInit
@@ -188,23 +186,23 @@ unsafe extern "C" {
     #[doc(alias = "TEMPMakeDir")]
     #[link_name = "TEMPMakeDir"]
     pub unsafe fn make_dir(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPMakeDirAsync
     #[doc(alias = "TEMPMakeDirAsync")]
     #[link_name = "TEMPMakeDirAsync"]
     pub unsafe fn make_dir_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPMountTempDir
@@ -216,52 +214,52 @@ unsafe extern "C" {
     #[doc(alias = "TEMPOpenDir")]
     #[link_name = "TEMPOpenDir"]
     pub unsafe fn open_dir(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPOpenDirAsync
     #[doc(alias = "TEMPOpenDirAsync")]
     #[link_name = "TEMPOpenDirAsync"]
     pub unsafe fn open_dir_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPOpenFile
     #[doc(alias = "TEMPOpenFile")]
     #[link_name = "TEMPOpenFile"]
     pub unsafe fn open_file(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPOpenFileAsync
     #[doc(alias = "TEMPOpenFileAsync")]
     #[link_name = "TEMPOpenFileAsync"]
     pub unsafe fn open_file_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPOpenNewFile
@@ -270,77 +268,77 @@ unsafe extern "C" {
     #[doc(alias = "TEMPOpenNewFile")]
     #[link_name = "TEMPOpenNewFile"]
     pub unsafe fn open_new_file(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
         size: u32,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPOpenNewFileAsync
     #[doc(alias = "TEMPOpenNewFileAsync")]
     #[link_name = "TEMPOpenNewFileAsync"]
     pub unsafe fn open_new_file_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
         size: u32,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPRemove
     #[doc(alias = "TEMPRemove")]
     #[link_name = "TEMPRemove"]
     pub unsafe fn remove(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPRemoveAsync
     #[doc(alias = "TEMPRemoveAsync")]
     #[link_name = "TEMPRemoveAsync"]
     pub unsafe fn remove_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPRename
     #[doc(alias = "TEMPRename")]
     #[link_name = "TEMPRename"]
     pub unsafe fn rename(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         old_path: *const ffi::c_char,
         new_path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
+        error_mask: fs::ErrorFlag,
     ) -> Status;
 
     /// TEMPRenameAsync
     #[doc(alias = "TEMPRenameAsync")]
     #[link_name = "TEMPRenameAsync"]
     pub unsafe fn rename_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         dir: DirId,
         old_path: *const ffi::c_char,
         new_path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
     ) -> Status;
 
     /// TEMPShutdown

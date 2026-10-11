@@ -68,7 +68,7 @@ impl Status {
 /// `p` points to this struct.
 #[doc(alias = "ISzAlloc")]
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub struct Alloc {
     pub alloc: Option<unsafe extern "C" fn(p: *mut ffi::c_void, size: usize) -> *mut ffi::c_void>,
     pub free: Option<unsafe extern "C" fn(p: *mut ffi::c_void, address: *mut ffi::c_void)>,
@@ -79,7 +79,7 @@ pub struct Alloc {
 /// `p` points to this struct. `read` sets `size` to the number of bytes read, 0 means end of stream.
 #[doc(alias = "ISeqInStream")]
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub struct SeqInStream {
     pub read: Option<
         unsafe extern "C" fn(p: *mut ffi::c_void, buf: *mut ffi::c_void, size: *mut usize) -> Error,
@@ -91,7 +91,7 @@ pub struct SeqInStream {
 /// `p` points to this struct. `write` returns the number of bytes written, less than `size` means error.
 #[doc(alias = "ISeqOutStream")]
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub struct SeqOutStream {
     pub write: Option<
         unsafe extern "C" fn(p: *mut ffi::c_void, buf: *const ffi::c_void, size: usize) -> usize,
@@ -103,7 +103,7 @@ pub struct SeqOutStream {
 /// `p` points to this struct. Returning anything but [Error::OK] aborts. A size of `u64::MAX` means unknown.
 #[doc(alias = "ICompressProgress")]
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 pub struct CompressProgress {
     pub progress:
         Option<unsafe extern "C" fn(p: *mut ffi::c_void, in_size: u64, out_size: u64) -> Error>,

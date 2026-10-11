@@ -3,52 +3,8 @@
 //! Save data access. The functions mirror the FS API, with paths relative to the save directory of an account slot.
 
 use super::{acp::DeviceType, act::SlotNo};
+use crate::coreinit::fs;
 use crate::ffi;
-
-// TODO: replace with FSClient from coreinit::fs
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsClient(pub ffi::unknown<0x1700>);
-
-// TODO: replace with FSCmdBlock from coreinit::fs
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsCmdBlock(pub ffi::unknown<0xA80>);
-
-// TODO: replace with FSStat from coreinit::fs
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsStat(pub ffi::unknown<0x64>);
-
-// TODO: replace with FSAsyncData from coreinit::fs
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsAsyncData(pub ffi::unknown<0xC>);
-
-// TODO: replace with FSStatus from coreinit::fs
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsStatus(pub i32);
-
-// TODO: replace with FSErrorFlag from coreinit::fs
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsErrorFlag(pub u32);
-
-// TODO: replace with FSMode from coreinit::fs
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsMode(pub u32);
-
-// TODO: replace with FSFileHandle from coreinit::fs
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsFileHandle(pub i32);
-
-// TODO: replace with FSDirectoryHandle from coreinit::fs
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FsDirHandle(pub i32);
 
 /// SAVEStatus
 #[doc(alias = "SAVEStatus")]
@@ -69,74 +25,74 @@ unsafe extern "C" {
     #[doc(alias = "SAVEChangeDir")]
     #[link_name = "SAVEChangeDir"]
     pub unsafe fn change_dir(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEChangeDirAsync
     #[doc(alias = "SAVEChangeDirAsync")]
     #[link_name = "SAVEChangeDirAsync"]
     pub unsafe fn change_dir_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEChangeGroupAndOthersMode
     #[doc(alias = "SAVEChangeGroupAndOthersMode")]
     #[link_name = "SAVEChangeGroupAndOthersMode"]
     pub unsafe fn change_group_and_others_mode(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        mode: FsMode,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        mode: fs::Mode,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEChangeGroupAndOthersModeAsync
     #[doc(alias = "SAVEChangeGroupAndOthersModeAsync")]
     #[link_name = "SAVEChangeGroupAndOthersModeAsync"]
     pub unsafe fn change_group_and_others_mode_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        mode: FsMode,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        mode: fs::Mode,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEChangeGroupMode
     #[doc(alias = "SAVEChangeGroupMode")]
     #[link_name = "SAVEChangeGroupMode"]
     pub unsafe fn change_group_mode(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        mode: FsMode,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        mode: fs::Mode,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEChangeGroupModeAsync
     #[doc(alias = "SAVEChangeGroupModeAsync")]
     #[link_name = "SAVEChangeGroupModeAsync"]
     pub unsafe fn change_group_mode_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        mode: FsMode,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        mode: fs::Mode,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVECheckSaveDirRequiredUpdate
     #[doc(alias = "SAVECheckSaveDirRequiredUpdate")]
@@ -147,45 +103,45 @@ unsafe extern "C" {
     #[doc(alias = "SAVEFlushQuota")]
     #[link_name = "SAVEFlushQuota"]
     pub unsafe fn flush_quota(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEFlushQuotaAsync
     #[doc(alias = "SAVEFlushQuotaAsync")]
     #[link_name = "SAVEFlushQuotaAsync"]
     pub unsafe fn flush_quota_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEGetFreeSpaceSize
     #[doc(alias = "SAVEGetFreeSpaceSize")]
     #[link_name = "SAVEGetFreeSpaceSize"]
     pub unsafe fn get_free_space_size(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         size: *mut u64,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEGetFreeSpaceSizeAsync
     #[doc(alias = "SAVEGetFreeSpaceSizeAsync")]
     #[link_name = "SAVEGetFreeSpaceSizeAsync"]
     pub unsafe fn get_free_space_size_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         size: *mut u64,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEGetFreeSpaceSizeOfDevice
     #[doc(alias = "SAVEGetFreeSpaceSizeOfDevice")]
@@ -234,165 +190,165 @@ unsafe extern "C" {
     #[doc(alias = "SAVEGetStat")]
     #[link_name = "SAVEGetStat"]
     pub unsafe fn get_stat(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEGetStatAsync
     #[doc(alias = "SAVEGetStatAsync")]
     #[link_name = "SAVEGetStatAsync"]
     pub unsafe fn get_stat_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherApplication
     #[doc(alias = "SAVEGetStatOtherApplication")]
     #[link_name = "SAVEGetStatOtherApplication"]
     pub unsafe fn get_stat_other_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         title_id: u64,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherApplicationAsync
     #[doc(alias = "SAVEGetStatOtherApplicationAsync")]
     #[link_name = "SAVEGetStatOtherApplicationAsync"]
     pub unsafe fn get_stat_other_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         title_id: u64,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherDemoApplication
     #[doc(alias = "SAVEGetStatOtherDemoApplication")]
     #[link_name = "SAVEGetStatOtherDemoApplication"]
     pub unsafe fn get_stat_other_demo_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherDemoApplicationAsync
     #[doc(alias = "SAVEGetStatOtherDemoApplicationAsync")]
     #[link_name = "SAVEGetStatOtherDemoApplicationAsync"]
     pub unsafe fn get_stat_other_demo_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherDemoApplicationVariation
     #[doc(alias = "SAVEGetStatOtherDemoApplicationVariation")]
     #[link_name = "SAVEGetStatOtherDemoApplicationVariation"]
     pub unsafe fn get_stat_other_demo_application_variation(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherDemoApplicationVariationAsync
     #[doc(alias = "SAVEGetStatOtherDemoApplicationVariationAsync")]
     #[link_name = "SAVEGetStatOtherDemoApplicationVariationAsync"]
     pub unsafe fn get_stat_other_demo_application_variation_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherNormalApplication
     #[doc(alias = "SAVEGetStatOtherNormalApplication")]
     #[link_name = "SAVEGetStatOtherNormalApplication"]
     pub unsafe fn get_stat_other_normal_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherNormalApplicationAsync
     #[doc(alias = "SAVEGetStatOtherNormalApplicationAsync")]
     #[link_name = "SAVEGetStatOtherNormalApplicationAsync"]
     pub unsafe fn get_stat_other_normal_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherNormalApplicationVariation
     #[doc(alias = "SAVEGetStatOtherNormalApplicationVariation")]
     #[link_name = "SAVEGetStatOtherNormalApplicationVariation"]
     pub unsafe fn get_stat_other_normal_application_variation(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEGetStatOtherNormalApplicationVariationAsync
     #[doc(alias = "SAVEGetStatOtherNormalApplicationVariationAsync")]
     #[link_name = "SAVEGetStatOtherNormalApplicationVariationAsync"]
     pub unsafe fn get_stat_other_normal_application_variation_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
-        stat: *mut FsStat,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        stat: *mut fs::Stat,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEInit
     #[doc(alias = "SAVEInit")]
@@ -436,433 +392,433 @@ unsafe extern "C" {
     #[doc(alias = "SAVEMakeDir")]
     #[link_name = "SAVEMakeDir"]
     pub unsafe fn make_dir(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEMakeDirAsync
     #[doc(alias = "SAVEMakeDirAsync")]
     #[link_name = "SAVEMakeDirAsync"]
     pub unsafe fn make_dir_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenDir
     #[doc(alias = "SAVEOpenDir")]
     #[link_name = "SAVEOpenDir"]
     pub unsafe fn open_dir(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenDirAsync
     #[doc(alias = "SAVEOpenDirAsync")]
     #[link_name = "SAVEOpenDirAsync"]
     pub unsafe fn open_dir_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherApplication
     #[doc(alias = "SAVEOpenDirOtherApplication")]
     #[link_name = "SAVEOpenDirOtherApplication"]
     pub unsafe fn open_dir_other_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         title_id: u64,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherApplicationAsync
     #[doc(alias = "SAVEOpenDirOtherApplicationAsync")]
     #[link_name = "SAVEOpenDirOtherApplicationAsync"]
     pub unsafe fn open_dir_other_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         title_id: u64,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherDemoApplication
     #[doc(alias = "SAVEOpenDirOtherDemoApplication")]
     #[link_name = "SAVEOpenDirOtherDemoApplication"]
     pub unsafe fn open_dir_other_demo_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherDemoApplicationAsync
     #[doc(alias = "SAVEOpenDirOtherDemoApplicationAsync")]
     #[link_name = "SAVEOpenDirOtherDemoApplicationAsync"]
     pub unsafe fn open_dir_other_demo_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherDemoApplicationVariation
     #[doc(alias = "SAVEOpenDirOtherDemoApplicationVariation")]
     #[link_name = "SAVEOpenDirOtherDemoApplicationVariation"]
     pub unsafe fn open_dir_other_demo_application_variation(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherDemoApplicationVariationAsync
     #[doc(alias = "SAVEOpenDirOtherDemoApplicationVariationAsync")]
     #[link_name = "SAVEOpenDirOtherDemoApplicationVariationAsync"]
     pub unsafe fn open_dir_other_demo_application_variation_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherNormalApplication
     #[doc(alias = "SAVEOpenDirOtherNormalApplication")]
     #[link_name = "SAVEOpenDirOtherNormalApplication"]
     pub unsafe fn open_dir_other_normal_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherNormalApplicationAsync
     #[doc(alias = "SAVEOpenDirOtherNormalApplicationAsync")]
     #[link_name = "SAVEOpenDirOtherNormalApplicationAsync"]
     pub unsafe fn open_dir_other_normal_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherNormalApplicationVariation
     #[doc(alias = "SAVEOpenDirOtherNormalApplicationVariation")]
     #[link_name = "SAVEOpenDirOtherNormalApplicationVariation"]
     pub unsafe fn open_dir_other_normal_application_variation(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenDirOtherNormalApplicationVariationAsync
     #[doc(alias = "SAVEOpenDirOtherNormalApplicationVariationAsync")]
     #[link_name = "SAVEOpenDirOtherNormalApplicationVariationAsync"]
     pub unsafe fn open_dir_other_normal_application_variation_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
-        handle: *mut FsDirHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::DirHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenFile
     #[doc(alias = "SAVEOpenFile")]
     #[link_name = "SAVEOpenFile"]
     pub unsafe fn open_file(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenFileAsync
     #[doc(alias = "SAVEOpenFileAsync")]
     #[link_name = "SAVEOpenFileAsync"]
     pub unsafe fn open_file_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherApplication
     #[doc(alias = "SAVEOpenFileOtherApplication")]
     #[link_name = "SAVEOpenFileOtherApplication"]
     pub unsafe fn open_file_other_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         title_id: u64,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherApplicationAsync
     #[doc(alias = "SAVEOpenFileOtherApplicationAsync")]
     #[link_name = "SAVEOpenFileOtherApplicationAsync"]
     pub unsafe fn open_file_other_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         title_id: u64,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherDemoApplication
     #[doc(alias = "SAVEOpenFileOtherDemoApplication")]
     #[link_name = "SAVEOpenFileOtherDemoApplication"]
     pub unsafe fn open_file_other_demo_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherDemoApplicationAsync
     #[doc(alias = "SAVEOpenFileOtherDemoApplicationAsync")]
     #[link_name = "SAVEOpenFileOtherDemoApplicationAsync"]
     pub unsafe fn open_file_other_demo_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherDemoApplicationVariation
     #[doc(alias = "SAVEOpenFileOtherDemoApplicationVariation")]
     #[link_name = "SAVEOpenFileOtherDemoApplicationVariation"]
     pub unsafe fn open_file_other_demo_application_variation(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherDemoApplicationVariationAsync
     #[doc(alias = "SAVEOpenFileOtherDemoApplicationVariationAsync")]
     #[link_name = "SAVEOpenFileOtherDemoApplicationVariationAsync"]
     pub unsafe fn open_file_other_demo_application_variation_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherNormalApplication
     #[doc(alias = "SAVEOpenFileOtherNormalApplication")]
     #[link_name = "SAVEOpenFileOtherNormalApplication"]
     pub unsafe fn open_file_other_normal_application(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherNormalApplicationAsync
     #[doc(alias = "SAVEOpenFileOtherNormalApplicationAsync")]
     #[link_name = "SAVEOpenFileOtherNormalApplicationAsync"]
     pub unsafe fn open_file_other_normal_application_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherNormalApplicationVariation
     #[doc(alias = "SAVEOpenFileOtherNormalApplicationVariation")]
     #[link_name = "SAVEOpenFileOtherNormalApplicationVariation"]
     pub unsafe fn open_file_other_normal_application_variation(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVEOpenFileOtherNormalApplicationVariationAsync
     #[doc(alias = "SAVEOpenFileOtherNormalApplicationVariationAsync")]
     #[link_name = "SAVEOpenFileOtherNormalApplicationVariationAsync"]
     pub unsafe fn open_file_other_normal_application_variation_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         unique_id: u32,
         variation: u8,
         slot: SlotNo,
         path: *const ffi::c_char,
         mode: *const ffi::c_char,
-        handle: *mut FsFileHandle,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        handle: *mut fs::FileHandle,
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVERemove
     #[doc(alias = "SAVERemove")]
     #[link_name = "SAVERemove"]
     pub unsafe fn remove(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVERemoveAsync
     #[doc(alias = "SAVERemoveAsync")]
     #[link_name = "SAVERemoveAsync"]
     pub unsafe fn remove_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVERename
     #[doc(alias = "SAVERename")]
     #[link_name = "SAVERename"]
     pub unsafe fn rename(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         old_path: *const ffi::c_char,
         new_path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVERenameAsync
     #[doc(alias = "SAVERenameAsync")]
     #[link_name = "SAVERenameAsync"]
     pub unsafe fn rename_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
         old_path: *const ffi::c_char,
         new_path: *const ffi::c_char,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVERollbackQuota
     #[doc(alias = "SAVERollbackQuota")]
     #[link_name = "SAVERollbackQuota"]
     pub unsafe fn rollback_quota(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
-        error_mask: FsErrorFlag,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+    ) -> fs::Status;
 
     /// SAVERollbackQuotaAsync
     #[doc(alias = "SAVERollbackQuotaAsync")]
     #[link_name = "SAVERollbackQuotaAsync"]
     pub unsafe fn rollback_quota_async(
-        client: *mut FsClient,
-        block: *mut FsCmdBlock,
+        client: *mut fs::Client,
+        block: *mut fs::CmdBlock,
         slot: SlotNo,
-        error_mask: FsErrorFlag,
-        async_data: *const FsAsyncData,
-    ) -> FsStatus;
+        error_mask: fs::ErrorFlag,
+        async_data: *const fs::AsyncData,
+    ) -> fs::Status;
 
     /// SAVEShutdown
     #[doc(alias = "SAVEShutdown")]

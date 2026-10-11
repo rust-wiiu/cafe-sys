@@ -1,12 +1,7 @@
 //! Accounts
 
-use super::Result;
+use super::{Result, ffl::StoreData};
 use crate::ffi;
-
-// TODO: replace with FFLStoreData from nn::ffl
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct FflStoreData(pub ffi::unknown<0x60>);
 
 pub const ACCOUNT_ID_SIZE: usize = 17;
 pub const NFS_PASSWORD_SIZE: usize = 17;
@@ -243,12 +238,12 @@ unsafe extern "C" {
     /// GetMii
     #[doc(alias = "GetMii")]
     #[link_name = "GetMii__Q2_2nn3actFP12FFLStoreData"]
-    pub unsafe fn get_mii(mii: *mut FflStoreData) -> Result;
+    pub unsafe fn get_mii(mii: *mut StoreData) -> Result;
 
     /// GetMiiEx
     #[doc(alias = "GetMiiEx")]
     #[link_name = "GetMiiEx__Q2_2nn3actFP12FFLStoreDataUc"]
-    pub unsafe fn get_mii_ex(mii: *mut FflStoreData, slot: SlotNo) -> Result;
+    pub unsafe fn get_mii_ex(mii: *mut StoreData, slot: SlotNo) -> Result;
 
     /// GetMiiImageEx
     #[doc(alias = "GetMiiImageEx")]

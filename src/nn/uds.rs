@@ -5,10 +5,7 @@
 use super::Result;
 use crate::ffi;
 
-// TODO: replace with nn::cfg::CTR::UserName
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct UserName(pub ffi::unknown<0x18>);
+pub use super::cfg::ctr::UserName;
 
 /// Size of the work memory for [init].
 pub const WORK_MEMORY_SIZE: u32 = 0x14000;

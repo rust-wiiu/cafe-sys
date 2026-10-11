@@ -1,17 +1,12 @@
 //! Amiibo (NFP)
 
-use super::{Result, act::FflStoreData};
-use crate::{coreinit::event::Event, ffi, nfc::Technology};
-
-// TODO: replace with SYSStandardArgs from sysapp
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SysStandardArgs(pub ffi::unknown<0x10>);
-
-// TODO: replace with SYSArgDataBlock from sysapp
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SysArgDataBlock(pub ffi::unknown<0x10>);
+use super::{Result, ffl::StoreData};
+use crate::{
+    coreinit::event::Event,
+    ffi,
+    nfc::Technology,
+    sysapp::{ArgSlot, StandardArgs},
+};
 
 /// Description values of an NFP [Result].
 #[repr(transparent)]
@@ -149,7 +144,7 @@ pub struct CommonInfo {
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RegisterInfo {
-    pub mii: FflStoreData,
+    pub mii: StoreData,
     /// UTF-16.
     pub name: [u16; 11],
     pub font_region: u8,
@@ -178,7 +173,7 @@ pub type RomInfo = ReadOnlyInfo;
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RegisterInfoSet {
-    pub mii: FflStoreData,
+    pub mii: StoreData,
     /// UTF-16.
     pub name: [u16; 11],
     pub font_region: u8,
@@ -219,7 +214,7 @@ pub struct AmiiboSettingsArgsIn {
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AmiiboSettingsArgs {
-    pub standard_args: SysStandardArgs,
+    pub standard_args: StandardArgs,
     pub args_in: AmiiboSettingsArgsIn,
 }
 
@@ -434,7 +429,7 @@ unsafe extern "C" {
     #[link_name = "GetAmiiboSettingsResult__Q2_2nn3nfpFPQ3_2nn3nfp20AmiiboSettingsResultRC15SysArgDataBlock"]
     pub unsafe fn get_amiibo_settings_result(
         result: *mut AmiiboSettingsResult,
-        block: *const SysArgDataBlock,
+        block: *const ArgSlot,
     ) -> Result;
 
     /// ReturnToCallerWithAmiiboSettingsResult

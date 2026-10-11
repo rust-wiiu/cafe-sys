@@ -2,7 +2,8 @@
 
 use super::{
     Result,
-    act::{ACCOUNT_ID_SIZE, FflStoreData, MII_NAME_SIZE, PrincipalId},
+    act::{ACCOUNT_ID_SIZE, MII_NAME_SIZE, PrincipalId},
+    ffl::StoreData,
 };
 use crate::ffi;
 
@@ -268,7 +269,7 @@ unsafe extern "C" {
     /// GetMyMii
     #[doc(alias = "GetMyMii")]
     #[link_name = "GetMyMii__Q2_2nn2fpFP12FFLStoreData"]
-    pub unsafe fn get_my_mii(mii: *mut FflStoreData) -> Result;
+    pub unsafe fn get_my_mii(mii: *mut StoreData) -> Result;
 
     /// GetMyProfile
     #[doc(alias = "GetMyProfile")]
@@ -322,7 +323,7 @@ unsafe extern "C" {
     #[doc(alias = "UpdateMiiAsync")]
     #[link_name = "UpdateMiiAsync__Q2_2nn2fpFPC12FFLStoreDataPFQ2_2nn6ResultPv_vPv"]
     pub unsafe fn update_mii_async(
-        mii: *const FflStoreData,
+        mii: *const StoreData,
         callback: AsyncCallback,
         context: *mut ffi::c_void,
     ) -> Result;
@@ -331,7 +332,7 @@ unsafe extern "C" {
     #[doc(alias = "UpdateMiiAsync")]
     #[link_name = "UpdateMiiAsync__Q2_2nn2fpFPC12FFLStoreDataPCwPFQ2_2nn6ResultPv_vPv"]
     pub unsafe fn update_mii_with_name_async(
-        mii: *const FflStoreData,
+        mii: *const StoreData,
         name: *const u16,
         callback: AsyncCallback,
         context: *mut ffi::c_void,
@@ -477,7 +478,7 @@ unsafe extern "C" {
     #[doc(alias = "GetFriendMii")]
     #[link_name = "GetFriendMii__Q2_2nn2fpFP12FFLStoreDataPCUiUi"]
     pub unsafe fn get_friend_mii(
-        miis: *mut FflStoreData,
+        miis: *mut StoreData,
         principals: *const PrincipalId,
         count: u32,
     ) -> Result;

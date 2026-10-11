@@ -2,11 +2,6 @@
 
 use crate::ffi;
 
-// TODO: replace with the thread affinity type from coreinit::thread
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ThreadAffinity(pub u32);
-
 pub const STREAM_WIDTH: u32 = 640;
 pub const STREAM_PITCH: u32 = 768;
 pub const STREAM_HEIGHT: u32 = 480;
@@ -223,7 +218,8 @@ pub struct SetupInfo {
     pub work_mem: WorkMem,
     pub event_handler: EventHandler,
     pub mode: Mode,
-    pub thread_affinity: ThreadAffinity,
+    /// [ThreadAttributes][crate::coreinit::thread::ThreadAttributes] affinity bits.
+    pub thread_affinity: u32,
     pub reserved: ffi::unknown<0x10>,
 }
 

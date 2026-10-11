@@ -2,12 +2,8 @@
 //!
 //! Development hardware only.
 
+use crate::coreinit::mem::allocator::Allocator;
 use crate::ffi;
-
-// TODO: replace with MEMAllocator from coreinit::mem
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct MemAllocator(pub ffi::unknown<0x10>);
 
 /// GX2_INVALID_COUNTER_VALUE_U64
 #[doc(alias = "GX2_INVALID_COUNTER_VALUE_U64")]
@@ -292,7 +288,7 @@ unsafe extern "C" {
     /// `max_tags` is the size of the tag list, allocated with `allocator`.
     #[doc(alias = "GX2PerfInit")]
     #[link_name = "GX2PerfInit"]
-    pub unsafe fn init(data: *mut Data, max_tags: u32, allocator: *mut MemAllocator);
+    pub unsafe fn init(data: *mut Data, max_tags: u32, allocator: *mut Allocator);
 
     /// GX2PerfFree
     #[doc(alias = "GX2PerfFree")]
