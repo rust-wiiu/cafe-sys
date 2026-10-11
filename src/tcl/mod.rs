@@ -1,6 +1,5 @@
-//! tcl
+//! TCL ?
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "tcl",
     [
