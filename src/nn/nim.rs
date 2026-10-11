@@ -1,6 +1,5 @@
-//! NN NIM
+//! Network Install Manager (NIM)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_nim",
     [
