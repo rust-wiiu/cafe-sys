@@ -1,6 +1,6 @@
 //! Saved frames
 //!
-//! The last TV and GamePad frames, kept while switching to the HOME Menu.
+//! Frames saved for the TV and GamePad.
 
 use crate::ffi;
 

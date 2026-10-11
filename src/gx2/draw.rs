@@ -4,10 +4,7 @@ use super::enums::{IndexType, PrimitiveMode};
 use super::shader::StreamOutBuffer;
 use crate::ffi;
 
-/// GX2DispatchParams
-///
-/// Number of work groups per dimension, each at least 1. Read by the GPU, hence the alignment.
-#[doc(alias = "GX2DispatchParams")]
+/// Number of work groups per dimension.
 #[repr(C, align(0x100))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DispatchParams {
@@ -97,7 +94,7 @@ unsafe extern "C" {
 
     /// GX2DrawStreamOut
     ///
-    /// Draws the vertices written to `buffer`. Call [save_stream_out_context] first.
+    /// Draws the vertices written to `buffer`.
     #[doc(alias = "GX2DrawStreamOut")]
     #[link_name = "GX2DrawStreamOut"]
     pub unsafe fn draw_stream_out(mode: PrimitiveMode, buffer: *const StreamOutBuffer);

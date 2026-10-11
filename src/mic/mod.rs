@@ -36,8 +36,6 @@ pub enum Instance {
     I1 = 1,
 }
 
-/// mic_state_t
-#[doc(alias = "mic_state_t")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum State {
@@ -53,7 +51,6 @@ pub enum State {
 }
 
 /// MIC_STATUS_FLAG_*
-#[doc(alias = "MIC_STATUS_FLAG")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StatusFlags(pub u32);
@@ -69,7 +66,7 @@ impl StatusFlags {
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct RingBuffer {
-    /// Number of samples in `base`.
+    /// Number of samples in `base`, at least 1544.
     pub modulus: u32,
     pub base: *mut i16,
 }

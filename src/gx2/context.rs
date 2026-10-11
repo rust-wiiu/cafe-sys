@@ -44,14 +44,14 @@ const _: () = {
 unsafe extern "C" {
     /// GX2SetupContextStateEx
     ///
-    /// Initializes `state` with the current state and makes it the active context.
+    /// Initializes `state` with the default state.
     #[doc(alias = "GX2SetupContextStateEx")]
     #[link_name = "GX2SetupContextStateEx"]
     pub unsafe fn setup_context_state_ex(state: *mut ContextState, profiling: ffi::c_bool);
 
     /// GX2SetContextState
     ///
-    /// Restores `state` and makes it the active context. Null disables state shadowing.
+    /// Restores `state` and makes it the active context.
     #[doc(alias = "GX2SetContextState")]
     #[link_name = "GX2SetContextState"]
     pub unsafe fn set_context_state(state: *const ContextState);

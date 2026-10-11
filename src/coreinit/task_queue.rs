@@ -75,7 +75,7 @@ pub struct Task {
 }
 
 /// MPTaskQueueInfo
-#[doc(alias = "MPTaskQueueInfo", alias = "MPTaskQInfo")]
+#[doc(alias = "MPTaskQueueInfo")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TaskQueueInfo {
@@ -87,21 +87,24 @@ pub struct TaskQueueInfo {
 }
 
 /// MPTaskQueue
-#[doc(alias = "MPTaskQueue", alias = "MPTaskQ")]
+#[doc(alias = "MPTaskQueue")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TaskQueue {
-    pub id: u32,
+    pub self_: *mut TaskQueue,
     pub state: TaskQueueState,
     pub tasks: u32,
     pub tasks_ready: u32,
     pub tasks_running: u32,
-    /// Finished tasks per core.
-    pub tasks_finished: [u32; 3],
-    pub next_index: [i32; 3],
-    pub end_index: [i32; 3],
+    _unk0: ffi::unknown<4>,
+    pub tasks_finished: u32,
+    _unk1: ffi::unknown<8>,
+    pub queue_index: u32,
+    _unk2: ffi::unknown<8>,
+    pub queue_size: u32,
+    _unk3: ffi::unknown<4>,
     pub queue: *mut *mut Task,
-    pub queue_len: u32,
+    pub queue_max_size: u32,
     pub lock: SpinLock,
 }
 
@@ -145,7 +148,7 @@ unsafe extern "C" {
 
     /// MPRunTasksFromTaskQ
     ///
-    /// Runs tasks on the current core, dequeuing `granularity` tasks at a time.
+    /// Runs tasks from the queue on the current core, dequeuing up to `granularity` tasks at a time.
     #[doc(alias = "MPRunTasksFromTaskQ")]
     #[link_name = "MPRunTasksFromTaskQ"]
     pub unsafe fn run_tasks_from_queue(

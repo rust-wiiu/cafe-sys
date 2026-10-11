@@ -60,6 +60,7 @@ unsafe extern "C" {
     /// IPCBufPoolCreate
     ///
     /// Creates a pool of `message_size` messages in `buffer`, the pool header included.
+    /// `message_size` is rounded up to a multiple of 64. Returns null if `buffer` is too small.
     #[doc(alias = "IPCBufPoolCreate")]
     #[link_name = "IPCBufPoolCreate"]
     pub unsafe fn create(

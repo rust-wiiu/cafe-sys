@@ -5,17 +5,13 @@
 use super::wpad;
 use crate::ffi;
 
-/// KPAD_RING_BUFS
 #[doc(alias("KPAD_RING_BUFS", "KPAD_MAX_READ_BUFS"))]
 pub const RING_BUFS: usize = 16;
 
 pub const BUTTON_MASK: u32 = 0x00ff_ffff;
 pub const URCC_BUTTON_MASK: u32 = 0x03ff_ffff;
 
-/// KPAD_BUTTON
-///
 /// Wii Remote buttons in [Status::hold]. `Z` and `C` are on the Nunchuk.
-#[doc(alias = "KPAD_BUTTON")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Button(pub u32);
@@ -45,10 +41,7 @@ impl core::ops::BitOr for Button {
     }
 }
 
-/// KPAD_FS_BUTTON
-///
 /// Nunchuk stick emulation in [FsStatus::hold].
-#[doc(alias = "KPAD_FS_BUTTON")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct FsButton(pub u32);
@@ -68,10 +61,7 @@ impl core::ops::BitOr for FsButton {
     }
 }
 
-/// KPAD_CL_BUTTON
-///
 /// Classic Controller buttons.
-#[doc(alias = "KPAD_CL_BUTTON")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ClButton(pub u32);
@@ -110,10 +100,7 @@ impl core::ops::BitOr for ClButton {
     }
 }
 
-/// KPAD_UC_BUTTON
-///
 /// Wii U Pro Controller buttons.
-#[doc(alias = "KPAD_UC_BUTTON")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct UcButton(pub u32);
@@ -169,10 +156,7 @@ impl ReadError {
     pub const INIT: Self = Self(-5);
 }
 
-/// KPAD_WBC_ERR
-///
 /// Balance Board weight error.
-#[doc(alias = "KPAD_WBC_ERR")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WbcError(pub i32);
@@ -190,10 +174,7 @@ impl WbcError {
     pub const ZEROPOINT: Self = Self(-8);
 }
 
-/// KPAD_WBC_ERR_TGC
-///
 /// Balance Board temperature/gravity correction error.
-#[doc(alias = "KPAD_WBC_ERR_TGC")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WbcTgcError(pub i32);
@@ -241,8 +222,6 @@ impl MplsZeroDriftMode {
     pub const TIGHT: Self = Self(2);
 }
 
-/// KPAD_DPD
-#[doc(alias = "KPAD_DPD")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DpdDetection(pub u8);
@@ -252,8 +231,6 @@ impl DpdDetection {
     pub const DOWNWARD: Self = Self(1);
 }
 
-/// KPAD_STATE_CTRL_DPD
-#[doc(alias = "KPAD_STATE_CTRL_DPD")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DpdControlState(pub i32);
@@ -263,8 +240,6 @@ impl DpdControlState {
     pub const FINISHED: Self = Self(1);
 }
 
-/// KPAD_STATE_CTRL_MPLS
-#[doc(alias = "KPAD_STATE_CTRL_MPLS")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MplsControlState(pub i32);
@@ -277,7 +252,6 @@ impl MplsControlState {
     pub const FINISHED: Self = Self(1);
 }
 
-/// Vec2
 #[doc(alias = "KPADVec2D")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
@@ -286,7 +260,6 @@ pub struct Vec2 {
     pub y: f32,
 }
 
-/// Vec
 #[doc(alias("Vec", "KPADVec3D"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
@@ -307,7 +280,6 @@ pub struct Rect {
     pub bottom: f32,
 }
 
-/// KPADMPDir
 #[doc(alias("KPADMPDir", "KPADBase3D"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
@@ -317,10 +289,7 @@ pub struct MpDir {
     pub z: Vec3,
 }
 
-/// KPADMPStatus
-///
 /// MotionPlus.
-#[doc(alias = "KPADMPStatus")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct MpStatus {
@@ -388,10 +357,7 @@ pub struct CmStatus {
     pub release: u32,
 }
 
-/// KPADEXStatus
-///
 /// Extension data, depending on [Status::dev_type].
-#[doc(alias = "KPADEXStatus")]
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub union ExStatus {

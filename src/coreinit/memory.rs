@@ -5,7 +5,7 @@
 use crate::ffi;
 
 /// OSMemoryType
-#[doc(alias = "OSMemoryType", alias = "OSMemType")]
+#[doc(alias = "OSMemoryType")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MemoryType(pub u32);
@@ -28,8 +28,6 @@ impl SharedDataType {
     pub const FONT_TAIWANESE: Self = Self(3);
 }
 
-/// OVERLAY_ARENA_ERROR
-#[doc(alias = "OVERLAY_ARENA_ERROR")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct OverlayArenaError(pub u32);
@@ -80,8 +78,6 @@ unsafe extern "C" {
     pub unsafe fn set_mem_bound(kind: MemoryType, start: u32, size: u32) -> i32;
 
     /// OSGetForegroundBucket
-    ///
-    /// Area kept while the application is in the background.
     #[doc(alias = "OSGetForegroundBucket")]
     #[link_name = "OSGetForegroundBucket"]
     pub unsafe fn get_foreground_bucket(area: *mut *mut ffi::c_void, size: *mut u32)
@@ -89,7 +85,7 @@ unsafe extern "C" {
 
     /// OSGetSharedData
     ///
-    /// Maps system shared data like the system fonts.
+    /// Gets the address and size of a system font. Returns false on failure.
     #[doc(alias = "OSGetSharedData")]
     #[link_name = "OSGetSharedData"]
     pub unsafe fn get_shared_data(

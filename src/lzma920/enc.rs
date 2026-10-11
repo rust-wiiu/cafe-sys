@@ -3,10 +3,7 @@
 use super::{Alloc, CompressProgress, Error, SeqInStream, SeqOutStream};
 use crate::ffi;
 
-/// CLzmaEncProps
-///
 /// Initialize with [props_init].
-#[doc(alias = "CLzmaEncProps")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Props {
@@ -32,12 +29,10 @@ pub struct Props {
     pub mc: u32,
     /// Write an end marker, default 0.
     pub write_end_mark: ffi::c_uint,
-    /// 1 or 2, default 2.
+    /// Default 1, this build is single-threaded.
     pub num_threads: ffi::c_int,
 }
 
-/// CLzmaEncHandle
-#[doc(alias = "CLzmaEncHandle")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Handle(pub *mut ffi::c_void);

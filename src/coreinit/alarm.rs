@@ -1,6 +1,6 @@
 //! Alarm
 //!
-//! One-shot and periodic timers calling back on the core they were set on.
+//! One-shot and periodic timers. Alarms are queued on the core they are set on.
 
 use super::context::Context;
 use super::thread_queue::ThreadQueue;
@@ -16,9 +16,7 @@ pub const ALARM_TAG: u32 = 0x614C724D;
 pub const ALARM_QUEUE_TAG: u32 = 0x614C6D51;
 
 /// OSAlarmCallback
-///
-/// Runs in interrupt context.
-#[doc(alias = "OSAlarmCallback", alias = "OSAlarmHandler")]
+#[doc(alias = "OSAlarmCallback")]
 pub type AlarmCallback = Option<unsafe extern "C" fn(alarm: *mut Alarm, context: *mut Context)>;
 
 /// OSAlarmQueue

@@ -1,6 +1,6 @@
 //! AX multi voices
 //!
-//! Controls up to [MAX_VOICES] voices at once, e.g. for interleaved multi-channel ADPCM.
+//! Controls several voices at once.
 
 use super::device::DeviceType;
 use super::voice::{
@@ -10,8 +10,6 @@ use super::voice::{
 use super::{DspAdpcm, Error};
 use crate::ffi;
 
-/// AX_MV_PB_MAX_VOICES
-#[doc(alias = "AX_MV_PB_MAX_VOICES")]
 pub const MAX_VOICES: usize = 6;
 
 /// AXMVPB

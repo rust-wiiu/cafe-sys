@@ -6,16 +6,10 @@ use crate::ffi;
 
 pub use crate::vpadbase::{BatteryLevel, Channel, MAX_CONTROLLERS};
 
-/// VPAD_MAX_READ_BUFS
-///
 /// Number of samples buffered per channel.
-#[doc(alias = "VPAD_MAX_READ_BUFS", alias = "VPAD_RING_BUFS")]
 pub const MAX_READ_BUFS: usize = 16;
 
-/// VPAD_MOTOR_PATTERN_LENGTH_MAX
-///
 /// Maximum rumble pattern length in bits, one second at 120 Hz.
-#[doc(alias = "VPAD_MOTOR_PATTERN_LENGTH_MAX")]
 pub const MOTOR_PATTERN_LENGTH_MAX: u8 = 120;
 
 /// VPADButtons
@@ -131,9 +125,9 @@ pub enum TouchPadResolution {
 pub struct LcdMode(pub u32);
 
 impl LcdMode {
-    /// Standby, as set from the HOME Menu. Turns back on when a button is pressed.
+    /// Standby. Turns back on when a button is pressed.
     pub const STANDBY: Self = Self(0);
-    /// The screen is off and the GamePad only works as a controller. Turned on while the HOME Menu is open.
+    /// The screen is off and the GamePad only works as a controller.
     pub const GAME_CONTROLLER: Self = Self(1);
     pub const ON: Self = Self(0xFF);
 }
@@ -162,8 +156,6 @@ impl PlayMode {
     pub const TIGHT: Self = Self(1);
 }
 
-/// VPAD_MIC_STATUS
-#[doc(alias = "VPAD_MIC_STATUS")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MicStatus(pub u8);
@@ -194,7 +186,7 @@ pub struct Vec3 {
 /// VPADDirection
 ///
 /// Orientation of the GamePad as three axis vectors.
-#[doc(alias = "VPADDirection", alias = "VPADDir")]
+#[doc(alias = "VPADDirection")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Direction {
@@ -219,7 +211,7 @@ pub struct AccStatus {
 }
 
 /// VPADTouchData
-#[doc(alias = "VPADTouchData", alias = "VPADTPData")]
+#[doc(alias = "VPADTouchData")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TouchData {
@@ -231,7 +223,7 @@ pub struct TouchData {
 }
 
 /// VPADTouchCalibrationParam
-#[doc(alias = "VPADTouchCalibrationParam", alias = "VPADTPCalibrationParam")]
+#[doc(alias = "VPADTouchCalibrationParam")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct TouchCalibrationParam {
@@ -302,7 +294,7 @@ unsafe extern "C" {
 
     /// VPADRead
     ///
-    /// Reads up to `count` samples since the last call into `buffers`, newest first. Returns the number of samples read. `buffers` may be overwritten even if there is no data.
+    /// Reads up to `count` samples into `buffers`, newest first. Returns the number of samples read.
     #[doc(alias = "VPADRead")]
     #[link_name = "VPADRead"]
     pub unsafe fn read(
@@ -718,7 +710,7 @@ unsafe extern "C" {
 
     /// VPADControlMotor
     ///
-    /// Queues a rumble pattern of `length` bits (up to [MOTOR_PATTERN_LENGTH_MAX]), one bit per 1/120 s. Up to 5 patterns are queued, a length of 0 clears the queue. Call at most every 0.1 s. Negative on failure.
+    /// Plays a rumble pattern of `length` bits (up to [MOTOR_PATTERN_LENGTH_MAX]), one bit per 1/120 s. A length of 0 stops the rumble. Does nothing while the TV Menu is open. Negative on failure.
     #[doc(alias = "VPADControlMotor")]
     #[link_name = "VPADControlMotor"]
     pub unsafe fn control_motor(channel: Channel, pattern: *const u8, length: u8) -> i32;
@@ -730,7 +722,7 @@ unsafe extern "C" {
 
     /// VPADSetSensorBar
     ///
-    /// Turned off automatically while the HOME Menu is open or the GamePad is disconnected. Negative on failure.
+    /// Negative on failure.
     #[doc(alias = "VPADSetSensorBar")]
     #[link_name = "VPADSetSensorBar"]
     pub unsafe fn set_sensor_bar(channel: Channel, on: ffi::c_bool) -> i32;

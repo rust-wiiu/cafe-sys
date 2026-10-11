@@ -5,16 +5,14 @@ use crate::{
     lzma920::{Alloc, Error, FinishMode, Status, dec},
 };
 
-/// CLzma2Dec
-///
 /// Free with [dec::free] or [dec::free_probs] on [Decoder::decoder].
-#[doc(alias = "CLzma2Dec")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Decoder {
     pub decoder: dec::Decoder,
     pub pack_size: u32,
     pub unpack_size: u32,
+    pub state: ffi::c_int,
     pub control: u8,
     pub need_init_dic: ffi::c_bool,
     pub need_init_state: ffi::c_bool,

@@ -1,12 +1,12 @@
 //! Human Interface Devices (HID)
 //!
-//! USB HID devices. The transfer functions block if `callback` is `None` and then return the number of bytes transferred.
+//! USB HID devices.
+//!
+//! The transfer functions block if `callback` is `None` and then return the number of bytes transferred.
 //! Otherwise they return immediately and report the result to `callback`.
 
 use crate::ffi;
 
-/// HID_ERROR_CODE
-#[doc(alias = "HID_ERROR_CODE")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub i32);
@@ -21,8 +21,6 @@ impl Error {
     pub const CANCELLED: Self = Self(-6);
 }
 
-/// HIDDeviceHandle
-#[doc(alias = "HIDDeviceHandle")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Handle(pub u32);
@@ -56,8 +54,6 @@ pub struct Device {
 }
 
 /// HIDAttachCallback
-///
-/// Return 1 on [AttachEvent::ATTACH] to take the device. The first client that takes it stops the notification of other clients.
 #[doc(alias = "HIDAttachCallback")]
 pub type AttachCallback = Option<
     unsafe extern "C" fn(client: *mut Client, device: *mut Device, event: AttachEvent) -> i32,
@@ -96,8 +92,6 @@ unsafe extern "C" {
     pub unsafe fn deinit() -> Error;
 
     /// HIDAddClient
-    ///
-    /// `client` must stay valid until [del_client]. Devices that are already attached are reported during this call.
     #[doc(alias = "HIDAddClient")]
     #[link_name = "HIDAddClient"]
     pub unsafe fn add_client(client: *mut Client, attach_callback: AttachCallback) -> Error;

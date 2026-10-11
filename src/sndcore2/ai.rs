@@ -4,8 +4,6 @@
 
 use crate::ffi;
 
-/// AI_SAMPLERATE
-#[doc(alias = "AI_SAMPLERATE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SampleRate(pub u32);
@@ -15,8 +13,6 @@ impl SampleRate {
     pub const KHZ_48: Self = Self(1);
 }
 
-/// AI_CHANNEL
-#[doc(alias = "AI_CHANNEL")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Channel {
@@ -26,8 +22,6 @@ pub enum Channel {
     Bitstream = 2,
 }
 
-/// AIDCallback
-#[doc(alias = "AIDCallback")]
 pub type DmaCallback = Option<unsafe extern "C" fn()>;
 
 unsafe extern "C" {

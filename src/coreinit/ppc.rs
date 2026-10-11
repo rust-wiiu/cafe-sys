@@ -63,7 +63,7 @@ unsafe extern "C" {
 
     /// PPCMthid4
     ///
-    /// Writes HID4.
+    /// Writes HID4. The most significant bit is always set.
     #[doc(alias = "PPCMthid4")]
     #[link_name = "PPCMthid4"]
     pub unsafe fn mthid4(value: u32);
@@ -273,21 +273,21 @@ unsafe extern "C" {
 
     /// PPCOrMsr
     ///
-    /// Sets bits in MSR, returning the previous value.
+    /// Returns MSR with the bits of `value` set. MSR itself is not written.
     #[doc(alias = "PPCOrMsr")]
     #[link_name = "PPCOrMsr"]
     pub unsafe fn or_msr(value: u32) -> u32;
 
     /// PPCAndMsr
     ///
-    /// Masks MSR, returning the previous value.
+    /// Returns MSR masked by `value`. MSR itself is not written.
     #[doc(alias = "PPCAndMsr")]
     #[link_name = "PPCAndMsr"]
     pub unsafe fn and_msr(value: u32) -> u32;
 
     /// PPCAndCMsr
     ///
-    /// Clears bits in MSR, returning the previous value.
+    /// Returns MSR with the bits of `value` cleared. MSR itself is not written.
     #[doc(alias = "PPCAndCMsr")]
     #[link_name = "PPCAndCMsr"]
     pub unsafe fn andc_msr(value: u32) -> u32;
@@ -346,7 +346,7 @@ unsafe extern "C" {
 
     /// PMBegin
     ///
-    /// Starts counting cycles, instructions and L1 misses.
+    /// Resets the counters and starts counting cycles, instructions and L1 misses.
     #[doc(alias = "PMBegin")]
     #[link_name = "PMBegin"]
     pub unsafe fn pm_begin();

@@ -1,6 +1,6 @@
 //! MCP
 //!
-//! Master title control: installed titles, devices, installation and system settings.
+//! Installed titles, devices, installation and system settings.
 
 use super::ios::Handle;
 use crate::ffi;

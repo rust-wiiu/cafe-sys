@@ -75,11 +75,11 @@ macro_rules! imports_section {
 pub trait UnsafeInit: Sized {
     /// Zero-initializes the struct, allows the user to set specific fields via a mutable reference, then returns the fully initialized type.
     ///
-    /// Prefer initialiting the struct as a literal when setting all fields!
+    /// Prefer initializing the struct as a literal when setting all fields!
     ///
     /// # Safety
     ///
-    /// Has the same safety implications as [MaybeUninit]. Should only be used on "#[[repr(C)]]" structs i.e. structs with valid zero-invariant.
+    /// Has the same safety implications as [MaybeUninit](core::mem::MaybeUninit). Should only be used on "#[[repr(C)]]" structs i.e. structs with valid zero-invariant.
     fn init<F>(f: F) -> Self
     where
         F: FnOnce(&mut Self),

@@ -4,7 +4,7 @@ use super::Error;
 use crate::ffi;
 
 /// AXDeviceType
-#[doc(alias = "AXDeviceType", alias = "AXPBDeviceType")]
+#[doc(alias = "AXDeviceType")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DeviceType {
@@ -29,8 +29,6 @@ impl DeviceMode {
     pub const MONO: Self = Self(5);
 }
 
-/// AXPB_AUX_ID
-#[doc(alias = "AXPB_AUX_ID")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum AuxId {
@@ -40,8 +38,6 @@ pub enum AuxId {
     C = 2,
 }
 
-/// AXAUXCBSTRUCT
-#[doc(alias = "AXAUXCBSTRUCT")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AuxCallbackInfo {
@@ -53,7 +49,7 @@ pub struct AuxCallbackInfo {
 /// AXAuxCallback
 ///
 /// `data` points to one sample buffer per channel.
-#[doc(alias = "AXAuxCallback", alias = "AXUserAuxCallback")]
+#[doc(alias = "AXAuxCallback")]
 pub type AuxCallback = Option<
     unsafe extern "C" fn(
         data: *mut *mut i32,
@@ -62,26 +58,20 @@ pub type AuxCallback = Option<
     ),
 >;
 
-/// AX_FINAL_MIX_CB_STRUCT
-#[doc(alias = "AX_FINAL_MIX_CB_STRUCT")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct FinalMixCallbackInfo {
-    /// `num_channels_in * num_devices` sample buffers, grouped by channel.
     pub data: *mut *mut i32,
     pub num_channels_in: u16,
     pub num_samples: u16,
     pub num_devices: u16,
-    /// Set to the number of channels to output, initially `num_channels_in`.
     pub num_channels_out: u16,
 }
 
 /// AXDeviceFinalMixCallback
-#[doc(alias = "AXDeviceFinalMixCallback", alias = "AXUserFinalMixCallback")]
+#[doc(alias = "AXDeviceFinalMixCallback")]
 pub type FinalMixCallback = Option<unsafe extern "C" fn(info: *mut FinalMixCallbackInfo)>;
 
-/// AXDEVICEFINALOUTPUTSTRUCT
-#[doc(alias = "AXDEVICEFINALOUTPUTSTRUCT")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct FinalOutputInfo {
@@ -105,7 +95,7 @@ unsafe extern "C" {
 
     /// AXSetDeviceMode
     ///
-    /// Always fails, the mode is set in the system settings.
+    /// Does nothing and returns success, the mode is set in the system settings.
     #[doc(alias = "AXSetDeviceMode")]
     #[link_name = "AXSetDeviceMode"]
     #[deprecated]
@@ -120,7 +110,7 @@ unsafe extern "C" {
 
     /// AXGetDeviceChannelCount
     ///
-    /// `id` is 0 for the TV, 0-1 for DRCs and 0-3 for controllers.
+    /// `id` must be 0 for the TV and 0-1 for DRCs.
     #[doc(alias = "AXGetDeviceChannelCount")]
     #[link_name = "AXGetDeviceChannelCount"]
     pub unsafe fn get_channel_count(device: DeviceType, id: u32, count: *mut u32) -> Error;
@@ -199,7 +189,7 @@ unsafe extern "C" {
 
     /// AXGetDeviceFinalOutput
     ///
-    /// Copies the final output samples of the TV or DRC into `data`, interleaved. `size` is in bytes and must be at least 1728 for the TV and 576 for the DRC.
+    /// Copies the final output samples of the TV or DRC into `data`. `size` is in bytes.
     #[doc(alias = "AXGetDeviceFinalOutput")]
     #[link_name = "AXGetDeviceFinalOutput"]
     pub unsafe fn get_final_output(
@@ -255,7 +245,7 @@ unsafe extern "C" {
 
     /// AXSetDeviceUpsampleStage
     ///
-    /// The final mix callback receives 32 kHz samples if `post` is true, otherwise 48 kHz.
+    /// If `post` is true, the output is upsampled to 48 kHz after the final mix callback instead of before it.
     #[doc(alias = "AXSetDeviceUpsampleStage")]
     #[link_name = "AXSetDeviceUpsampleStage"]
     pub unsafe fn set_upsample_stage(device: DeviceType, post: ffi::c_bool) -> Error;

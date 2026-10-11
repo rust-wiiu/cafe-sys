@@ -2,8 +2,6 @@
 //!
 //! FFL itself is a static library, only the types shared with system libraries are here.
 
-/// FFL_MIIDATA_PACKET_SIZE
-#[doc(alias = "FFL_MIIDATA_PACKET_SIZE")]
 pub const MII_DATA_PACKET_SIZE: usize = 96;
 
 /// FFLStoreData

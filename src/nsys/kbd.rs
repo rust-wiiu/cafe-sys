@@ -2,16 +2,10 @@
 
 use crate::ffi;
 
-/// KBD_MEM_SIZE
-#[doc(alias = "KBD_MEM_SIZE")]
 pub const MEM_SIZE: usize = 3264;
 
-/// KBD_MAX_CHANNELS
-#[doc(alias = "KBD_MAX_CHANNELS")]
 pub const MAX_CHANNELS: usize = 4;
 
-/// KBDEc
-#[doc(alias = "KBDEc")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub i32);
@@ -26,14 +20,10 @@ impl Error {
     pub const BUSY: Self = Self(7);
 }
 
-/// KBDChannel
-#[doc(alias = "KBDChannel")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Channel(pub u8);
 
-/// KBDHIDCode
-#[doc(alias = "KBDHIDCode")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct HidCode(pub u8);
@@ -43,8 +33,6 @@ impl HidCode {
     pub const OVERFLOW: Self = Self(255);
 }
 
-/// KBDChanStatus
-#[doc(alias = "KBDChanStatus")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ChannelStatus(pub u32);
@@ -56,8 +44,6 @@ impl ChannelStatus {
     pub const ERROR: Self = Self(0x04);
 }
 
-/// KBDKeyMode
-#[doc(alias = "KBDKeyMode")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct KeyMode(pub u32);
@@ -68,8 +54,6 @@ impl KeyMode {
     pub const REPEAT: Self = Self(0x02);
 }
 
-/// KBDCountryCode
-#[doc(alias = "KBDCountryCode")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CountryCode(pub u32);
@@ -96,8 +80,6 @@ impl CountryCode {
     pub const RUSSIA: Self = Self(18);
 }
 
-/// KBDModState
-#[doc(alias = "KBDModState")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ModState(pub u32);
@@ -110,9 +92,7 @@ impl ModState {
     pub const GUI: Self = Self(0x0008);
     pub const EXTRA: Self = Self(0x0010);
     pub const ALTGR: Self = Self(0x0020);
-    /// Hiragana.
     pub const LANG1: Self = Self(0x0040);
-    /// Katakana.
     pub const LANG2: Self = Self(0x0080);
     pub const NUM_LOCK: Self = Self(0x0100);
     pub const CAPS_LOCK: Self = Self(0x0200);
@@ -128,8 +108,6 @@ impl core::ops::BitOr for ModState {
     }
 }
 
-/// KBDLedState
-#[doc(alias = "KBDLedState")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LedState(pub u32);
@@ -148,8 +126,6 @@ impl core::ops::BitOr for LedState {
     }
 }
 
-/// KBDDevEvent
-#[doc(alias = "KBDDevEvent")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DevEvent {
@@ -169,8 +145,6 @@ pub struct KeyEvent {
     pub unicode: u16,
 }
 
-/// KBDLedEvent
-#[doc(alias = "KBDLedEvent")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LedEvent {
@@ -179,8 +153,6 @@ pub struct LedEvent {
     pub rc: Error,
 }
 
-/// KBDReport
-#[doc(alias = "KBDReport")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Report {
@@ -189,23 +161,17 @@ pub struct Report {
     pub keycode: [u8; 6],
 }
 
-/// KBDDevCallbackF
-#[doc(alias = "KBDDevCallbackF")]
 pub type DevCallback = Option<unsafe extern "C" fn(event: *mut DevEvent)>;
 
-/// KBDKeyCallbackF
-#[doc(alias = "KBDKeyCallbackF")]
 pub type KeyCallback = Option<unsafe extern "C" fn(event: *mut KeyEvent)>;
 
-/// KBDLedCallbackF
-#[doc(alias = "KBDLedCallbackF")]
 pub type LedCallback =
     Option<unsafe extern "C" fn(event: *mut LedEvent, context: *mut ffi::c_void)>;
 
 unsafe extern "C" {
     /// KBDInit
     ///
-    /// `mem` must be [MEM_SIZE] bytes.
+    /// Ignores `mem` and calls [setup].
     #[doc(alias = "KBDInit")]
     #[link_name = "KBDInit"]
     pub unsafe fn init(
@@ -281,8 +247,6 @@ unsafe extern "C" {
     pub unsafe fn get_mod_state(channel: Channel, state: *mut ModState) -> Error;
 
     /// KBDSetRepeat
-    ///
-    /// `delay` and `interval` are in milliseconds. A `delay` of 0 disables repeat.
     #[doc(alias = "KBDSetRepeat")]
     #[link_name = "KBDSetRepeat"]
     pub unsafe fn set_repeat(channel: Channel, delay: u16, interval: u16) -> Error;
@@ -356,18 +320,12 @@ unsafe extern "C" {
 
 /// Key processing: alt-keypad codes, dead keys and romaji to kana conversion.
 pub mod kpr {
-    /// KPR_FLUSH_AKP_CHAR
-    #[doc(alias = "KPR_FLUSH_AKP_CHAR")]
     pub const FLUSH_ALT_KEYPAD_CHAR: u16 = 0x0000;
 
-    /// KPR_FLUSH_ALL_CHAR
-    #[doc(alias = "KPR_FLUSH_ALL_CHAR")]
     pub const FLUSH_ALL_CHAR: u16 = 0xFFFF;
 
     pub const MAX_QUEUE_LEN: usize = 5;
 
-    /// KPRMode
-    #[doc(alias = "KPRMode")]
     #[repr(transparent)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct Mode(pub u32);
@@ -387,10 +345,7 @@ pub mod kpr {
         }
     }
 
-    /// KPRQueue
-    ///
     /// Initialize with [init_queue].
-    #[doc(alias = "KPRQueue")]
     #[repr(C)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct Queue {

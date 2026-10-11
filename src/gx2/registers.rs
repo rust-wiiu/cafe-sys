@@ -8,8 +8,6 @@ use super::enums::{
 };
 use crate::ffi;
 
-/// GX2SpecialState
-#[doc(alias = "GX2SpecialState")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SpecialState(pub u32);
@@ -17,7 +15,7 @@ pub struct SpecialState(pub u32);
 impl SpecialState {
     /// Accelerated surface clears.
     pub const CLEAR: Self = Self(0);
-    /// Fast HiZ clears, used with [SpecialState::CLEAR].
+    /// Fast HiZ clears.
     pub const CLEAR_HIZ: Self = Self(1);
     /// Accelerated surface copies.
     pub const COPY: Self = Self(2);
@@ -31,7 +29,7 @@ impl SpecialState {
     pub const CONVERT_AA_DEPTH: Self = Self(6);
     /// Multisample to single sample resolves.
     pub const RESOLVE_COLOR: Self = Self(7);
-    /// Accelerated color clears through the depth path, used with [SpecialState::CLEAR].
+    /// Color clears as depth.
     pub const CLEAR_COLOR_AS_DEPTH: Self = Self(8);
 }
 
@@ -271,7 +269,7 @@ unsafe extern "C" {
 
     /// GX2SetDepthOnlyControl
     ///
-    /// Same as [set_depth_stencil_control], but leaves the stencil state unchanged.
+    /// Same as [set_depth_stencil_control] with the stencil test disabled.
     #[doc(alias = "GX2SetDepthOnlyControl")]
     #[link_name = "GX2SetDepthOnlyControl"]
     pub unsafe fn set_depth_only_control(
@@ -334,7 +332,7 @@ unsafe extern "C" {
 
     /// GX2SetCullOnlyControl
     ///
-    /// Same as [set_polygon_control], but only changes the culling state.
+    /// Same as [set_polygon_control] with polygon modes and offsets disabled.
     #[doc(alias = "GX2SetCullOnlyControl")]
     #[link_name = "GX2SetCullOnlyControl"]
     pub unsafe fn set_cull_only_control(

@@ -6,14 +6,11 @@ use crate::ffi;
 use crate::sndcore2::device::{AuxId, DeviceType};
 use crate::sndcore2::voice::Voice;
 
-/// MIX_SOUND_MODE
-#[doc(alias = "MIX_SOUND_MODE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SoundMode(pub u32);
 
 impl SoundMode {
-    /// Ignores left and right pan.
     pub const MONO: Self = Self(0);
     pub const STEREO: Self = Self(1);
     pub const SURROUND: Self = Self(2);
@@ -21,10 +18,7 @@ impl SoundMode {
     pub const SIX_CHANNEL: Self = Self(4);
 }
 
-/// MIX_MODE
-///
 /// Channel mixing mode flags.
-#[doc(alias = "MIX_MODE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Mode(pub u32);
@@ -71,8 +65,6 @@ impl core::ops::BitOr for RmtMode {
     }
 }
 
-/// MIXCntrlStruct
-#[doc(alias = "MIXCntrlStruct")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Control {
@@ -84,8 +76,6 @@ pub struct Control {
     pub lfe: i16,
 }
 
-/// MIXCHVOLSTRUCT
-#[doc(alias = "MIXCHVOLSTRUCT")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ChannelVolume {
@@ -93,10 +83,7 @@ pub struct ChannelVolume {
     pub target: u16,
 }
 
-/// MIXChannel
-///
 /// Internal mixer state of a voice.
-#[doc(alias = "MIXChannel")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Channel {
@@ -118,15 +105,12 @@ pub struct Channel {
     pub rmt_mode: [u32; 4],
 }
 
-/// MIXRmtChannel
-#[doc(alias = "MIXRmtChannel")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RmtChannel {
     pub mode: RmtMode,
     pub fader: [ffi::c_int; 4],
     pub aux: [ffi::c_int; 4],
-    /// Two values each for main 0, aux 0, main 1, aux 1, ... main 3, aux 3.
     pub volumes: [u16; 16],
 }
 
@@ -146,7 +130,7 @@ unsafe extern "C" {
 
     /// MIXInitSpecifyMem
     ///
-    /// Same as [init], but uses `mem` instead of allocating. It needs `size_of::<Channel>() + size_of::<RmtChannel>()` bytes per voice.
+    /// Same as [init], but uses `mem` for the [Channel]s, one per AX voice, instead of an internal buffer.
     #[doc(alias = "MIXInitSpecifyMem")]
     #[link_name = "MIXInitSpecifyMem"]
     pub unsafe fn init_specify_mem(mem: *mut ffi::c_void);
@@ -158,7 +142,7 @@ unsafe extern "C" {
 
     /// MIXUpdateSettings
     ///
-    /// Applies the mixer settings to the voices. Call once from the AX frame callback.
+    /// Applies the mixer settings to the voices.
     #[doc(alias = "MIXUpdateSettings")]
     #[link_name = "MIXUpdateSettings"]
     pub unsafe fn update_settings();
@@ -175,7 +159,7 @@ unsafe extern "C" {
 
     /// MIXAssignChannel
     ///
-    /// Assigns a mixer channel to an acquired voice and resets its controls. Must be called before any other per-voice function.
+    /// Assigns a mixer channel to an acquired voice.
     #[doc(alias = "MIXAssignChannel")]
     #[link_name = "MIXAssignChannel"]
     pub unsafe fn assign_channel(voice: *mut Voice);
@@ -186,15 +170,11 @@ unsafe extern "C" {
     pub unsafe fn release_channel(voice: *mut Voice);
 
     /// MIXInitInputControl
-    ///
-    /// `input` is in 0.1 dB.
     #[doc(alias = "MIXInitInputControl")]
     #[link_name = "MIXInitInputControl"]
     pub unsafe fn init_input_control(voice: *mut Voice, input: i16, mode: Mode);
 
     /// MIXInitDeviceControl
-    ///
-    /// Call after [assign_channel].
     #[doc(alias = "MIXInitDeviceControl")]
     #[link_name = "MIXInitDeviceControl"]
     pub unsafe fn init_device_control(
@@ -246,8 +226,6 @@ unsafe extern "C" {
     ) -> ffi::c_bool;
 
     /// MIXSetDeviceAux
-    ///
-    /// `db` is in 0.1 dB.
     #[doc(alias = "MIXSetDeviceAux")]
     #[link_name = "MIXSetDeviceAux"]
     pub unsafe fn set_device_aux(
@@ -310,8 +288,6 @@ unsafe extern "C" {
     pub unsafe fn get_device_span(voice: *mut Voice, device: DeviceType, id: u32) -> i16;
 
     /// MIXSetDeviceFader
-    ///
-    /// `fader` is in 0.1 dB.
     #[doc(alias = "MIXSetDeviceFader")]
     #[link_name = "MIXSetDeviceFader"]
     pub unsafe fn set_device_fader(voice: *mut Voice, device: DeviceType, id: u32, fader: i16);
@@ -342,8 +318,6 @@ unsafe extern "C" {
     pub unsafe fn get_device_lfe(voice: *mut Voice, device: DeviceType, id: u32) -> i16;
 
     /// MIXSetDeviceSoundMode
-    ///
-    /// Applies to all instances of `device`. Must match the AX device mode.
     #[doc(alias = "MIXSetDeviceSoundMode")]
     #[link_name = "MIXSetDeviceSoundMode"]
     pub unsafe fn set_device_sound_mode(device: DeviceType, mode: SoundMode);
@@ -354,8 +328,6 @@ unsafe extern "C" {
     pub unsafe fn get_device_sound_mode(device: DeviceType) -> SoundMode;
 
     /// MIXInitChannel
-    ///
-    /// Levels are in 0.1 dB.
     #[doc(alias = "MIXInitChannel")]
     #[link_name = "MIXInitChannel"]
     pub unsafe fn init_channel(
@@ -376,8 +348,6 @@ unsafe extern "C" {
     pub unsafe fn reset_controls(voice: *mut Voice);
 
     /// MIXSetInput
-    ///
-    /// `db` is in 0.1 dB.
     #[doc(alias = "MIXSetInput")]
     #[link_name = "MIXSetInput"]
     pub unsafe fn set_input(voice: *mut Voice, db: ffi::c_int);
@@ -543,8 +513,6 @@ unsafe extern "C" {
     pub unsafe fn is_mute(voice: *mut Voice) -> ffi::c_bool;
 
     /// MIXDRCInitVoice
-    ///
-    /// Levels are in 0.1 dB.
     #[doc(alias = "MIXDRCInitVoice")]
     #[link_name = "MIXDRCInitVoice"]
     pub unsafe fn drc_init_voice(
@@ -657,8 +625,6 @@ unsafe extern "C" {
     pub unsafe fn drc_get_span(voice: *mut Voice) -> ffi::c_int;
 
     /// MIXRmtSetVolumes
-    ///
-    /// Levels are in 0.1 dB, one per controller.
     #[doc(alias = "MIXRmtSetVolumes")]
     #[link_name = "MIXRmtSetVolumes"]
     pub unsafe fn rmt_set_volumes(

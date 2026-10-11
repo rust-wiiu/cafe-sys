@@ -1,11 +1,9 @@
 //! GX2 usage alerts
 //!
-//! Runtime alerts about inefficient API usage.
+//! Runtime usage alerts.
 
 use crate::ffi;
 
-/// GX2UDAAlertID
-#[doc(alias = "GX2UDAAlertID")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct UdaAlertId(pub i32);
@@ -15,8 +13,6 @@ impl UdaAlertId {
     pub const ENABLE_STATE_SHADOWING: Self = Self(0);
 }
 
-/// GX2UDAAlertLevel
-#[doc(alias = "GX2UDAAlertLevel")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct UdaAlertLevel(pub u32);

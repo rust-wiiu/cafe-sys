@@ -8,7 +8,7 @@ use crate::ffi;
 unsafe extern "C" {
     /// GX2CopyColorBufferToScanBuffer
     ///
-    /// Copies (and converts) `buffer` into the next scan buffer of `target`.
+    /// Copies (and converts) `buffer` into the next scan buffer of `target`. Must not be called while writing a display list.
     #[doc(alias = "GX2CopyColorBufferToScanBuffer")]
     #[link_name = "GX2CopyColorBufferToScanBuffer"]
     pub unsafe fn copy_color_buffer_to_scan_buffer(buffer: *const ColorBuffer, target: ScanTarget);

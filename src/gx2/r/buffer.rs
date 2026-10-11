@@ -114,7 +114,7 @@ unsafe extern "C" {
 
     /// GX2RInitFetchShader
     ///
-    /// Same as `GX2InitFetchShaderEx` with the program in `program`.
+    /// Not supported, does nothing.
     #[doc(alias = "GX2RInitFetchShader")]
     #[link_name = "GX2RInitFetchShader"]
     pub unsafe fn init_fetch_shader(

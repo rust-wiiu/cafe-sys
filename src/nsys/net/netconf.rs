@@ -58,8 +58,6 @@ impl Error {
     pub const PROXY_PASSWORD: Self = Self(-34);
 }
 
-/// NETCONF_PROFILE
-#[doc(alias = "NETCONF_PROFILE")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ProfileId(pub i32);
@@ -134,8 +132,6 @@ impl AddrMethod {
     pub const MANUAL: Self = Self(2);
 }
 
-/// NETCONF_METHOD
-#[doc(alias = "NETCONF_METHOD")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ConfigMethod(pub u16);
@@ -226,8 +222,6 @@ impl ProxyAuthType {
     pub const ANY: Self = Self(11);
 }
 
-/// NETCONF_PROFILE_STATE
-#[doc(alias = "NETCONF_PROFILE_STATE")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ProfileState(pub u32);
@@ -237,8 +231,6 @@ impl ProfileState {
     pub const CONFIGURED: Self = Self(1);
 }
 
-/// NETCONF_PROFILE_VALID_FLAG
-#[doc(alias = "NETCONF_PROFILE_VALID_FLAG")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ValidFlag(pub u32);
@@ -248,8 +240,6 @@ impl ValidFlag {
     pub const VALID: Self = Self(1);
 }
 
-/// NETCONF_LAST_WIFI_LINK_ERROR
-#[doc(alias = "NETCONF_LAST_WIFI_LINK_ERROR")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LastWifiLinkError(pub u32);

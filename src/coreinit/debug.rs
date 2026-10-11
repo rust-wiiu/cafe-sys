@@ -69,8 +69,6 @@ impl LastError {
     pub const FPE: Self = Self(16);
 }
 
-/// CRASH_CONTROL_MODE
-#[doc(alias = "CRASH_CONTROL_MODE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CrashControlMode(pub u32);
@@ -83,8 +81,6 @@ impl CrashControlMode {
     pub const KILL: Self = Self(4);
 }
 
-/// OSCrashControl
-#[doc(alias = "OSCrashControl")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CrashControl {
@@ -95,19 +91,14 @@ pub struct CrashControl {
     pub data2: u32,
 }
 
-/// OSCrashInfo
-#[doc(alias = "OSCrashInfo")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CrashInfo {
-    /// A [LastError] value, or 17 if the process was killed.
     pub error: u32,
     pub upid: Upid,
     pub title_id: u64,
 }
 
-/// OS_CRASH_DUMP_TYPE
-#[doc(alias = "OS_CRASH_DUMP_TYPE")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CrashDumpType(pub u32);
@@ -117,8 +108,6 @@ impl CrashDumpType {
     pub const FULL: Self = Self(1);
 }
 
-/// OSPanicCBFunc
-#[doc(alias = "OSPanicCBFunc")]
 pub type PanicCallback = Option<unsafe extern "C" fn(arg: *mut ffi::c_void)>;
 
 /// DisassemblePPCFlags
@@ -132,18 +121,14 @@ impl DisassemblyFlags {
 }
 
 /// DisassemblyPrintFn
-#[doc(alias = "DisasmReport")]
 pub type DisassemblyPrintFn = Option<unsafe extern "C" fn(format: *const ffi::c_char, ...)>;
 
 /// DisassemblyFindSymbolFn
 ///
-/// Writes the nearest symbol name to `name` and returns its address, or 0.
-#[doc(alias = "DisasmGetSym")]
+/// Writes the symbol name to `name` and returns its address.
 pub type DisassemblyFindSymbolFn =
     Option<unsafe extern "C" fn(addr: u32, name: *mut ffi::c_char, name_size: u32) -> u32>;
 
-/// OS_LOG_CATEGORY
-#[doc(alias = "OS_LOG_CATEGORY")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LogCategory(pub u32);
@@ -157,14 +142,10 @@ impl LogCategory {
     pub const DRC: Self = Self(5);
     pub const SOUND: Self = Self(6);
     pub const FS: Self = Self(7);
-    /// First category free for application use, up to 255.
     pub const CUSTOM_RANGE_START: Self = Self(128);
-    /// All categories, for [log_set_filter_policy].
     pub const ALL: Self = Self(256);
 }
 
-/// OS_LOG_LEVEL
-#[doc(alias = "OS_LOG_LEVEL")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LogLevel(pub u32);
@@ -176,14 +157,9 @@ impl LogLevel {
     pub const ERROR: Self = Self(3);
 }
 
-/// OS_LOG_ENTRY_HEADER
-///
-/// `info0` and `info1` are bitfields: session, sequence byte, argument count, flags, data format and use case; and interrupt state, core, user mode, process, level and category.
-#[doc(alias = "OS_LOG_ENTRY_HEADER")]
 #[repr(C, packed)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LogEntryHeader {
-    /// Size of the header and following data.
     pub size: u32,
     pub time_stamp: u64,
     pub tag: u32,
@@ -191,8 +167,6 @@ pub struct LogEntryHeader {
     pub info1: u32,
 }
 
-/// OS_LOG_RETRIEVAL
-#[doc(alias = "OS_LOG_RETRIEVAL")]
 #[repr(C, packed)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LogRetrieval {
@@ -287,7 +261,7 @@ unsafe extern "C" {
 
     /// OSGetSymbolName
     ///
-    /// Writes the module and function name containing `addr` to `name`. Returns the symbol address.
+    /// Writes the name of the symbol containing `addr` to `name`. Returns the symbol address.
     #[doc(alias = "OSGetSymbolName")]
     #[link_name = "OSGetSymbolName"]
     pub unsafe fn get_symbol_name(addr: u32, name: *mut ffi::c_char, name_size: u32) -> u32;
@@ -383,8 +357,6 @@ unsafe extern "C" {
     pub unsafe fn get_test_setting(name: *const ffi::c_char) -> u32;
 
     /// MasterAgent_LoadNotify
-    ///
-    /// Debugger notification for loaded modules, see [dynload::NotifyCallback][super::dynload::NotifyCallback].
     #[doc(alias = "MasterAgent_LoadNotify")]
     #[link_name = "MasterAgent_LoadNotify"]
     pub unsafe fn master_agent_load_notify(
@@ -480,6 +452,8 @@ unsafe extern "C" {
     ) -> ffi::c_bool;
 
     /// OSLogRetrieve
+    ///
+    /// Returns false if no entries were retrieved.
     #[doc(alias = "OSLogRetrieve")]
     #[link_name = "OSLogRetrieve"]
     pub unsafe fn log_retrieve(
@@ -494,8 +468,6 @@ unsafe extern "C" {
     pub unsafe fn log_save_crash_dump() -> ffi::c_bool;
 
     /// OSLogSetFilterPolicy
-    ///
-    /// Drops entries of `category` below `minimum_level`.
     #[doc(alias = "OSLogSetFilterPolicy")]
     #[link_name = "OSLogSetFilterPolicy"]
     pub unsafe fn log_set_filter_policy(category: LogCategory, minimum_level: LogLevel);

@@ -14,7 +14,7 @@ unsafe extern "C" {
 
     /// OSCopyFromClipboard
     ///
-    /// `size` is the buffer size on input and the copied size on output.
+    /// `size` is the buffer size on input and the size of the clipboard data on output.
     #[doc(alias = "OSCopyFromClipboard")]
     #[link_name = "OSCopyFromClipboard"]
     pub unsafe fn copy_from(data: *mut ffi::c_void, size: *mut u32) -> ffi::c_bool;

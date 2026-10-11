@@ -1,6 +1,6 @@
-//! NTAG Format Library
+//! NTAG
 //!
-//! NFC tags with the NTAG format. Builds on [nfc](crate::nfc). Timeouts are in milliseconds.
+//! NFC tag library used for amiibo figures. Builds on [nfc]. Timeouts are in milliseconds.
 
 use crate::{ffi, nfc, nn::ffl::StoreData, vpad::Channel};
 
@@ -310,18 +310,6 @@ unsafe extern "C" {
     #[doc(alias = "NTAGAbort")]
     #[link_name = "NTAGAbort"]
     pub unsafe fn abort(chan: Channel, callback: Callback, context: *mut ffi::c_void) -> Error;
-
-    /// NTAGDetect
-    ///
-    /// Same as [nfc::detect].
-    #[doc(alias = "NTAGDetect")]
-    #[link_name = "NTAGDetect"]
-    pub unsafe fn detect(
-        chan: Channel,
-        timeout: u16,
-        callback: nfc::DetectCallback,
-        context: *mut ffi::c_void,
-    ) -> nfc::Error;
 
     /// NTAGSetTagDetectCallback
     #[doc(alias = "NTAGSetTagDetectCallback")]

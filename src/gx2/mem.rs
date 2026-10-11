@@ -3,15 +3,9 @@
 use super::enums::InvalidateMode;
 use crate::ffi;
 
-/// GX2DefaultAllocateFunc
-///
-/// `user_arg` is the resource flags of the allocation.
-#[doc(alias = "GX2DefaultAllocateFunc")]
 pub type DefaultAllocateFn =
     Option<unsafe extern "C" fn(user_arg: u32, size: u32, alignment: u32) -> *mut ffi::c_void>;
 
-/// GX2DefaultFreeFunc
-#[doc(alias = "GX2DefaultFreeFunc")]
 pub type DefaultFreeFn = Option<unsafe extern "C" fn(user_arg: u32, ptr: *mut ffi::c_void)>;
 
 unsafe extern "C" {
@@ -29,14 +23,12 @@ unsafe extern "C" {
 
     /// GX2SetDefaultAllocator
     ///
-    /// Allocator used for internal buffers such as the geometry shader ring buffers.
+    /// [init][super::state::init] installs a default allocator if none is set.
     #[doc(alias = "GX2SetDefaultAllocator")]
     #[link_name = "GX2SetDefaultAllocator"]
     pub unsafe fn set_default_allocator(alloc: DefaultAllocateFn, free: DefaultFreeFn);
 
     /// GX2NotifyMemAlloc
-    ///
-    /// Tells debugging tools about memory used by the GPU.
     #[doc(alias = "GX2NotifyMemAlloc")]
     #[link_name = "GX2NotifyMemAlloc"]
     pub unsafe fn notify_mem_alloc(ptr: *mut ffi::c_void, size: u32, alignment: u32);

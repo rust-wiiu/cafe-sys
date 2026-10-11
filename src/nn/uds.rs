@@ -83,7 +83,7 @@ impl ReceiveFlags {
 unsafe extern "C" {
     /// Initialize
     ///
-    /// `work_memory` must be [WORK_MEMORY_SIZE] bytes.
+    /// See [WORK_MEMORY_SIZE] for the recommended size of `work_memory`.
     #[doc(alias = "Initialize")]
     #[link_name = "Initialize__Q3_2nn3uds4CafeFPvUi"]
     pub unsafe fn init(work_memory: *mut ffi::c_void, work_memory_size: u32) -> Result;

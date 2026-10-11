@@ -99,8 +99,6 @@ pub enum ExportType {
     Data = 1,
 }
 
-/// OSDynLoad_SegmentRestrictionFlags
-#[doc(alias = "OSDynLoad_SegmentRestrictionFlags")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SegmentRestriction {
@@ -124,11 +122,10 @@ impl NotifyReason {
 }
 
 /// OSDynLoad_NotifyData
-#[doc(alias = "OSDynLoad_NotifyData", alias = "OSDynLoad_NotifyHdr")]
+#[doc(alias = "OSDynLoad_NotifyData")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct NotifyData {
-    /// Full path of the module.
     pub name: *mut ffi::c_char,
     pub text_addr: u32,
     pub text_offset: u32,
@@ -201,7 +198,7 @@ unsafe extern "C" {
 
     /// OSDynLoad_IsModuleLoaded
     ///
-    /// Same as [acquire] without loading the module.
+    /// Looks up an already loaded module without loading it.
     #[doc(alias = "OSDynLoad_IsModuleLoaded")]
     #[link_name = "OSDynLoad_IsModuleLoaded"]
     pub unsafe fn is_module_loaded(name: *const ffi::c_char, module: *mut Module) -> Error;
@@ -222,8 +219,6 @@ unsafe extern "C" {
     ) -> Error;
 
     /// OSDynLoad_FindTag
-    ///
-    /// `size` is the buffer size on input and the value size on output.
     #[doc(alias = "OSDynLoad_FindTag")]
     #[link_name = "OSDynLoad_FindTag"]
     pub unsafe fn find_tag(
@@ -234,8 +229,6 @@ unsafe extern "C" {
     ) -> Error;
 
     /// OSDynLoad_GetModuleName
-    ///
-    /// `size` is the buffer size on input and the name size on output.
     #[doc(alias = "OSDynLoad_GetModuleName")]
     #[link_name = "OSDynLoad_GetModuleName"]
     pub unsafe fn get_module_name(module: Module, name: *mut ffi::c_char, size: *mut i32) -> Error;
@@ -249,7 +242,7 @@ unsafe extern "C" {
 
     /// OSDynLoad_GetRPLInfo
     ///
-    /// Returns false if an RPL was loaded since [get_number_of_rpls].
+    /// Always false on retail consoles.
     #[doc(alias = "OSDynLoad_GetRPLInfo")]
     #[link_name = "OSDynLoad_GetRPLInfo"]
     pub unsafe fn get_rpl_info(first: u32, count: u32, infos: *mut NotifyData) -> ffi::c_bool;

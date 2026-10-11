@@ -1,4 +1,4 @@
-//! Storage / USB Periferal Management (SPM)
+//! Storage / USB Peripheral Management (SPM)
 //!
 //! [StorageIndex] is a C++ class, so functions taking it by value receive a pointer to a copy.
 

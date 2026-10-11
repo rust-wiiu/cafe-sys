@@ -36,7 +36,7 @@ pub struct ExceptionMode(pub u32);
 
 impl ExceptionMode {
     pub const SYSTEM: Self = Self(0);
-    /// Current thread only.
+    /// Current thread, on the current core.
     pub const THREAD: Self = Self(1);
     /// Current core.
     pub const GLOBAL: Self = Self(2);
@@ -74,9 +74,7 @@ impl core::ops::BitOr for FpuExceptionMask {
 }
 
 /// OSExceptionCallbackFn
-///
-/// Return true if handled.
-#[doc(alias = "OSExceptionCallbackFn", alias = "OSExceptionCallback")]
+#[doc(alias = "OSExceptionCallbackFn")]
 pub type ExceptionCallback =
     Option<unsafe extern "C" fn(interrupted_context: *mut Context) -> ffi::c_bool>;
 
@@ -93,7 +91,9 @@ unsafe extern "C" {
 
     /// OSSetExceptionCallbackEx
     ///
-    /// Returns the previous callback.
+    /// Returns the previous callback. Only [ExceptionType::DSI], [ExceptionType::ISI],
+    /// [ExceptionType::PROGRAM] and [ExceptionType::PERFORMANCE_MONITOR] are supported, other
+    /// types are ignored and return `None`.
     #[doc(alias = "OSSetExceptionCallbackEx")]
     #[link_name = "OSSetExceptionCallbackEx"]
     pub unsafe fn set_callback_ex(
@@ -122,6 +122,8 @@ unsafe extern "C" {
     pub unsafe fn set_iabr(all_cores: ffi::c_bool, address: *mut ffi::c_void);
 
     /// OSEnableThreadFPUException
+    ///
+    /// Only changes threads in the ready state, returns false otherwise.
     #[doc(alias = "OSEnableThreadFPUException")]
     #[link_name = "OSEnableThreadFPUException"]
     pub unsafe fn enable_thread_fpu_exception(
@@ -131,22 +133,24 @@ unsafe extern "C" {
 
     /// OSEnableAllThreadFPUException
     ///
-    /// Returns the previous mask.
+    /// Returns the number of threads that were changed, see [enable_thread_fpu_exception].
     #[doc(alias = "OSEnableAllThreadFPUException")]
     #[link_name = "OSEnableAllThreadFPUException"]
-    pub unsafe fn enable_all_thread_fpu_exception(mask: FpuExceptionMask) -> FpuExceptionMask;
+    pub unsafe fn enable_all_thread_fpu_exception(mask: FpuExceptionMask) -> u32;
 
     /// OSDisableThreadFPUException
+    ///
+    /// Only changes threads in the ready state, returns false otherwise.
     #[doc(alias = "OSDisableThreadFPUException")]
     #[link_name = "OSDisableThreadFPUException"]
     pub unsafe fn disable_thread_fpu_exception(thread: *mut Thread) -> ffi::c_bool;
 
     /// OSDisableAllThreadFPUException
     ///
-    /// Returns the previous mask.
+    /// Returns the number of threads that were changed, see [disable_thread_fpu_exception].
     #[doc(alias = "OSDisableAllThreadFPUException")]
     #[link_name = "OSDisableAllThreadFPUException"]
-    pub unsafe fn disable_all_thread_fpu_exception() -> FpuExceptionMask;
+    pub unsafe fn disable_all_thread_fpu_exception() -> u32;
 
     /// OSDisableContextFPUException
     #[doc(alias = "OSDisableContextFPUException")]

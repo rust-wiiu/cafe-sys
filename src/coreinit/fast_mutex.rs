@@ -1,6 +1,6 @@
 //! Fast mutex
 //!
-//! Recursive mutex without priority inheritance, cheaper when uncontended.
+//! Mutex that avoids the global scheduler lock and does not test for thread cancel.
 
 use super::thread_queue::ThreadSimpleQueue;
 use crate::ffi;
@@ -39,7 +39,6 @@ pub struct FastMutex {
     pub in_contended_queue: ffi::c_bool,
     pub contended_queue: ThreadSimpleQueue,
     pub owned_link: FastMutexLink,
-    /// Owning thread, with bit 0 set while contended.
     pub lock: u32,
     /// Recursion count.
     pub lock_count: i32,

@@ -42,7 +42,7 @@ unsafe extern "C" {
 
     /// GX2SetClearDepth
     ///
-    /// Sets the depth clear value of the buffer, which must match the cleared value for HiZ to work.
+    /// Sets the depth clear value of the buffer.
     #[doc(alias = "GX2SetClearDepth")]
     #[link_name = "GX2SetClearDepth"]
     pub unsafe fn set_clear_depth(depth_buffer: *mut DepthBuffer, depth: f32);

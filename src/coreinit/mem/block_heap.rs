@@ -5,11 +5,7 @@
 use super::{HeapFlags, HeapHandle, HeapHeader};
 use crate::ffi;
 
-/// MEM_BLKHEAP_BYTES_PER_BLOCK_TRACK
-#[doc(alias = "MEM_BLKHEAP_BYTES_PER_BLOCK_TRACK")]
 pub const BYTES_PER_BLOCK_TRACK: u32 = 20;
-/// MEM_BLKHEAP_TRACK_GROUP_OVERHEAD
-#[doc(alias = "MEM_BLKHEAP_TRACK_GROUP_OVERHEAD")]
 pub const TRACK_GROUP_OVERHEAD: u32 = 16;
 
 /// MEMBlockHeapTracking

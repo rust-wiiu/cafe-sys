@@ -8,12 +8,8 @@ pub mod dec;
 pub mod enc;
 pub mod lzma2;
 
-/// LZMA_PROPS_SIZE
-#[doc(alias = "LZMA_PROPS_SIZE")]
 pub const PROPS_SIZE: usize = 5;
 
-/// SRes
-#[doc(alias = "SRes")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub ffi::c_int);
@@ -36,8 +32,6 @@ impl Error {
     pub const NO_ARCHIVE: Self = Self(17);
 }
 
-/// ELzmaFinishMode
-#[doc(alias = "ELzmaFinishMode")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum FinishMode {
@@ -48,8 +42,6 @@ pub enum FinishMode {
     End = 1,
 }
 
-/// ELzmaStatus
-#[doc(alias = "ELzmaStatus")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Status(pub u32);
@@ -63,10 +55,7 @@ impl Status {
     pub const MAYBE_FINISHED_WITHOUT_MARK: Self = Self(4);
 }
 
-/// ISzAlloc
-///
 /// `p` points to this struct.
-#[doc(alias = "ISzAlloc")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct Alloc {
@@ -74,10 +63,7 @@ pub struct Alloc {
     pub free: Option<unsafe extern "C" fn(p: *mut ffi::c_void, address: *mut ffi::c_void)>,
 }
 
-/// ISeqInStream
-///
 /// `p` points to this struct. `read` sets `size` to the number of bytes read, 0 means end of stream.
-#[doc(alias = "ISeqInStream")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct SeqInStream {
@@ -86,10 +72,7 @@ pub struct SeqInStream {
     >,
 }
 
-/// ISeqOutStream
-///
 /// `p` points to this struct. `write` returns the number of bytes written, less than `size` means error.
-#[doc(alias = "ISeqOutStream")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct SeqOutStream {
@@ -98,10 +81,7 @@ pub struct SeqOutStream {
     >,
 }
 
-/// ICompressProgress
-///
 /// `p` points to this struct. Returning anything but [Error::OK] aborts. A size of `u64::MAX` means unknown.
-#[doc(alias = "ICompressProgress")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct CompressProgress {
@@ -112,7 +92,7 @@ pub struct CompressProgress {
 unsafe extern "C" {
     /// LzmaCompress
     ///
-    /// `props_size` must be [PROPS_SIZE]. Defaults: `level` 5, `dict_size` 1 << 24, `lc` 3, `lp` 0, `pb` 2, `fb` 32, `num_threads` 2.
+    /// `props_size` must be [PROPS_SIZE]. Defaults: `level` 5, `dict_size` 1 << 24, `lc` 3, `lp` 0, `pb` 2, `fb` 32, `num_threads` 1.
     #[doc(alias = "LzmaCompress")]
     #[link_name = "LzmaCompress"]
     pub unsafe fn compress(

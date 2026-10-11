@@ -146,8 +146,6 @@ unsafe extern "C" {
     #[link_name = "RebootAllClients__Q4_2nn3dlp4Cafe6ServerSFPCc"]
     pub unsafe fn reboot_all_clients(pass_phrase: *const ffi::c_char) -> Result;
 
-    /// StartDistribute
-    #[doc(alias = "StartDistribute")]
     #[link_name = "StartDistribute__Q4_2nn3dlp4Cafe6ServerSFv"]
     pub unsafe fn start_distribute() -> Result;
 

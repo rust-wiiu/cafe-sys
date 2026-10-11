@@ -2,8 +2,6 @@
 
 use crate::ffi;
 
-/// GX2QueryType
-#[doc(alias = "GX2QueryType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct QueryType(pub u32);
@@ -17,23 +15,17 @@ impl QueryType {
     pub const STREAM_OUT_STATS_GPU: Self = Self(3);
 }
 
-/// GX2QueryInfo
-///
 /// Written by the GPU, little-endian.
-#[doc(alias = "GX2QueryInfo")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct QueryInfo {
     pub reg: [u64; 8],
 }
 
-/// GX2StreamOutStats
-#[doc(alias = "GX2StreamOutStats")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StreamOutStats {
     pub primitives_written: u64,
-    /// Primitives that would have been written with enough space.
     pub storage_needed: u64,
 }
 
@@ -72,7 +64,7 @@ unsafe extern "C" {
 
     /// GX2QueryBeginConditionalRender
     ///
-    /// Following draws are skipped depending on the GPU query result and `predicate`.
+    /// Following draws are skipped depending on the GPU query result and `predicate`. `kind` must be a GPU query type.
     #[doc(alias = "GX2QueryBeginConditionalRender")]
     #[link_name = "GX2QueryBeginConditionalRender"]
     pub unsafe fn begin_conditional_render(
@@ -99,7 +91,7 @@ unsafe extern "C" {
 
     /// GX2SampleTopGPUCycle
     ///
-    /// Has the GPU write its cycle counter to `addr` at the top of the pipeline. Invalidate `addr` for the CPU before reading it.
+    /// Has the GPU write its cycle counter to `addr` at the top of the pipeline. `*addr` is set to all ones until then.
     #[doc(alias = "GX2SampleTopGPUCycle")]
     #[link_name = "GX2SampleTopGPUCycle"]
     pub unsafe fn sample_top_gpu_cycle(addr: *mut u64);

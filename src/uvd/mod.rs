@@ -1,4 +1,4 @@
-//! USB Video Decoder driver
+//! UVD hardware video decoder driver
 
 imports_section!(
     "uvd",

@@ -3,8 +3,6 @@
 use super::Result;
 use crate::ffi;
 
-/// ACStatus
-#[doc(alias = "ACStatus")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Status(pub i32);
@@ -15,8 +13,6 @@ impl Status {
     pub const PROCESSING: Self = Self(1);
 }
 
-/// ACErrorCode
-#[doc(alias = "ACErrorCode")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ErrorCode(pub u32);
@@ -56,7 +52,7 @@ unsafe extern "C" {
     ///
     /// Initializes the AC library.
     ///
-    /// If this function has already been called, it does nothing. This function **must** be called before calling any other AC functions.
+    /// Must be called before any other AC function.
     #[doc(alias = "ACInitialize")]
     #[link_name = "ACInitialize"]
     pub unsafe fn init() -> Result;
@@ -65,7 +61,7 @@ unsafe extern "C" {
     ///
     /// Deinitializes the AC library.
     ///
-    /// Close any active connections with [close] before calling this function. This function asserts(?) if called more times than the [init] function.
+    /// Do not call other AC functions except [init] afterwards.
     #[doc(alias = "ACFinalize")]
     #[link_name = "ACFinalize"]
     pub unsafe fn deinit();
@@ -74,7 +70,7 @@ unsafe extern "C" {
     ///
     /// Creates a network connection.
     ///
-    /// Uses the default network profile configured in the system settings. Any network related functions (like `socket`) must be used after this function and before [close].
+    /// Uses the default network profile configured in the system settings.
     #[doc(alias = "ACConnect")]
     #[link_name = "ACConnect"]
     pub unsafe fn connect() -> Result;
@@ -100,7 +96,7 @@ unsafe extern "C" {
     ///
     /// Closes a network connection.
     ///
-    /// Only closes connections created by this process. Any network related functions (like `socket`) must be used after [connect] function and before this function.
+    /// Closes connections made with [connect].
     #[doc(alias = "ACClose")]
     #[link_name = "ACClose"]
     pub unsafe fn close() -> Result;
@@ -126,8 +122,6 @@ unsafe extern "C" {
     pub unsafe fn get_close_status(status: *mut Status) -> Result;
 
     /// ACGetConnectResult
-    ///
-    /// Result of the last [connect_async].
     #[doc(alias = "ACGetConnectResult")]
     #[link_name = "ACGetConnectResult"]
     pub unsafe fn get_connect_result(result: *mut Result) -> Result;

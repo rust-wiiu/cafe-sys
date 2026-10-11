@@ -25,7 +25,7 @@ pub struct ThreadQueue {
 }
 
 /// OSThreadSimpleQueue
-#[doc(alias = "OSThreadSimpleQueue", alias = "OSThreadSmallQueue")]
+#[doc(alias = "OSThreadSimpleQueue")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ThreadSimpleQueue {

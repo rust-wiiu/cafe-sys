@@ -9,8 +9,6 @@ pub const MAX_TITLES_NUM: u32 = MAX_UNIQUE_ID_NUM * MAX_VARIATION_NUM;
 pub const MAX_CONTENT_PATH_SIZE: usize = 88;
 pub const MAX_OPENABLE_TITLE_NUM: u32 = 16;
 
-/// AOCStatus
-#[doc(alias = "AOCStatus")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Status(pub i32);
@@ -33,8 +31,6 @@ impl Status {
     pub const INTERNAL_ERROR: Self = Self(-1024);
 }
 
-/// AOC_TitleListType
-#[doc(alias = "AOC_TitleListType")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TitleListType {
@@ -64,7 +60,7 @@ unsafe extern "C" {
 
     /// AOC_ListTitle
     ///
-    /// Lists the installed add-on content of the calling title. Can block for a long time.
+    /// Lists the installed add-on content of the calling title.
     /// `work_buffer` must be 64-byte aligned.
     #[doc(alias = "AOC_ListTitle")]
     #[link_name = "AOC_ListTitle"]
@@ -78,7 +74,7 @@ unsafe extern "C" {
 
     /// AOC_OpenTitle
     ///
-    /// Writes the content root directory to `path`. Can block for a long time.
+    /// Writes the content root directory to `path`.
     /// `work_buffer` must be 64-byte aligned.
     #[doc(alias = "AOC_OpenTitle")]
     #[link_name = "AOC_OpenTitle"]

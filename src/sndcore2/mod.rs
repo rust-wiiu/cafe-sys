@@ -10,18 +10,12 @@ pub mod multi_voice;
 pub mod rmt;
 pub mod voice;
 
-/// AX_MAX_VOICES
-#[doc(alias = "AX_MAX_VOICES")]
 pub const MAX_VOICES: u32 = 96;
-/// AX_MAX_APP_FRAME_CBS
-#[doc(alias = "AX_MAX_APP_FRAME_CBS")]
 pub const MAX_APP_FRAME_CALLBACKS: u32 = 64;
-/// AX_MS_PER_FRAME
-#[doc(alias = "AX_MS_PER_FRAME")]
 pub const MS_PER_FRAME: u32 = 3;
 
 /// AXResult
-#[doc(alias = "AXResult", alias = "AXPB_ERROR_CODE")]
+#[doc(alias = "AXResult")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub i32);
@@ -53,8 +47,6 @@ impl Error {
     pub const MULTI_VOICE_INVALID_FORMAT: Self = Self(-23);
 }
 
-/// AXINIT_ERROR_CODE
-#[doc(alias = "AXINIT_ERROR_CODE")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InitError(pub i32);
@@ -67,10 +59,7 @@ impl InitError {
     pub const INVALID_PIPELINE_STAGE: Self = Self(-4);
 }
 
-/// AXSYNC_ERROR
-///
 /// Non-negative values are success.
-#[doc(alias = "AXSYNC_ERROR")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SyncError(pub i32);
@@ -78,14 +67,13 @@ pub struct SyncError(pub i32);
 impl SyncError {
     pub const SUCCESS: Self = Self(0);
     pub const IN_USE: Self = Self(-1);
-    /// Called from an AX callback, or from another core.
     pub const IN_CALLBACK: Self = Self(-2);
     pub const NOT_PROTECTED: Self = Self(-3);
     pub const TOO_MANY_PROTECTS: Self = Self(-4);
 }
 
 /// AXInitRenderer
-#[doc(alias = "AXInitRenderer", alias = "AX_RENDERER_FREQ_ENUM")]
+#[doc(alias = "AXInitRenderer")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InitRenderer(pub u32);
@@ -96,7 +84,7 @@ impl InitRenderer {
 }
 
 /// AXInitPipeline
-#[doc(alias = "AXInitPipeline", alias = "AX_PIPELINE_STAGES_ENUM")]
+#[doc(alias = "AXInitPipeline")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InitPipeline(pub u32);
@@ -107,7 +95,7 @@ impl InitPipeline {
 }
 
 /// AXInitParams
-#[doc(alias = "AXInitParams", alias = "AXINITPARAMS")]
+#[doc(alias = "AXInitParams")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InitParams {
@@ -117,8 +105,6 @@ pub struct InitParams {
     pub pipeline: InitPipeline,
 }
 
-/// AXOutputBufferMode
-#[doc(alias = "AX_OUTPUT_BUFFER")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OutputBufferMode {
@@ -128,7 +114,7 @@ pub enum OutputBufferMode {
 }
 
 /// AXProfile
-#[doc(alias = "AXProfile", alias = "AXPROFILE")]
+#[doc(alias = "AXProfile")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Profile {
@@ -176,21 +162,15 @@ pub struct DspAdpcm {
     pub loop_pred_scale: u16,
     pub loop_yn1: i16,
     pub loop_yn2: i16,
-    /// Number of interleaved channels (1-6), or 0 for a single channel.
     pub multi_ch_count: u16,
-    /// ADPCM frames (8 bytes each) per interleaved channel block.
     pub block_frame_count: u16,
     _pad: ffi::unknown<18>,
 }
 
 /// AXFrameCallback
-#[doc(alias = "AXFrameCallback", alias = "AXUserCallback")]
+#[doc(alias = "AXFrameCallback")]
 pub type FrameCallback = Option<unsafe extern "C" fn()>;
 
-/// AXExceedCallback
-///
-/// Called when the DSP did not finish within the audio frame.
-#[doc(alias = "AXExceedCallback")]
 pub type ExceedCallback = Option<unsafe extern "C" fn(cycles: u32)>;
 
 /// AXAuxCallback
@@ -235,7 +215,7 @@ const _: () = {
 unsafe extern "C" {
     /// AXInit
     ///
-    /// Same as [init_with_params] with a 32 kHz renderer and a single pipeline stage.
+    /// Same as [init_with_params] with a 32 kHz renderer and four pipeline stages.
     #[doc(alias = "AXInit")]
     #[link_name = "AXInit"]
     #[deprecated(note = "Use init_with_params instead")]
@@ -289,7 +269,7 @@ unsafe extern "C" {
 
     /// AXIsAudioOutReady
     ///
-    /// Whether the system audio output setting is ready.
+    /// Same as `AVMIsAVOutReady`.
     #[doc(alias = "AXIsAudioOutReady")]
     #[link_name = "AXIsAudioOutReady"]
     pub unsafe fn is_audio_out_ready() -> ffi::c_bool;
@@ -306,14 +286,14 @@ unsafe extern "C" {
 
     /// AXInitProfile
     ///
-    /// Profiles of each audio frame are recorded into `profiles` until [get_swap_profile] is called. Double buffer the array.
+    /// Profiles of each audio frame are recorded into `profiles`.
     #[doc(alias = "AXInitProfile")]
     #[link_name = "AXInitProfile"]
     pub unsafe fn init_profile(profiles: *mut Profile, max_profiles: u32);
 
     /// AXGetSwapProfile
     ///
-    /// Same as [init_profile], but returns the number of valid profiles recorded since the last call.
+    /// Same as [init_profile], but returns the number of profiles recorded since the last call.
     #[doc(alias = "AXGetSwapProfile")]
     #[link_name = "AXGetSwapProfile"]
     pub unsafe fn get_swap_profile(profiles: *mut Profile, max_profiles: u32) -> u32;
@@ -367,7 +347,7 @@ unsafe extern "C" {
 
     /// AXSetMaxVoices
     ///
-    /// Only limits the usable voices, does not change memory allocation.
+    /// Not implemented.
     #[doc(alias = "AXSetMaxVoices")]
     #[link_name = "AXSetMaxVoices"]
     pub unsafe fn set_max_voices(num: u32);
@@ -378,8 +358,6 @@ unsafe extern "C" {
     pub unsafe fn get_max_dsp_voices() -> u32;
 
     /// AXSetMaxDspVoices
-    ///
-    /// Non-zero overrides the load calculation as the reason to move voices to the PPC.
     #[doc(alias = "AXSetMaxDspVoices")]
     #[link_name = "AXSetMaxDspVoices"]
     pub unsafe fn set_max_dsp_voices(max_voices: u32);
@@ -391,7 +369,7 @@ unsafe extern "C" {
 
     /// AXSetDspLoadLimit
     ///
-    /// Above this load (0.0-100.0) voices move to the PPC, or are dropped if pinned to the DSP.
+    /// Clamped to 0.0-92.0.
     #[doc(alias = "AXSetDspLoadLimit")]
     #[link_name = "AXSetDspLoadLimit"]
     pub unsafe fn set_dsp_load_limit(limit: f32);
@@ -403,21 +381,17 @@ unsafe extern "C" {
 
     /// AXSetPpcLoadLimit
     ///
-    /// Above this load (0.0-100.0) voices are dropped.
+    /// Clamped to 0.0-95.0.
     #[doc(alias = "AXSetPpcLoadLimit")]
     #[link_name = "AXSetPpcLoadLimit"]
     pub unsafe fn set_ppc_load_limit(limit: f32);
 
     /// AXGetDspLoad
-    ///
-    /// Only call from the frame callback.
     #[doc(alias = "AXGetDspLoad")]
     #[link_name = "AXGetDspLoad"]
     pub unsafe fn get_dsp_load() -> f32;
 
     /// AXGetPpcLoad
-    ///
-    /// Only call from the frame callback.
     #[doc(alias = "AXGetPpcLoad")]
     #[link_name = "AXGetPpcLoad"]
     pub unsafe fn get_ppc_load() -> f32;
@@ -458,12 +432,12 @@ unsafe extern "C" {
     /// AXSetDefaultMixerSelect
     ///
     /// Renderer of newly acquired voices. Returns the previous one.
-    #[doc(alias = "AXSetDefaultMixerSelect", alias = "AXSetDefaultRenderer")]
+    #[doc(alias = "AXSetDefaultMixerSelect")]
     #[link_name = "AXSetDefaultMixerSelect"]
     pub unsafe fn set_default_renderer(renderer: voice::Renderer) -> voice::Renderer;
 
     /// AXGetDefaultMixerSelect
-    #[doc(alias = "AXGetDefaultMixerSelect", alias = "AXGetDefaultRenderer")]
+    #[doc(alias = "AXGetDefaultMixerSelect")]
     #[link_name = "AXGetDefaultMixerSelect"]
     pub unsafe fn get_default_renderer() -> voice::Renderer;
 
@@ -508,7 +482,7 @@ unsafe extern "C" {
 
     /// AXUserBegin
     ///
-    /// Starts a user protection clause, ended by [user_end]. Protects data shared between threads and AX callbacks. Voice parameters changed inside are protected too. Can be nested up to [MAX_VOICES] times.
+    /// Starts a user protection clause, ended by [user_end].
     #[doc(alias = "AXUserBegin")]
     #[link_name = "AXUserBegin"]
     pub unsafe fn user_begin() -> SyncError;
@@ -541,8 +515,6 @@ unsafe extern "C" {
     pub unsafe fn get_adpcm_work_size(samples: i32) -> i32;
 
     /// AXGetAdpcmData
-    ///
-    /// Encodes mono 16-bit big-endian PCM into DSP-ADPCM. Sizes come from [get_adpcm_output_size] and [get_adpcm_work_size].
     #[doc(alias = "AXGetAdpcmData")]
     #[link_name = "AXGetAdpcmData"]
     pub unsafe fn get_adpcm_data(
@@ -557,8 +529,6 @@ unsafe extern "C" {
     ) -> i32;
 
     /// AXDecodeAdpcmData
-    ///
-    /// Decodes DSP-ADPCM into mono 16-bit big-endian PCM.
     #[doc(alias = "AXDecodeAdpcmData")]
     #[link_name = "AXDecodeAdpcmData"]
     pub unsafe fn decode_adpcm_data(

@@ -5,10 +5,7 @@ use super::enums::{
 };
 use crate::ffi;
 
-/// GX2DRCConnectReason
-///
 /// Reason passed to a [DrcConnectCallback].
-#[doc(alias = "GX2_DRC_ATTACH", alias = "GX2_DRC_DETACH")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DrcConnectReason(pub i32);
@@ -18,8 +15,6 @@ impl DrcConnectReason {
     pub const ATTACH: Self = Self(1);
 }
 
-/// GX2DRCEncodingHint
-#[doc(alias = "GX2DRCEncodingHint")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DrcEncodingHint(pub u32);
@@ -40,8 +35,8 @@ impl core::ops::BitOr for DrcEncodingHint {
 
 /// GX2DRCConnectCallback
 ///
-/// Called when the DRC on `channel` connects or disconnects. Cleared on process switch.
-#[doc(alias = "GX2DRCConnectCallback", alias = "GX2DRCConnectCB")]
+/// Called when the DRC on `channel` connects or disconnects.
+#[doc(alias = "GX2DRCConnectCallback")]
 pub type DrcConnectCallback = Option<unsafe extern "C" fn(channel: i32, reason: DrcConnectReason)>;
 
 unsafe extern "C" {
@@ -108,15 +103,11 @@ unsafe extern "C" {
     );
 
     /// GX2SetTVScale
-    ///
-    /// Size of the rendered area of the TV scan buffer, scaled to the full output.
     #[doc(alias = "GX2SetTVScale")]
     #[link_name = "GX2SetTVScale"]
     pub unsafe fn set_tv_scale(width: u32, height: u32);
 
     /// GX2SetDRCScale
-    ///
-    /// Size of the rendered area of the DRC scan buffer, scaled to the full output.
     #[doc(alias = "GX2SetDRCScale")]
     #[link_name = "GX2SetDRCScale"]
     pub unsafe fn set_drc_scale(width: u32, height: u32);
@@ -153,7 +144,7 @@ unsafe extern "C" {
 
     /// GX2SetDRCConnectCallback
     ///
-    /// Returns the previous callback. Must be registered again after a process switch.
+    /// Returns the previous callback.
     #[doc(alias = "GX2SetDRCConnectCallback")]
     #[link_name = "GX2SetDRCConnectCallback"]
     pub unsafe fn set_drc_connect_callback(
@@ -168,7 +159,7 @@ unsafe extern "C" {
 
     /// GX2SetVideoEncodingHint
     ///
-    /// Hints the DRC video encoder, e.g. with a global motion vector in units of 4 pixels pointing from the new to the old frame.
+    /// Hints the DRC video encoder, e.g. with a global motion vector.
     #[doc(alias = "GX2SetVideoEncodingHint")]
     #[link_name = "GX2SetVideoEncodingHint"]
     pub unsafe fn set_video_encoding_hint(
@@ -179,7 +170,7 @@ unsafe extern "C" {
 
     /// GX2GetDRCVerticalInfo
     ///
-    /// Current vertical count of the DRC, and the field (0 or 1) in 30 Hz mode.
+    /// Current vertical count and phase of the DRC.
     #[doc(alias = "GX2GetDRCVerticalInfo")]
     #[link_name = "GX2GetDRCVerticalInfo"]
     pub unsafe fn get_drc_vertical_info(vcount: *mut u32, vphase: *mut u32);
@@ -190,8 +181,6 @@ unsafe extern "C" {
     pub unsafe fn set_tv_gamma(gamma: f32);
 
     /// GX2GetTVGamma
-    ///
-    /// Gamma set by the application.
     #[doc(alias = "GX2GetTVGamma")]
     #[link_name = "GX2GetTVGamma"]
     pub unsafe fn get_tv_gamma(gamma: *mut f32);
@@ -207,8 +196,6 @@ unsafe extern "C" {
     pub unsafe fn set_drc_gamma(gamma: f32);
 
     /// GX2GetDRCGamma
-    ///
-    /// Gamma set by the application.
     #[doc(alias = "GX2GetDRCGamma")]
     #[link_name = "GX2GetDRCGamma"]
     pub unsafe fn get_drc_gamma(gamma: *mut f32);

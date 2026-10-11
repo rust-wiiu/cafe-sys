@@ -11,7 +11,6 @@ pub const DPD_IMG_RESO_WY: u32 = 768;
 pub const MAX_CUSTOM_BUFS: usize = 20;
 pub const MAX_BULK_BUFS: usize = 21;
 pub const PRESS_UNITS: usize = 4;
-#[doc(alias = "WPAD_ADDR_LEN")]
 pub const ADDRESS_LEN: usize = 6;
 pub const MEM_GAMEDATA_LEN: u32 = 3888;
 pub const ACC_RESO: u32 = 1024;
@@ -20,7 +19,7 @@ pub const FS_ACC_RESO: u32 = 1024;
 pub const CL_STICK_RESO: u32 = 1024;
 pub const CL_TRIGGER_RESO: u32 = 256;
 pub const UC_STICK_RESO: u32 = 4096;
-/// Size of the Balance Board work area, see [register_blc_workarea].
+/// Not needed, [register_blc_workarea] ignores its work area.
 pub const BLCINT_WORK_LEN: usize = 307200;
 
 pub const BATTERY_LEVEL_CRITICAL: u8 = 0;
@@ -43,7 +42,7 @@ pub const BLCLB_BLK5_LEN: u16 = 16;
 
 /// WPADChan
 ///
-/// Controller channel. Newer firmware supports up to 7 channels.
+/// Controller channel. See [kpad::set_max_controllers](super::kpad::set_max_controllers) for more than 4 controllers.
 #[doc(alias = "WPADChan")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -188,7 +187,6 @@ pub struct DeviceType(pub u32);
 
 impl DeviceType {
     pub const CORE: Self = Self(0);
-    #[doc(alias = "WPAD_DEV_FREESTYLE")]
     pub const FREESTYLE: Self = Self(1);
     pub const CLASSIC: Self = Self(2);
     pub const BALANCE_CHECKER: Self = Self(3);
@@ -305,10 +303,7 @@ impl MplsStatus {
     pub const PLSVLD: Self = Self(128);
 }
 
-/// WPADMplsType
-///
 /// Whether MotionPlus is built into the Wii Remote.
-#[doc(alias = "WPADMplsType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MplsType(pub i8);
@@ -350,8 +345,6 @@ impl SensorBarPos {
     pub const TOP: Self = Self(1);
 }
 
-/// WPADSyncType
-#[doc(alias = "WPADSyncType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SyncType(pub u8);
@@ -372,8 +365,6 @@ impl SyncEvent {
     pub const DONE: Self = Self(1);
 }
 
-/// WPADClearDeviceEvent
-#[doc(alias = "WPADClearDeviceEvent")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ClearEvent(pub i32);
@@ -409,8 +400,6 @@ impl StickClamp {
     pub const CIRCLE_WITHOUT_PLAY: Self = Self(3);
 }
 
-/// WPAD_TRIGGER
-#[doc(alias = "WPAD_TRIGGER")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TriggerClamp(pub u32);
@@ -420,8 +409,6 @@ impl TriggerClamp {
     pub const INDIVIDUAL_BASE: Self = Self(1);
 }
 
-/// WPAD_ACC_CLAMP
-#[doc(alias = "WPAD_ACC_CLAMP")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AccClamp(pub u32);
@@ -432,7 +419,6 @@ impl AccClamp {
 }
 
 /// WPAD_MOTOR_*
-#[doc(alias = "WPAD_MOTOR")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum MotorCommand {
@@ -458,8 +444,6 @@ pub enum PeripheralSpace {
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Address(pub [u8; ADDRESS_LEN]);
 
-/// DPDObject
-///
 /// IR point seen by the pointer camera.
 #[doc(alias("DPDObject", "WPADIRDot"))]
 #[repr(C)]
@@ -471,7 +455,6 @@ pub struct DpdObject {
     pub trace_id: u8,
 }
 
-/// DPDObjEx
 #[doc(alias("DPDObjEx", "WPADIRDotEx"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -484,7 +467,6 @@ pub struct DpdObjectEx {
     pub radius: i8,
 }
 
-/// WPADAcc
 #[doc(alias("WPADAcc", "WPADVec3D"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -527,8 +509,6 @@ pub struct StatusEx {
     pub exp: [DpdObjectEx; DPD_MAX_OBJECTS],
 }
 
-/// WPADFSStatus
-///
 /// Wii Remote with Nunchuk.
 #[doc(alias("WPADFSStatus", "WPADStatusNunchuk"))]
 #[repr(C)]
@@ -550,8 +530,6 @@ pub struct FsStatus {
     pub fs_stick_y: i8,
 }
 
-/// WPADCLStatus
-///
 /// Wii Remote with Classic Controller.
 #[doc(alias("WPADCLStatus", "WPADStatusClassic"))]
 #[repr(C)]
@@ -575,8 +553,6 @@ pub struct ClStatus {
     pub cl_trigger_r: u8,
 }
 
-/// WPADUCStatus
-///
 /// Wii U Pro Controller.
 #[doc(alias("WPADUCStatus", "WPADStatusProController"))]
 #[repr(C)]
@@ -600,8 +576,6 @@ pub struct UcStatus {
     pub cable: ffi::c_bool,
 }
 
-/// WPADCMStatus
-#[doc(alias = "WPADCMStatus")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CmStatus {
@@ -618,8 +592,6 @@ pub struct CmStatus {
     pub custom: [u8; MAX_CUSTOM_BUFS],
 }
 
-/// WPADBLStatus
-///
 /// Balance Board.
 #[doc(alias("WPADBLStatus", "WPADStatusBalanceBoard"))]
 #[repr(C)]
@@ -639,7 +611,6 @@ pub struct BlStatus {
     pub battery: u8,
 }
 
-/// WPADTRStatus
 #[doc(alias("WPADTRStatus", "WPADStatusTrain"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -658,8 +629,6 @@ pub struct TrStatus {
     pub mascon: u8,
 }
 
-/// WPADBKStatus
-#[doc(alias = "WPADBKStatus")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BkStatus {
@@ -700,7 +669,7 @@ pub struct MpClExt {
     pub cl_trigger_r: u8,
 }
 
-/// Extension data of [MpStatus], depending on [MplsMode].
+/// Extension data of [MpStatus], depending on [MpStatus::dev].
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub union MpExt {
@@ -708,8 +677,6 @@ pub union MpExt {
     pub cl: MpClExt,
 }
 
-/// WPADMPStatus
-///
 /// Wii Remote with MotionPlus.
 #[doc(alias("WPADMPStatus", "WPADStatusMotionPlus"))]
 #[repr(C)]
@@ -732,7 +699,6 @@ pub struct MpStatus {
     pub roll: i16,
 }
 
-/// WPADMpls
 #[doc(alias("WPADMpls", "WPADiMplsCalibration"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
@@ -764,7 +730,7 @@ pub struct Info {
 
 /// WENCParams
 ///
-/// Speaker encoder state, zero before the first call.
+/// Speaker encoder state.
 #[doc(alias = "WENCParams")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -810,12 +776,8 @@ pub type SyncDeviceCallback = Option<unsafe extern "C" fn(event: SyncEvent, num:
 #[doc(alias = "WPADClearDeviceCallback")]
 pub type ClearDeviceCallback = Option<unsafe extern "C" fn(event: ClearEvent)>;
 
-/// WPADAlloc
-#[doc(alias = "WPADAlloc")]
 pub type AllocFn = Option<unsafe extern "C" fn(size: u32) -> *mut ffi::c_void>;
 
-/// WPADFree
-#[doc(alias = "WPADFree")]
 pub type FreeFn = Option<unsafe extern "C" fn(ptr: *mut ffi::c_void) -> u8>;
 
 unsafe extern "C" {
@@ -1322,7 +1284,7 @@ unsafe extern "C" {
 
     /// WPADEnableURCC
     ///
-    /// Enables the Wii U Pro Controller.
+    /// Enables or disables Wii U Pro Controller support.
     #[doc(alias = "WPADEnableURCC")]
     #[link_name = "WPADEnableURCC"]
     pub unsafe fn enable_urcc(enable: ffi::c_bool);
@@ -1399,7 +1361,7 @@ unsafe extern "C" {
 
     /// WPADRegisterBLCWorkarea
     ///
-    /// `workarea` must be [BLCINT_WORK_LEN] bytes.
+    /// `workarea` is ignored, this only calls [enable_wbc].
     #[doc(alias = "WPADRegisterBLCWorkarea")]
     #[link_name = "WPADRegisterBLCWorkarea"]
     pub unsafe fn register_blc_workarea(workarea: *mut ffi::c_void);

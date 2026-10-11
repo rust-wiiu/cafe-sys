@@ -34,7 +34,7 @@ unsafe extern "C" {
 
     /// GX2RLockSurfaceEx
     ///
-    /// `mip_level` 0 is the image, 1 and above the mipmaps, -1 all of them.
+    /// Returns `image`. `mip_level` selects the range to invalidate: 0 the image, 1 and above a mipmap, -1 all mipmaps.
     #[doc(alias = "GX2RLockSurfaceEx")]
     #[link_name = "GX2RLockSurfaceEx"]
     pub unsafe fn lock_ex(

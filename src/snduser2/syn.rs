@@ -7,10 +7,6 @@ use crate::sndcore2::voice as ax;
 #[doc(alias = "SYN_INPUT_BUFFER_SIZE")]
 pub const INPUT_BUFFER_SIZE: usize = 256;
 
-/// WTART
-///
-/// Translated DLS articulation block.
-#[doc(alias = "WTART")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WtArt {
@@ -36,8 +32,6 @@ pub struct WtArt {
     pub pan: i32,
 }
 
-/// WTREGION
-#[doc(alias = "WTREGION")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WtRegion {
@@ -51,8 +45,6 @@ pub struct WtRegion {
     pub sample_index: u32,
 }
 
-/// WT_FORMAT
-#[doc(alias = "WT_FORMAT")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WtFormat(pub u16);
@@ -63,23 +55,18 @@ impl WtFormat {
     pub const PCM8: Self = Self(2);
 }
 
-/// WTSAMPLE
-#[doc(alias = "WTSAMPLE")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WtSample {
     pub format: WtFormat,
     /// In Hz.
     pub sample_rate: u16,
-    /// In samples, from the start of the sample file.
     pub offset: u32,
     /// In samples.
     pub length: u32,
     pub adpcm_index: u16,
 }
 
-/// WTADPCM
-#[doc(alias = "WTADPCM")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WtAdpcm {
@@ -93,20 +80,13 @@ pub struct WtAdpcm {
     pub loop_yn2: i16,
 }
 
-/// WTINST
-///
-/// Instrument, region index per key.
-#[doc(alias = "WTINST")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WtInst {
     pub key_region: [u16; 128],
 }
 
-/// WTFILEHEADER
-///
 /// Offsets are from the start of the file.
-#[doc(alias = "WTFILEHEADER")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WtFileHeader {
@@ -118,13 +98,9 @@ pub struct WtFileHeader {
     pub offset_adpcm_context: u32,
 }
 
-/// SYNCallback
-#[doc(alias = "SYNCallback")]
 pub type Callback =
     Option<unsafe extern "C" fn(voice: *mut ax::Voice, synth: *mut Synth, midi_channel: u8)>;
 
-/// SYNSYNTH
-#[doc(alias = "SYNSYNTH")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct Synth {
@@ -141,9 +117,7 @@ pub struct Synth {
     pub priority_note_release: u32,
     /// Instrument per MIDI channel.
     pub inst: [*mut WtInst; 16],
-    /// In 0.1 dB.
     pub master_volume: i32,
-    /// In 0.1 dB.
     pub drc_master_volume: i32,
     pub renderer: ax::Renderer,
     pub controller: [[u8; 128]; 16],
@@ -165,8 +139,6 @@ pub struct Synth {
     pub update_callback: Callback,
 }
 
-/// SYN_VOICE_TYPE
-#[doc(alias = "SYN_VOICE_TYPE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VoiceType(pub u32);
@@ -176,8 +148,6 @@ impl VoiceType {
     pub const LOOPED: Self = Self(1);
 }
 
-/// SYN_VOICE_STATE
-#[doc(alias = "SYN_VOICE_STATE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VoiceState(pub u32);
@@ -190,10 +160,7 @@ impl VoiceState {
     pub const DONE: Self = Self(4);
 }
 
-/// SYNVOICE
-///
 /// [init_specify_mem] needs one per AX voice.
-#[doc(alias = "SYNVOICE")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct Voice {
@@ -267,15 +234,13 @@ unsafe extern "C" {
     pub unsafe fn quit();
 
     /// SYNRunAudioFrame
-    ///
-    /// Call from the AX frame callback.
     #[doc(alias = "SYNRunAudioFrame")]
     #[link_name = "SYNRunAudioFrame"]
     pub unsafe fn run_audio_frame();
 
     /// SYNInitSynth
     ///
-    /// `wavetable` and `samples` point to the loaded wavetable and sample files. `zero_buffer` is unused. Priorities are 1-31.
+    /// `wavetable` and `samples` point to the loaded wavetable and sample files. `zero_buffer` is unused.
     #[doc(alias = "SYNInitSynth")]
     #[link_name = "SYNInitSynth"]
     pub unsafe fn init_synth(
@@ -295,7 +260,7 @@ unsafe extern "C" {
 
     /// SYNMidiInput
     ///
-    /// Sends one MIDI command. Call from the AX frame callback.
+    /// Sends one MIDI command.
     #[doc(alias = "SYNMidiInput")]
     #[link_name = "SYNMidiInput"]
     pub unsafe fn midi_input(synth: *mut Synth, input: *mut u8);
@@ -320,12 +285,12 @@ unsafe extern "C" {
     /// SYNDRCSetMasterVolume
     ///
     /// `db` is in 0.1 dB.
-    #[doc(alias = "SYNDRCSetMasterVolume", alias = "SYNMOVSetMasterVolume")]
+    #[doc(alias = "SYNDRCSetMasterVolume")]
     #[link_name = "SYNDRCSetMasterVolume"]
     pub unsafe fn drc_set_master_volume(synth: *mut Synth, db: i32);
 
     /// SYNDRCGetMasterVolume
-    #[doc(alias = "SYNDRCGetMasterVolume", alias = "SYNMOVGetMasterVolume")]
+    #[doc(alias = "SYNDRCGetMasterVolume")]
     #[link_name = "SYNDRCGetMasterVolume"]
     pub unsafe fn drc_get_master_volume(synth: *mut Synth) -> i32;
 
@@ -346,7 +311,7 @@ unsafe extern "C" {
 
     /// SYNSetInitCallback
     ///
-    /// Called at note-on. Returns the previous callback.
+    /// Returns the previous callback.
     #[doc(alias = "SYNSetInitCallback")]
     #[link_name = "SYNSetInitCallback"]
     pub unsafe fn set_init_callback(synth: *mut Synth, callback: Callback) -> Callback;

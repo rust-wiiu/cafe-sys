@@ -31,10 +31,7 @@ impl core::ops::BitOr for MessageFlags {
     }
 }
 
-/// OS_SYSTEM_MESSAGE_DATA0
-///
 /// Value of [Message::args]`[0]` for messages of [get_system_message_queue].
-#[doc(alias = "OS_SYSTEM_MESSAGE_DATA0")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SystemMessage(pub u32);

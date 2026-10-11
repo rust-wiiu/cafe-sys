@@ -9,8 +9,6 @@ use crate::ffi;
 /// FS_MAX_CLIENTS
 #[doc(alias = "FS_MAX_CLIENTS")]
 pub const MAX_CLIENTS: u32 = 63;
-/// FS_MAX_MOUNTPOINTS
-#[doc(alias = "FS_MAX_MOUNTPOINTS")]
 pub const MAX_MOUNTPOINTS: u32 = 48;
 /// FS_IO_BUFFER_ALIGN
 ///
@@ -22,33 +20,23 @@ pub const IO_BUFFER_ALIGN: usize = 64;
 /// Maximum length of a full path, without the terminator.
 #[doc(alias = "FS_MAX_PATH", alias = "FS_MAX_FULLPATH_SIZE")]
 pub const MAX_PATH: usize = 0x27F;
-/// FS_MAX_ENTNAME_SIZE
-#[doc(alias = "FS_MAX_ENTNAME_SIZE")]
 pub const MAX_ENTRY_NAME_SIZE: usize = 256;
 /// FS_MODE_LENGTH
 ///
 /// Maximum size of an open mode string.
-#[doc(alias = "FS_MODE_LENGTH", alias = "FS_MAX_MODE_SIZE")]
+#[doc(alias = "FS_MODE_LENGTH")]
 pub const MODE_LENGTH: usize = 16;
-/// FS_PRIORITY_DEFAULT
-#[doc(alias = "FS_PRIORITY_DEFAULT")]
 pub const PRIORITY_DEFAULT: i32 = 16;
-/// FS_PRIORITY_HIGHEST
-#[doc(alias = "FS_PRIORITY_HIGHEST")]
 pub const PRIORITY_HIGHEST: i32 = 0;
-/// FS_PRIORITY_LOWEST
-#[doc(alias = "FS_PRIORITY_LOWEST")]
 pub const PRIORITY_LOWEST: i32 = 31;
 
 /// FSTime
 ///
-/// Microseconds since 2000-01-01, see [time_to_calendar_time].
+/// Microseconds, see [time_to_calendar_time].
 #[doc(alias = "FSTime")]
 pub type Time = u64;
 
 /// FSClient
-///
-/// Must stay valid until [del_client].
 #[doc(alias = "FSClient")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -69,20 +57,16 @@ pub struct CmdBlock(ffi::unknown<0xA80>);
 pub struct FileHandle(pub i32);
 
 impl FileHandle {
-    /// FS_INVALID_HANDLE_VALUE
-    #[doc(alias = "FS_INVALID_HANDLE_VALUE")]
     pub const INVALID: Self = Self(-1);
 }
 
 /// FSDirectoryHandle
-#[doc(alias = "FSDirectoryHandle", alias = "FSDirHandle")]
+#[doc(alias = "FSDirectoryHandle")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DirHandle(pub i32);
 
 impl DirHandle {
-    /// FS_INVALID_HANDLE_VALUE
-    #[doc(alias = "FS_INVALID_HANDLE_VALUE")]
     pub const INVALID: Self = Self(-1);
 }
 
@@ -99,9 +83,8 @@ impl Status {
     #[doc(alias = "FS_STATUS_OK")]
     pub const SUCCESS: Self = Self(0);
     pub const CANCELLED: Self = Self(-1);
-    /// End of the file or directory, or no more mount sources.
+    /// End of the file or directory.
     pub const END: Self = Self(-2);
-    /// Maximum number of handles, clients or mount points reached.
     pub const MAX: Self = Self(-3);
     pub const ALREADY_OPEN: Self = Self(-4);
     pub const EXISTS: Self = Self(-5);
@@ -178,9 +161,7 @@ impl Error {
 }
 
 /// FSErrorFlag
-///
-/// Errors returned as [Status] instead of being handled as fatal.
-#[doc(alias = "FSErrorFlag", alias = "FSRetFlag")]
+#[doc(alias = "FSErrorFlag")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ErrorFlag(pub u32);
@@ -214,7 +195,7 @@ impl core::ops::BitOr for ErrorFlag {
 /// FSMode
 ///
 /// Access permissions.
-#[doc(alias = "FSMode", alias = "FSPermission")]
+#[doc(alias = "FSMode")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Mode(pub u32);
@@ -247,41 +228,15 @@ impl core::ops::BitOr for Mode {
 pub struct StatFlags(pub u32);
 
 impl StatFlags {
-    /// FS_STAT_FLAG_IS_DIRECTORY
-    #[doc(alias = "FS_STAT_DIRECTORY", alias = "FS_STAT_FLAG_IS_DIRECTORY")]
+    /// The entry is a directory.
     pub const DIRECTORY: Self = Self(0x8000_0000);
-    /// FS_STAT_FLAG_IS_QUOTA
-    #[doc(alias = "FS_STAT_FLAG_IS_QUOTA")]
-    pub const QUOTA: Self = Self(0x4000_0000);
-    /// [Stat::quota_size] is valid.
-    #[doc(alias = "FS_STAT_FLAG_SPRT_QUOTA_SIZE")]
-    pub const HAS_QUOTA_SIZE: Self = Self(0x2000_0000);
-    /// [Stat::entry_id] is valid.
-    #[doc(alias = "FS_STAT_FLAG_SPRT_ENTID")]
-    pub const HAS_ENTRY_ID: Self = Self(0x1000_0000);
-    /// [Stat::created] is valid.
-    #[doc(alias = "FS_STAT_FLAG_SPRT_CTIME")]
-    pub const HAS_CREATED: Self = Self(0x0800_0000);
-    /// [Stat::modified] is valid.
-    #[doc(alias = "FS_STAT_FLAG_SPRT_MTIME")]
-    pub const HAS_MODIFIED: Self = Self(0x0400_0000);
-    /// [Stat::attributes] is valid.
-    #[doc(alias = "FS_STAT_FLAG_SPRT_ATTRIBUTES")]
-    pub const HAS_ATTRIBUTES: Self = Self(0x0200_0000);
-    /// [Stat::alloc_size] is valid.
-    #[doc(alias = "FS_STAT_FILE", alias = "FS_STAT_FLAG_SPRT_FILE_ALLOC_SIZE")]
-    pub const HAS_ALLOC_SIZE: Self = Self(0x0100_0000);
-    /// The file is not encrypted.
-    #[doc(alias = "FS_STAT_ENCRYPTED_FILE", alias = "FS_STAT_FLAG_IS_RAW_FILE")]
-    pub const RAW_FILE: Self = Self(0x0080_0000);
-    /// [Stat::size] is valid for directories.
-    #[doc(alias = "FS_STAT_FLAG_SPRT_DIR_SIZE")]
-    pub const HAS_DIR_SIZE: Self = Self(0x0010_0000);
-    /// The name contains unsupported characters.
-    #[doc(alias = "FS_STAT_FLAG_IS_UNSUPPORTED_CHAR")]
-    pub const UNSUPPORTED_CHAR: Self = Self(0x0008_0000);
-    /// FS_STAT_LINK
-    #[doc(alias = "FS_STAT_LINK")]
+    /// The entry has a quota.
+    pub const QUOTA: Self = Self(0x6000_0000);
+    /// The entry is a file.
+    pub const FILE: Self = Self(0x0100_0000);
+    /// The file is encrypted and cannot be opened.
+    pub const ENCRYPTED_FILE: Self = Self(0x0080_0000);
+    /// The entry is a link.
     pub const LINK: Self = Self(0x0001_0000);
 
     #[inline]
@@ -333,12 +288,10 @@ impl VolumeState {
     pub const NO_MEDIA: Self = Self(2);
     pub const INVALID_MEDIA: Self = Self(3);
     pub const DIRTY_MEDIA: Self = Self(4);
-    /// The media is formatted correctly but is not the expected one.
     pub const WRONG_MEDIA: Self = Self(5);
     pub const MEDIA_ERROR: Self = Self(6);
     pub const DATA_CORRUPTED: Self = Self(7);
     pub const WRITE_PROTECTED: Self = Self(8);
-    /// The journal is full and must be flushed.
     pub const JOURNAL_FULL: Self = Self(9);
     pub const FATAL: Self = Self(10);
     pub const INVALID: Self = Self(11);
@@ -359,17 +312,15 @@ impl MediaState {
 }
 
 /// FSMountSourceType
-#[doc(alias = "FSMountSourceType", alias = "FSSourceType")]
+#[doc(alias = "FSMountSourceType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MountSourceType(pub u32);
 
 impl MountSourceType {
-    /// Manually mounted external device, e.g. the SD card.
-    #[doc(alias = "FS_SOURCETYPE_EXTERNAL")]
+    /// The SD card.
     pub const SD: Self = Self(0);
     /// Host file I/O.
-    #[doc(alias = "FS_SOURCETYPE_HFIO")]
     pub const HFIO: Self = Self(1);
 }
 
@@ -429,7 +380,7 @@ impl Default for Stat {
 }
 
 /// FSDirectoryEntry
-#[doc(alias = "FSDirectoryEntry", alias = "FSDirEntry")]
+#[doc(alias = "FSDirectoryEntry")]
 #[repr(C, packed(4))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DirectoryEntry {
@@ -512,7 +463,7 @@ pub type AsyncCallback = Option<
 /// FSAsyncData
 ///
 /// Either `callback` or `io_msg_queue` is used to report the result.
-#[doc(alias = "FSAsyncData", alias = "FSAsyncParams")]
+#[doc(alias = "FSAsyncData")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct AsyncData {
@@ -569,8 +520,6 @@ impl Default for StateChangeParams {
     }
 }
 
-/// FSStateNoticeInfo
-#[doc(alias = "FSStateNoticeInfo")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct StateNoticeInfo {
@@ -631,15 +580,11 @@ unsafe extern "C" {
     pub unsafe fn init_cmd_block(block: *mut CmdBlock);
 
     /// FSCancelCommand
-    ///
-    /// Cannot cancel a command that is already running.
     #[doc(alias = "FSCancelCommand")]
     #[link_name = "FSCancelCommand"]
     pub unsafe fn cancel_command(client: *mut Client, block: *mut CmdBlock);
 
     /// FSCancelAllCommands
-    ///
-    /// Cannot cancel a command that is already running.
     #[doc(alias = "FSCancelAllCommands")]
     #[link_name = "FSCancelAllCommands"]
     pub unsafe fn cancel_all_commands(client: *mut Client);
@@ -656,7 +601,7 @@ unsafe extern "C" {
 
     /// FSGetCurrentCmdBlock
     ///
-    /// Null if no command is in flight.
+    /// Null if there is no current command.
     #[doc(alias = "FSGetCurrentCmdBlock")]
     #[link_name = "FSGetCurrentCmdBlock"]
     pub unsafe fn get_current_cmd_block(client: *mut Client) -> *mut CmdBlock;
@@ -668,7 +613,7 @@ unsafe extern "C" {
 
     /// FSSetStateChangeNotification
     ///
-    /// Null `params` removes the notification.
+    /// `params` is copied. Null `params` disables the notification.
     #[doc(alias = "FSSetStateChangeNotification")]
     #[link_name = "FSSetStateChangeNotification"]
     pub unsafe fn set_state_change_notification(
@@ -691,8 +636,6 @@ unsafe extern "C" {
     pub unsafe fn get_state_change_info(message: *mut Message) -> *mut StateNoticeInfo;
 
     /// FSGetMountSource
-    ///
-    /// Returns [Status::END] if there are no more sources.
     #[doc(alias = "FSGetMountSource")]
     #[link_name = "FSGetMountSource"]
     pub unsafe fn get_mount_source(
@@ -1508,8 +1451,6 @@ unsafe extern "C" {
     ) -> Status;
 
     /// FSFlushQuota
-    ///
-    /// Commits the journal of the quota.
     #[doc(alias = "FSFlushQuota")]
     #[link_name = "FSFlushQuota"]
     pub unsafe fn flush_quota(
@@ -1533,8 +1474,6 @@ unsafe extern "C" {
     ) -> Status;
 
     /// FSRollbackQuota
-    ///
-    /// Discards uncommitted changes of the quota.
     #[doc(alias = "FSRollbackQuota")]
     #[link_name = "FSRollbackQuota"]
     pub unsafe fn rollback_quota(
@@ -1634,7 +1573,7 @@ unsafe extern "C" {
 
     /// FSGetLastErrorCodeForViewer
     ///
-    /// Error code for the error viewer, for automatically mounted devices.
+    /// Error code of the last error, for the error viewer.
     #[doc(alias = "FSGetLastErrorCodeForViewer")]
     #[link_name = "FSGetLastErrorCodeForViewer"]
     pub unsafe fn get_last_error_code_for_viewer(client: *mut Client) -> i32;
@@ -1669,8 +1608,6 @@ unsafe extern "C" {
     pub unsafe fn get_last_error(client: *mut Client) -> Error;
 
     /// FSSetEmulatedError
-    ///
-    /// Makes the next commands of `client` fail with `error`, for testing.
     #[doc(alias = "FSSetEmulatedError")]
     #[link_name = "FSSetEmulatedError"]
     pub unsafe fn set_emulated_error(client: *mut Client, error: Error) -> Status;

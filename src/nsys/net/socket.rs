@@ -42,7 +42,6 @@ impl Error {
     pub const EADDRINUSE: Self = Self(20);
     pub const EAFNOSUPPORT: Self = Self(21);
     pub const EINPROGRESS: Self = Self(22);
-    /// Error in the IP layer.
     pub const ELOWER: Self = Self(23);
     pub const ENOTSOCK: Self = Self(24);
     pub const EIEIO: Self = Self(27);
@@ -66,15 +65,10 @@ impl Error {
     pub const EABORTED: Self = Self(50);
     /// Too many sockets.
     pub const EMFILE: Self = Self(51);
-    #[doc(alias = "SO_ICMP_EDESTIN")]
     pub const ICMP_DESTINATION_UNREACHABLE: Self = Self(100);
-    #[doc(alias = "SO_ICMP_ESOURCEQ")]
     pub const ICMP_SOURCE_QUENCH: Self = Self(101);
-    #[doc(alias = "SO_ICMP_EREDIR")]
     pub const ICMP_REDIRECT: Self = Self(102);
-    #[doc(alias = "SO_ICMP_ETIMEX")]
     pub const ICMP_TIME_EXCEEDED: Self = Self(103);
-    #[doc(alias = "SO_ICMP_EPARAM")]
     pub const ICMP_PARAMETER_PROBLEM: Self = Self(104);
 }
 
@@ -90,7 +84,6 @@ impl Family {
 }
 
 /// SOCK_*
-#[doc(alias = "SOCK")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Type(pub i32);
@@ -102,7 +95,6 @@ impl Type {
 }
 
 /// IPPROTO_*
-#[doc(alias = "IPPROTO")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Protocol(pub i32);
@@ -150,7 +142,6 @@ impl SockOpt {
     pub const TCPSACK: Self = Self(0x00200);
     #[doc(alias = "SO_WINSCALE")]
     pub const WINSCALE: Self = Self(0x00400);
-    #[doc(alias = "SO_HDRINCL")]
     pub const HDRINCL: Self = Self(0x02000);
     #[doc(alias = "SO_RUSRBUF")]
     pub const RUSRBUF: Self = Self(0x10000);
@@ -158,7 +149,6 @@ impl SockOpt {
     pub const SNDBUF: Self = Self(0x1001);
     #[doc(alias = "SO_RCVBUF")]
     pub const RCVBUF: Self = Self(0x1002);
-    #[doc(alias = "SO_LASTERROR")]
     pub const LASTERROR: Self = Self(0x1007);
     #[doc(alias = "SO_TYPE")]
     pub const TYPE: Self = Self(0x1008);
@@ -180,11 +170,8 @@ impl SockOpt {
     pub const BIO: Self = Self(0x1015);
     #[doc(alias = "SO_NONBLOCK")]
     pub const NONBLOCK: Self = Self(0x1016);
-    #[doc(alias = "SO_KEEPIDLE")]
     pub const KEEPIDLE: Self = Self(0x1019);
-    #[doc(alias = "SO_KEEPINTVL")]
     pub const KEEPINTVL: Self = Self(0x101A);
-    #[doc(alias = "SO_KEEPCNT")]
     pub const KEEPCNT: Self = Self(0x101B);
 
     // Level::IP
@@ -196,12 +183,10 @@ impl SockOpt {
     pub const TCP_NOACKDELAY: Self = Self(0x2002);
     pub const TCP_MAXSEG: Self = Self(0x2003);
     pub const TCP_NODELAY: Self = Self(0x2004);
-    /// Number of outstanding unacknowledged segments.
     pub const TCP_ACKFREQUENCY: Self = Self(0x2005);
 }
 
 /// MSG_*
-#[doc(alias = "MSG")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MsgFlags(pub i32);
@@ -219,7 +204,6 @@ impl MsgFlags {
     pub const EOR: Self = Self(0x10);
     /// Don't block.
     pub const DONTWAIT: Self = Self(0x20);
-    /// Receive the TTL with [recvfrom_ex].
     pub const IP_RECVTTL: Self = Self(0x40);
 }
 
@@ -231,7 +215,6 @@ impl core::ops::BitOr for MsgFlags {
 }
 
 /// SHUT_*
-#[doc(alias = "SHUT")]
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Shutdown {
@@ -243,7 +226,6 @@ pub enum Shutdown {
 }
 
 /// SOLIB_OPT_*
-#[doc(alias = "SOLIB_OPT")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LibOpt(pub i32);
@@ -255,13 +237,9 @@ impl LibOpt {
     pub const SOCKBUF_CONSUMPTION: Self = Self(0x3002);
 }
 
-#[doc(alias = "SO_SOCKBUF_CONSUMPTTION_LOW")]
 pub const SOCKBUF_CONSUMPTION_LOW: i32 = 0x01;
-#[doc(alias = "SO_SOCKBUF_CONSUMPTTION_MED")]
 pub const SOCKBUF_CONSUMPTION_MED: i32 = 0x02;
-#[doc(alias = "SO_SOCKBUF_CONSUMPTTION_HIGH")]
 pub const SOCKBUF_CONSUMPTION_HIGH: i32 = 0x04;
-#[doc(alias = "SO_SOCKBUF_CONSUMPTTION_MAX")]
 pub const SOCKBUF_CONSUMPTION_MAX: i32 = 0x08;
 
 pub const INADDR_ANY: u32 = 0;
@@ -330,8 +308,6 @@ pub struct FdSet {
     pub bits: ffi::c_ulong,
 }
 
-/// recvfrom_multi_buffers
-#[doc(alias = "recvfrom_multi_buffers")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RecvFromMultiBuffers {
@@ -343,8 +319,6 @@ pub struct RecvFromMultiBuffers {
     pub results_len: ffi::c_uint,
 }
 
-/// sendto_multi_ex_buffers
-#[doc(alias = "sendto_multi_ex_buffers")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SendToMultiExBuffers {
@@ -407,7 +381,6 @@ pub struct AddrInfo {
 }
 
 /// EAI_*
-#[doc(alias = "EAI")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AiError(pub i32);
@@ -492,25 +465,21 @@ unsafe extern "C" {
 
     /// socketlasterr
     ///
-    /// Error of the last failed call on this thread.
+    /// Error set by the last socket call on this thread.
     #[doc(alias("socketlasterr", "SOLastError"))]
     #[link_name = "socketlasterr"]
     pub unsafe fn last_error() -> Error;
 
     /// socket
-    #[doc(alias = "SOSocket")]
     #[link_name = "socket"]
     pub unsafe fn socket(family: Family, sock_type: Type, protocol: Protocol) -> FileDescriptor;
 
     /// socketclose
-    ///
-    /// A call blocked on the socket in another thread returns with an error.
     #[doc(alias("socketclose", "SOClose"))]
     #[link_name = "socketclose"]
     pub unsafe fn close(fd: FileDescriptor) -> ffi::c_int;
 
     /// accept
-    #[doc(alias = "SOAccept")]
     #[link_name = "accept"]
     pub unsafe fn accept(
         fd: FileDescriptor,
@@ -519,12 +488,10 @@ unsafe extern "C" {
     ) -> FileDescriptor;
 
     /// bind
-    #[doc(alias = "SOBind")]
     #[link_name = "bind"]
     pub unsafe fn bind(fd: FileDescriptor, addr: *const SockAddr, addr_len: SockLen) -> ffi::c_int;
 
     /// connect
-    #[doc(alias = "SOConnect")]
     #[link_name = "connect"]
     pub unsafe fn connect(
         fd: FileDescriptor,
@@ -533,19 +500,16 @@ unsafe extern "C" {
     ) -> ffi::c_int;
 
     /// listen
-    #[doc(alias = "SOListen")]
     #[link_name = "listen"]
     pub unsafe fn listen(fd: FileDescriptor, backlog: ffi::c_int) -> ffi::c_int;
 
     /// shutdown
-    #[doc(alias = "SOShutdown")]
     #[link_name = "shutdown"]
     pub unsafe fn shutdown(fd: FileDescriptor, how: Shutdown) -> ffi::c_int;
 
     /// recv
     ///
     /// Returns the number of bytes received, 0 if the peer closed the connection.
-    #[doc(alias = "SORecv")]
     #[link_name = "recv"]
     pub unsafe fn recv(
         fd: FileDescriptor,
@@ -557,7 +521,6 @@ unsafe extern "C" {
     /// recvfrom
     ///
     /// Returns the number of bytes received, 0 if the peer closed the connection.
-    #[doc(alias = "SORecvFrom")]
     #[link_name = "recvfrom"]
     pub unsafe fn recvfrom(
         fd: FileDescriptor,
@@ -569,7 +532,6 @@ unsafe extern "C" {
     ) -> ffi::c_int;
 
     /// recvfrom_ex
-    #[doc(alias = "SORecvFromEx")]
     #[link_name = "recvfrom_ex"]
     pub unsafe fn recvfrom_ex(
         fd: FileDescriptor,
@@ -583,7 +545,6 @@ unsafe extern "C" {
     ) -> ffi::c_int;
 
     /// recvfrom_multi
-    #[doc(alias = "SORecvFromMulti")]
     #[link_name = "recvfrom_multi"]
     pub unsafe fn recvfrom_multi(
         fd: FileDescriptor,
@@ -596,8 +557,7 @@ unsafe extern "C" {
 
     /// send
     ///
-    /// Blocks if the send buffer is full. Returns the number of bytes sent.
-    #[doc(alias = "SOSend")]
+    /// Returns the number of bytes sent.
     #[link_name = "send"]
     pub unsafe fn send(
         fd: FileDescriptor,
@@ -608,8 +568,7 @@ unsafe extern "C" {
 
     /// sendto
     ///
-    /// Blocks if the send buffer is full. Returns the number of bytes sent.
-    #[doc(alias = "SOSendTo")]
+    /// Returns the number of bytes sent.
     #[link_name = "sendto"]
     pub unsafe fn sendto(
         fd: FileDescriptor,
@@ -622,8 +581,7 @@ unsafe extern "C" {
 
     /// sendto_multi
     ///
-    /// Sends the same datagram to `dest_count` addresses.
-    #[doc(alias = "SOSendToMulti")]
+    /// Sends the same datagram to `dest_count` addresses, 1 to 32.
     #[link_name = "sendto_multi"]
     pub unsafe fn sendto_multi(
         fd: FileDescriptor,
@@ -635,7 +593,6 @@ unsafe extern "C" {
     ) -> ffi::c_int;
 
     /// sendto_multi_ex
-    #[doc(alias = "SOSendToMultiEx")]
     #[link_name = "sendto_multi_ex"]
     pub unsafe fn sendto_multi_ex(
         fd: FileDescriptor,
@@ -647,7 +604,6 @@ unsafe extern "C" {
     /// select
     ///
     /// Returns the number of ready sockets.
-    #[doc(alias = "SOSelect")]
     #[link_name = "select"]
     pub unsafe fn select(
         nfds: ffi::c_int,
@@ -712,29 +668,24 @@ unsafe extern "C" {
     pub unsafe fn set_multicast_state(enabled: ffi::c_bool) -> ffi::c_int;
 
     /// htonl
-    #[doc(alias = "SOHtoNl")]
     #[link_name = "htonl"]
     pub unsafe fn htonl(value: u32) -> u32;
 
     /// htons
-    #[doc(alias = "SOHtoNs")]
     #[link_name = "htons"]
     pub unsafe fn htons(value: u16) -> u16;
 
     /// ntohl
-    #[doc(alias = "SONtoHl")]
     #[link_name = "ntohl"]
     pub unsafe fn ntohl(value: u32) -> u32;
 
     /// ntohs
-    #[doc(alias = "SONtoHs")]
     #[link_name = "ntohs"]
     pub unsafe fn ntohs(value: u16) -> u16;
 
     /// inet_aton
     ///
     /// Returns nonzero on success.
-    #[doc(alias = "SOInetAtoN")]
     #[link_name = "inet_aton"]
     pub unsafe fn inet_aton(text: *const ffi::c_char, addr: *mut InAddr) -> ffi::c_int;
 
@@ -742,19 +693,16 @@ unsafe extern "C" {
     ///
     /// The C function takes the [InAddr] by value, which the ABI passes as a pointer.
     /// The result is in a static buffer.
-    #[doc(alias = "SOInetNtoA")]
     #[link_name = "inet_ntoa"]
     pub unsafe fn inet_ntoa(addr: *const InAddr) -> *mut ffi::c_char;
 
     /// inet_ntoa_r
     ///
     /// The C function takes the [InAddr] by value, which the ABI passes as a pointer.
-    #[doc(alias = "SOInetNtoA_r")]
     #[link_name = "inet_ntoa_r"]
     pub unsafe fn inet_ntoa_r(addr: *const InAddr, buf: *mut ffi::c_char) -> *mut ffi::c_char;
 
     /// inet_ntop
-    #[doc(alias = "SOInetNtoP")]
     #[link_name = "inet_ntop"]
     pub unsafe fn inet_ntop(
         family: Family,
@@ -764,7 +712,6 @@ unsafe extern "C" {
     ) -> *const ffi::c_char;
 
     /// inet_pton
-    #[doc(alias = "SOInetPtoN")]
     #[link_name = "inet_pton"]
     pub unsafe fn inet_pton(
         family: Family,
@@ -825,7 +772,6 @@ unsafe extern "C" {
     ) -> AiError;
 
     /// gai_strerror
-    #[doc(alias = "SOGaiStrerror")]
     #[link_name = "gai_strerror"]
     pub unsafe fn gai_strerror(error: AiError) -> *const ffi::c_char;
 
@@ -836,7 +782,6 @@ unsafe extern "C" {
     pub unsafe fn get_h_errno() -> *mut HostError;
 
     /// set_resolver_allocator
-    #[doc(alias = "SOResolverRegisterAllocator")]
     #[link_name = "set_resolver_allocator"]
     pub unsafe fn set_resolver_allocator(alloc: ResolverAlloc, free: ResolverFree) -> ffi::c_int;
 

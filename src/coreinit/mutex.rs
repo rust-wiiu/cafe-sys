@@ -1,6 +1,6 @@
 //! Mutex
 //!
-//! Recursive mutex with priority inheritance.
+//! Recursive mutex.
 
 use super::thread::Thread;
 use super::thread_queue::ThreadQueue;

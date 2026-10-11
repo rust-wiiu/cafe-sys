@@ -3,12 +3,8 @@
 use super::{Alloc, Error, FinishMode, Status};
 use crate::ffi;
 
-/// LZMA_REQUIRED_INPUT_MAX
-#[doc(alias = "LZMA_REQUIRED_INPUT_MAX")]
 pub const REQUIRED_INPUT_MAX: usize = 20;
 
-/// CLzmaProps
-#[doc(alias = "CLzmaProps")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct Props {
@@ -18,10 +14,7 @@ pub struct Props {
     pub dic_size: u32,
 }
 
-/// CLzmaDec
-///
 /// `dic` and `probs` must be null before the first allocation.
-#[doc(alias = "CLzmaDec")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Decoder {

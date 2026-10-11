@@ -36,12 +36,11 @@ impl ResourceFlags {
     pub const USAGE_DMA_WRITE: Self = Self(1 << 16);
     pub const USAGE_FORCE_MEM1: Self = Self(1 << 17);
     pub const USAGE_FORCE_MEM2: Self = Self(1 << 18);
-    /// Ignores that the resource is still in use by the GPU.
     pub const IGNORE_IN_USE: Self = Self(1 << 19);
     pub const DISABLE_CPU_INVALIDATE: Self = Self(1 << 20);
     pub const DISABLE_GPU_INVALIDATE: Self = Self(1 << 21);
     pub const LOCKED_READ_ONLY: Self = Self(1 << 22);
-    /// Does not touch the memory on destruction.
+    /// [buffer::destroy_ex] does not free the memory.
     pub const NO_TOUCH_DESTROY: Self = Self(1 << 23);
     pub const GX2R_ALLOCATED: Self = Self(1 << 29);
     pub const LOCKED: Self = Self(1 << 30);
@@ -78,8 +77,6 @@ impl Default for Buffer {
     }
 }
 
-/// GX2RDebugOptions
-#[doc(alias = "GX2RDebugOptions")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DebugOptions(pub u32);
@@ -102,13 +99,13 @@ impl core::ops::BitOr for DebugOptions {
 }
 
 /// GX2RAllocFunction
-#[doc(alias = "GX2RAllocFunction", alias = "GX2RAllocateFunc")]
+#[doc(alias = "GX2RAllocFunction")]
 pub type AllocFunction = Option<
     unsafe extern "C" fn(flags: ResourceFlags, size: u32, alignment: u32) -> *mut ffi::c_void,
 >;
 
 /// GX2RFreeFunction
-#[doc(alias = "GX2RFreeFunction", alias = "GX2RFreeFunc")]
+#[doc(alias = "GX2RFreeFunction")]
 pub type FreeFunction =
     Option<unsafe extern "C" fn(flags: ResourceFlags, memory: *mut ffi::c_void)>;
 

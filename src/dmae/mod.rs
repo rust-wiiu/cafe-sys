@@ -2,8 +2,6 @@
 
 use crate::ffi;
 
-/// DMAE_DEFAULT_TIMEOUT_IN_MILLISEC
-#[doc(alias = "DMAE_DEFAULT_TIMEOUT_IN_MILLISEC")]
 pub const DEFAULT_TIMEOUT_MS: u32 = 30 * 1000;
 
 /// DMAETimeStamp
@@ -12,8 +10,6 @@ pub const DEFAULT_TIMEOUT_MS: u32 = 30 * 1000;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct TimeStamp(pub u64);
 
-/// DMAEEndian
-#[doc(alias = "DMAEEndian")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Endian {
@@ -27,14 +23,10 @@ pub enum Endian {
     Swap8In64 = 3,
 }
 
-/// DMAESemaphoreAction
-#[doc(alias = "DMAESemaphoreAction")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SemaphoreAction {
-    /// Wait before processing the next command.
     Wait = 0,
-    /// Signal after all previous work is done.
     Signal = 1,
 }
 
@@ -60,14 +52,13 @@ unsafe extern "C" {
 
     /// DMAESemaphore
     ///
-    /// Synchronizes the DMA engine with the GPU. The semaphore must be initialized and flushed from the CPU cache beforehand.
+    /// Synchronizes the DMA engine with the GPU.
     #[doc(alias = "DMAESemaphore")]
     #[link_name = "DMAESemaphore"]
     pub unsafe fn semaphore(semaphore: *mut u64, action: SemaphoreAction) -> TimeStamp;
 
     /// DMAECopyMem
     ///
-    /// Both ranges must be flushed or invalidated from the CPU cache beforehand.
     /// `count` is in units of `u32`.
     #[doc(alias = "DMAECopyMem")]
     #[link_name = "DMAECopyMem"]
@@ -80,7 +71,6 @@ unsafe extern "C" {
 
     /// DMAEFillMem
     ///
-    /// The range must be flushed or invalidated from the CPU cache beforehand.
     /// `count` is in units of `u32`.
     #[doc(alias = "DMAEFillMem")]
     #[link_name = "DMAEFillMem"]

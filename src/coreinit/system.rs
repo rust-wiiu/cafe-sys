@@ -34,8 +34,6 @@ impl Upid {
     pub const TEST_OVERLAY: Self = Self(31);
 }
 
-/// OSPolicyRequest
-#[doc(alias = "OSPolicyRequest")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct PolicyRequest(pub u32);
@@ -47,8 +45,6 @@ impl PolicyRequest {
     pub const NOTIFY_HOME_BUTTON_DENIED: Self = Self(4);
 }
 
-/// OS_SHUTDOWN
-#[doc(alias = "OS_SHUTDOWN")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ShutdownReason(pub u32);
@@ -60,8 +56,6 @@ impl ShutdownReason {
     pub const STANDBY: Self = Self(3);
 }
 
-/// OS_SHUTDOWN_FLAG
-#[doc(alias = "OS_SHUTDOWN_FLAG")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ShutdownFlags(pub u32);
@@ -101,10 +95,7 @@ impl core::ops::BitOr for SysHealthComponents {
     }
 }
 
-/// OSSysHealth
-///
 /// Each component pointer is null unless requested in `component_mask`.
-#[doc(alias = "OSSysHealth")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SysHealth {

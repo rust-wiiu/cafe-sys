@@ -15,11 +15,11 @@ pub struct Stopwatch {
     pub name: *const ffi::c_char,
     /// Number of stops.
     pub hit_count: u32,
-    /// Time from the first start to the last stop.
+    /// Sum of the times from start to stop.
     pub total_time: Time,
-    /// Shortest time between stops.
+    /// Shortest time from start to stop.
     pub min_time: Time,
-    /// Longest time between stops.
+    /// Longest time from start to stop.
     pub max_time: Time,
     pub start_time: Time,
     pub running: ffi::c_bool,

@@ -4,7 +4,7 @@ use super::Error;
 use crate::ffi;
 
 /// AXDRCVSMode
-#[doc(alias = "AXDRCVSMode", alias = "AXDRCVSModeType")]
+#[doc(alias = "AXDRCVSMode")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Mode(pub u32);
@@ -16,7 +16,7 @@ impl Mode {
 }
 
 /// AXDRCVSOutput
-#[doc(alias = "AXDRCVSOutput", alias = "AXDRCVSOutputMode")]
+#[doc(alias = "AXDRCVSOutput")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Output {
@@ -28,7 +28,7 @@ pub enum Output {
 /// AXDRCVSLC
 ///
 /// Whether to use locked caches.
-#[doc(alias = "AXDRCVSLC", alias = "AXDRCVSLCMode")]
+#[doc(alias = "AXDRCVSLC")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum LockedCache {
@@ -50,7 +50,7 @@ pub enum SpeakerPosition {
 
 /// AXDRCVSSurroundLevelGain
 ///
-/// Surround channel level when downmixing.
+/// Surround channel level.
 #[doc(alias = "AXDRCVSSurroundLevelGain")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -68,8 +68,6 @@ unsafe extern "C" {
     pub unsafe fn get_mode(mode: *mut Mode) -> Error;
 
     /// AXSetDRCVSMode
-    ///
-    /// Only active if surround is selected for the GamePad in the system settings.
     #[doc(alias = "AXSetDRCVSMode")]
     #[link_name = "AXSetDRCVSMode"]
     pub unsafe fn set_mode(mode: Mode) -> Error;
@@ -90,8 +88,6 @@ unsafe extern "C" {
     pub unsafe fn set_surround_depth(output: Output, depth: f32) -> Error;
 
     /// AXSetDRCVSDownmixBalance
-    ///
-    /// Volume ratio of the downmix to the virtual surround component.
     #[doc(alias = "AXSetDRCVSDownmixBalance")]
     #[link_name = "AXSetDRCVSDownmixBalance"]
     pub unsafe fn set_downmix_balance(output: Output, balance: f32) -> Error;

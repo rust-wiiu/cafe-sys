@@ -1,6 +1,4 @@
 //! Transition audio
-//!
-//! Audio played while switching between processes.
 
 use crate::ffi;
 

@@ -39,7 +39,7 @@ unsafe extern "C" {
 
     /// OSScreenClearBufferEx
     ///
-    /// `color` is RGBA.
+    /// `color` is `0xRRGGBBXX`, the low byte is ignored.
     #[doc(alias = "OSScreenClearBufferEx")]
     #[link_name = "OSScreenClearBufferEx"]
     pub unsafe fn clear_buffer(screen: Screen, color: u32);

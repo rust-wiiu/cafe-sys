@@ -5,8 +5,6 @@
 use super::message_queue::MessageQueue;
 use crate::ffi;
 
-/// HIOStatus
-#[doc(alias = "HIOStatus")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Status(pub i32);
@@ -28,10 +26,6 @@ impl Status {
     pub const ALREADY_CLOSED: Self = Self(-101);
 }
 
-/// HIOHandle
-///
-/// Negative values are a [Status].
-#[doc(alias = "HIOHandle")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Handle(pub i32);
@@ -40,8 +34,6 @@ impl Handle {
     pub const INVALID: Self = Self(-1);
 }
 
-/// HIOChannelOptions
-#[doc(alias = "HIOChannelOptions")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ChannelOptions(pub u32);
@@ -52,14 +44,8 @@ impl ChannelOptions {
     pub const READ_WRITE: Self = Self(3);
 }
 
-/// HIOCallback
-#[doc(alias = "HIOCallback")]
 pub type Callback = Option<unsafe extern "C" fn(status: Status, context: *mut ffi::c_void)>;
 
-/// HIOAsyncStruct
-///
-/// Callbacks are delivered through `queue`. Copied by the functions taking it.
-#[doc(alias = "HIOAsyncStruct")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct AsyncStruct {
@@ -80,8 +66,6 @@ unsafe extern "C" {
     pub unsafe fn shutdown() -> Status;
 
     /// HIOOpenEx
-    ///
-    /// The callback in `async_struct` is called when a host connects.
     #[doc(alias = "HIOOpenEx")]
     #[link_name = "HIOOpenEx"]
     pub unsafe fn open_ex(

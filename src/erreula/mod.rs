@@ -118,7 +118,6 @@ pub enum ErrorType {
 }
 
 /// nn::erreula::RenderTarget
-#[doc(alias = "ScreenType")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RenderTarget {
@@ -141,8 +140,6 @@ pub enum ControllerType {
     DrcGamepad = 4,
 }
 
-/// nn::erreula::RemoCtrlHoldType
-#[doc(alias = "RemoCtrlHoldType")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RemoteHoldType {
@@ -204,13 +201,11 @@ pub struct ResultType(pub u32);
 
 impl ResultType {
     pub const NONE: Self = Self(0);
-    /// Hide the viewer and continue.
+    /// The user closed the viewer.
     pub const FINISH: Self = Self(1);
-    /// Show the viewer again with [get_result_code] as the error code.
     pub const NEXT: Self = Self(2);
     /// Hide the viewer and call [jump].
     pub const JUMP: Self = Self(3);
-    /// Run the PIN unlock sequence.
     pub const PIN_CODE: Self = Self(4);
 }
 
@@ -224,15 +219,14 @@ pub struct ErrorArg {
     pub remote_hold_type: RemoteHoldType,
     /// Used with [ErrorType::Code].
     pub error_code: ErrorCode,
-    /// 1 for 60 fps, 2 for 30 fps.
     pub frame_rate: i32,
-    /// UTF-16, up to 500 characters per line and 2000 in total.
+    /// UTF-16.
     pub error_message: *const u16,
-    /// Label of the only or left button, UTF-16, up to 24 characters.
+    /// Label of the only or left button, UTF-16.
     pub button1_label: *const u16,
-    /// Label of the right button, UTF-16, up to 24 characters.
+    /// Label of the right button, UTF-16.
     pub button2_label: *const u16,
-    /// UTF-16, up to 10 characters.
+    /// UTF-16.
     pub error_title: *const u16,
     /// Draws the Wii Remote pointer on the TV.
     pub draw_dpd_cursor: bool,
@@ -264,12 +258,9 @@ pub struct AppearArg {
 }
 
 /// nn::erreula::HomeNixSignArg
-///
-/// Settings of the "HOME Menu unavailable" icon.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct HomeNixSignArg {
-    /// 1 for 60 fps, 2 for 30 fps.
     pub frame_rate: i32,
 }
 
@@ -280,8 +271,6 @@ impl Default for HomeNixSignArg {
 }
 
 /// nn::erreula::ControllerInfo
-///
-/// The statuses are copied.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ControllerInfo {
@@ -314,7 +303,7 @@ const _: () = {
 unsafe extern "C" {
     /// ErrEulaCreate
     ///
-    /// `work_memory` must be [get_work_memory_size] bytes. Call [set_version] with 3 first. Keep the calling thread alive until [destroy].
+    /// `work_memory` must be [get_work_memory_size] bytes. Call [set_version] with 3 first.
     #[doc(alias = "ErrEulaCreate", alias = "Create")]
     #[link_name = "ErrEulaCreate__3RplFPUcQ3_2nn7erreula10RegionTypeQ3_2nn7erreula8LangTypeP8FSClient"]
     pub unsafe fn create(
@@ -428,7 +417,7 @@ unsafe extern "C" {
 
     /// ErrEulaSetControllerRemo
     ///
-    /// Switches the Wii Remote operating a viewer shown on the TV.
+    /// Switches the controller operating the viewer.
     #[doc(alias = "ErrEulaSetControllerRemo", alias = "SetControllerRemo")]
     #[link_name = "ErrEulaSetControllerRemo__3RplFQ3_2nn7erreula14ControllerType"]
     pub unsafe fn set_controller_remo(controller: ControllerType);
@@ -446,8 +435,6 @@ unsafe extern "C" {
     pub unsafe fn play_appear_se(play: bool);
 
     /// ErrEulaAppearHomeNixSign
-    ///
-    /// Shows the "HOME Menu unavailable" icon.
     #[doc(alias = "ErrEulaAppearHomeNixSign", alias = "AppearHomeNixSign")]
     #[link_name = "ErrEulaAppearHomeNixSign__3RplFRCQ3_2nn7erreula14HomeNixSignArg"]
     pub unsafe fn appear_home_nix_sign(arg: *const HomeNixSignArg);

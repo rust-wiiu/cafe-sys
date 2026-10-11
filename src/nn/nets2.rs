@@ -46,18 +46,15 @@ unsafe extern "C" {
 
     /// icmp_create_handle
     ///
-    /// Returns a handle, or a negative value on error.
-    #[doc(alias = "SOIcmpCreateHandle")]
+    /// Returns a handle, or -1 on error.
     #[link_name = "icmp_create_handle"]
     pub unsafe fn icmp_create_handle(family: ffi::c_int) -> ffi::c_int;
 
     /// icmp_close_handle
-    #[doc(alias = "SOIcmpCloseHandle")]
     #[link_name = "icmp_close_handle"]
     pub unsafe fn icmp_close_handle(handle: ffi::c_int) -> ffi::c_int;
 
     /// icmp_ping
-    #[doc(alias = "SOIcmpPing")]
     #[link_name = "icmp_ping"]
     pub unsafe fn icmp_ping(
         handle: ffi::c_int,
@@ -70,12 +67,10 @@ unsafe extern "C" {
     ) -> ffi::c_int;
 
     /// icmp_cancel
-    #[doc(alias = "SOIcmpCancel")]
     #[link_name = "icmp_cancel"]
     pub unsafe fn icmp_cancel(handle: ffi::c_int) -> ffi::c_int;
 
     /// icmp_last_code_type
-    #[doc(alias = "SOIcmpLastCodeType")]
     #[link_name = "icmp_last_code_type"]
     pub unsafe fn icmp_last_code_type(handle: ffi::c_int) -> ffi::c_int;
 

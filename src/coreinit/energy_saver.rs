@@ -22,8 +22,6 @@ unsafe extern "C" {
     pub unsafe fn is_dim_enabled(enabled: *mut u32) -> Error;
 
     /// IMGetDimPeriod
-    ///
-    /// Seconds of inactivity before dimming.
     #[doc(alias = "IMGetDimPeriod")]
     #[link_name = "IMGetDimPeriod"]
     pub unsafe fn get_dim_period(seconds: *mut u32) -> Error;

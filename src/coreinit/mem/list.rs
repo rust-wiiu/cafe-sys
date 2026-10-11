@@ -5,7 +5,7 @@ use crate::ffi;
 /// MEMMemoryLink
 ///
 /// Embedded in each object of a [List].
-#[doc(alias = "MEMMemoryLink", alias = "MEMLink")]
+#[doc(alias = "MEMMemoryLink")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Link {
@@ -23,7 +23,7 @@ impl Default for Link {
 }
 
 /// MEMMemoryList
-#[doc(alias = "MEMMemoryList", alias = "MEMList")]
+#[doc(alias = "MEMMemoryList")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct List {

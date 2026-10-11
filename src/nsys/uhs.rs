@@ -6,10 +6,7 @@ use crate::ffi;
 
 pub const MAX_ENDPOINT_PAIRS: usize = 16;
 pub const MAX_HUB_HIERARCHY: usize = 8;
-#[doc(alias = "MAX_NUM_ISOC_FRAMES")]
 pub const MAX_ISOC_FRAMES: usize = 32;
-/// Minimum number of transactions to allocate memory for in [Config].
-#[doc(alias = "UHS_CLIENT_MINIMUM_ASYNC_TXN_ALLOCATION")]
 pub const CLIENT_MIN_ASYNC_TXN: u32 = 3;
 
 /// UHSStatus
@@ -24,35 +21,24 @@ impl Status {
     pub const HANDLE_INVALID_STATE: Self = Self(0xFFDEFFFCu32 as i32);
 }
 
-/// UhsDevRegHandle
-#[doc(alias = "UhsDevRegHandle")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DevRegHandle(pub i32);
 
-/// UhsInterfaceHandle
-#[doc(alias = "UhsInterfaceHandle")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InterfaceHandle(pub i32);
 
-/// UhsTime
-///
-/// Timeout in milliseconds.
-#[doc(alias = "UhsTime")]
+/// Timeout, -1 for none.
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Time(pub i32);
 
 impl Time {
-    #[doc(alias = "UHS_TIME_FOREVER")]
     pub const FOREVER: Self = Self(-1);
 }
 
-/// UhsEndpointMask
-///
 /// Bit `n` is OUT endpoint `n`, bit `n + 16` is IN endpoint `n`.
-#[doc(alias = "UhsEndpointMask")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct EndpointMask(pub u32);
@@ -64,8 +50,6 @@ impl core::ops::BitOr for EndpointMask {
     }
 }
 
-/// UhsEndpointOptions
-#[doc(alias = "UhsEndpointOptions")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct EndpointOptions(pub u32);
@@ -75,8 +59,6 @@ impl EndpointOptions {
     pub const PRESERVE_MAX_LIMITS: Self = Self(1);
 }
 
-/// UhsDeviceOptions
-#[doc(alias = "UhsDeviceOptions")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DeviceOptions(pub u32);
@@ -86,8 +68,6 @@ impl DeviceOptions {
     pub const UNCONDITIONAL: Self = Self(1);
 }
 
-/// UhsDeviceSpeed
-#[doc(alias = "UhsDeviceSpeed")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DeviceSpeed(pub u32);
@@ -122,8 +102,6 @@ pub enum DeviceCommand {
     Destroy = 5,
 }
 
-/// UhsDirection
-#[doc(alias = "UhsDirection")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Direction(pub u32);
@@ -134,8 +112,6 @@ impl Direction {
     pub const TO_HOST: Self = Self(2);
 }
 
-/// UhsInterfaceIndication
-#[doc(alias = "UhsInterfaceIndication")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InterfaceIndication(pub u32);
@@ -148,8 +124,6 @@ impl InterfaceIndication {
     pub const DISCONNECT: Self = Self(4);
 }
 
-/// UhsIsocStartType
-#[doc(alias = "UhsIsocStartType")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum IsocStartType {
@@ -182,6 +156,7 @@ pub struct Config {
     pub controller: i32,
     /// Transaction memory, 64-byte aligned.
     pub buf: *mut ffi::c_void,
+    /// At least 4991 bytes.
     pub buf_size: u32,
 }
 
@@ -199,7 +174,6 @@ pub struct Client {
 }
 
 /// UHS_DEVICE_ID_MATCH_*
-#[doc(alias = "UHS_DEVICE_ID_MATCH")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MatchFlags(pub u16);
@@ -318,7 +292,6 @@ pub struct InterfaceProfile {
     pub speed: DeviceSpeed,
     pub controller_group: i32,
     pub controller_index: i32,
-    /// Hub ports from the root to the device.
     pub ports: [i16; MAX_HUB_HIERARCHY],
     pub device_uid: u32,
     pub alt_settings: i32,
@@ -329,8 +302,6 @@ pub struct InterfaceProfile {
     pub out_endpoints: [EndpointDescriptor; MAX_ENDPOINT_PAIRS],
 }
 
-/// UhsIsocFrameElement
-#[doc(alias = "UhsIsocFrameElement")]
 #[repr(C, packed)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct IsocFrame {
@@ -339,8 +310,6 @@ pub struct IsocFrame {
     pub xfer_size: u32,
 }
 
-/// UhsIsocPayload
-#[doc(alias = "UhsIsocPayload")]
 #[repr(C, packed)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct IsocPayload {
@@ -372,8 +341,6 @@ pub type IndicationCallback = Option<
     ),
 >;
 
-/// UhsControlUrbCompletionCallback
-#[doc(alias = "UhsControlUrbCompletionCallback")]
 pub type ControlCallback = Option<
     unsafe extern "C" fn(
         context: *mut ffi::c_void,
@@ -388,7 +355,6 @@ pub type ControlCallback = Option<
     ),
 >;
 
-/// UhsBulkUrbCompletionCallback / UhsInterruptUrbCompletionCallback
 #[doc(alias("UhsBulkUrbCompletionCallback", "UhsInterruptUrbCompletionCallback"))]
 pub type TransferCallback = Option<
     unsafe extern "C" fn(
@@ -402,8 +368,6 @@ pub type TransferCallback = Option<
     ),
 >;
 
-/// UhsIsocUrbCompletionCallback
-#[doc(alias = "UhsIsocUrbCompletionCallback")]
 pub type IsocCallback = Option<
     unsafe extern "C" fn(
         context: *mut ffi::c_void,

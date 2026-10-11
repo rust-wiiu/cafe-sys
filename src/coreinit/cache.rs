@@ -6,7 +6,6 @@ use crate::ffi;
 
 pub const LC_MAX_BYTES: u32 = 0x4000;
 pub const LC_MIN_ALLOC: u32 = 512;
-/// Maximum blocks of 32 bytes per DMA transfer.
 pub const LC_MAX_DMA_BLOCKS: u32 = 128;
 
 unsafe extern "C" {
@@ -61,7 +60,8 @@ unsafe extern "C" {
 
     /// DCCoreFlushAll
     ///
-    /// Flushes the whole data cache of the current core, using `buffer` to evict lines.
+    /// Flushes the whole data cache of the current core by zeroing `buffer` in the cache.
+    /// Returns false if `buffer` is not 32-byte aligned or smaller than a core-dependent size.
     #[doc(alias = "DCCoreFlushAll")]
     #[link_name = "DCCoreFlushAll"]
     pub unsafe fn dc_core_flush_all(buffer: *mut ffi::c_void, size: u32) -> ffi::c_bool;
@@ -77,8 +77,6 @@ unsafe extern "C" {
     pub unsafe fn memory_barrier();
 
     /// OSIsAddressRangeDCValid
-    ///
-    /// Whether the range is cacheable.
     #[doc(alias = "OSIsAddressRangeDCValid")]
     #[link_name = "OSIsAddressRangeDCValid"]
     pub unsafe fn is_address_range_dc_valid(addr: *const ffi::c_void, size: u32) -> ffi::c_bool;
@@ -100,7 +98,7 @@ unsafe extern "C" {
 
     /// LCAlloc
     ///
-    /// At least [LC_MIN_ALLOC] bytes.
+    /// `size` must be between [LC_MIN_ALLOC] and [LC_MAX_BYTES] and is rounded up to a multiple of [LC_MIN_ALLOC].
     #[doc(alias = "LCAlloc")]
     #[link_name = "LCAlloc"]
     pub unsafe fn lc_alloc(size: u32) -> *mut ffi::c_void;

@@ -1,6 +1,4 @@
 //! Copy data
-//!
-//! Data kept across application switches.
 
 use crate::ffi;
 

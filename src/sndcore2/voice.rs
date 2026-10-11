@@ -4,16 +4,9 @@ use super::device::DeviceType;
 use super::{Error, SyncError};
 use crate::ffi;
 
-/// AX_PRIORITY_FREE
-#[doc(alias = "AX_PRIORITY_FREE")]
 pub const PRIORITY_FREE: u32 = 0;
-/// AX_PRIORITY_LOWEST
-#[doc(alias = "AX_PRIORITY_LOWEST")]
 pub const PRIORITY_LOWEST: u32 = 1;
-/// AX_PRIORITY_NODROP
-///
 /// Voices with this priority are never dropped.
-#[doc(alias = "AX_PRIORITY_NODROP")]
 pub const PRIORITY_NODROP: u32 = 31;
 
 /// AXVoiceFormat
@@ -59,7 +52,6 @@ impl State {
 pub enum Type {
     #[default]
     Normal = 0,
-    /// Only uses the ADPCM predictor and scale, ignores the sample history.
     Stream = 1,
 }
 
@@ -72,11 +64,11 @@ pub enum SrcType {
     #[default]
     None = 0,
     Linear = 1,
-    /// 4-tap polyphase filter with 8 kHz low-pass response.
+    /// 4-tap filter.
     FourTap8Khz = 2,
-    /// 4-tap polyphase filter with 12.8 kHz low-pass response.
+    /// 4-tap filter.
     FourTap12Khz = 3,
-    /// 4-tap polyphase filter with 16 kHz low-pass response.
+    /// 4-tap filter.
     FourTap16Khz = 4,
 }
 
@@ -104,14 +96,12 @@ impl SrcRatioResult {
     pub const TOO_LARGE: Self = Self(-2);
 }
 
-/// AXVoiceCallbackReason
-#[doc(alias = "AXVCB_REASON")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CallbackReason(pub u32);
 
 impl CallbackReason {
-    /// Dropped for a voice with higher priority or because of the load limits.
+    /// Dropped because the DSP or PPC load limit was exceeded.
     pub const NO_RESOURCES: Self = Self(1);
     /// The sample buffer crosses a 512 MiB boundary, see [check_offsets].
     pub const SEG_VIOLATION: Self = Self(2);
@@ -120,13 +110,13 @@ impl CallbackReason {
 /// AXVoiceCallbackFn
 ///
 /// Called when the voice is dropped.
-#[doc(alias = "AXVoiceCallbackFn", alias = "AXVoiceCallback")]
+#[doc(alias = "AXVoiceCallbackFn")]
 pub type Callback = Option<unsafe extern "C" fn(voice: *mut Voice)>;
 
 /// AXVoiceCallbackExFn
 ///
 /// Called when the voice is dropped.
-#[doc(alias = "AXVoiceCallbackExFn", alias = "AXVoiceCallbackEx")]
+#[doc(alias = "AXVoiceCallbackExFn")]
 pub type CallbackEx = Option<
     unsafe extern "C" fn(voice: *mut Voice, user_context: *mut ffi::c_void, reason: CallbackReason),
 >;
@@ -174,7 +164,7 @@ pub struct Voice {
 /// AXVoiceVeData
 ///
 /// Volume envelope.
-#[doc(alias = "AXVoiceVeData", alias = "AXPBVE")]
+#[doc(alias = "AXVoiceVeData")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VeData {
@@ -183,7 +173,7 @@ pub struct VeData {
 }
 
 /// AXVoiceDeviceBusMixData
-#[doc(alias = "AXVoiceDeviceBusMixData", alias = "AXPBCHVE")]
+#[doc(alias = "AXVoiceDeviceBusMixData")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DeviceBusMixData {
@@ -194,15 +184,13 @@ pub struct DeviceBusMixData {
 /// AXVoiceDeviceMixData
 ///
 /// Mix of one channel, indexed by [Bus].
-#[doc(alias = "AXVoiceDeviceMixData", alias = "AXPBCHMIX")]
+#[doc(alias = "AXVoiceDeviceMixData")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DeviceMixData {
     pub bus: [DeviceBusMixData; 4],
 }
 
-/// AXPBBusType
-#[doc(alias = "AXPBBusType")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Bus {
@@ -214,19 +202,18 @@ pub enum Bus {
 }
 
 /// AXVoiceAdpcm
-#[doc(alias = "AXVoiceAdpcm", alias = "AXPBADPCM")]
+#[doc(alias = "AXVoiceAdpcm")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Adpcm {
     pub coefficients: [i16; 16],
-    /// 0 for ADPCM, 0x0800 for PCM16 and 0x0100 for PCM8.
     pub gain: u16,
     pub pred_scale: u16,
     pub prev_sample: [i16; 2],
 }
 
 /// AXVoiceAdpcmLoopData
-#[doc(alias = "AXVoiceAdpcmLoopData", alias = "AXPBADPCMLOOP")]
+#[doc(alias = "AXVoiceAdpcmLoopData")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AdpcmLoopData {
@@ -235,7 +222,7 @@ pub struct AdpcmLoopData {
 }
 
 /// AXVoiceSrc
-#[doc(alias = "AXVoiceSrc", alias = "AXPBSRC")]
+#[doc(alias = "AXVoiceSrc")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Src {
@@ -247,8 +234,6 @@ pub struct Src {
     pub last_sample: [i16; 4],
 }
 
-/// AXPBRMTSRC
-#[doc(alias = "AXPBRMTSRC")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RmtSrc {
@@ -256,10 +241,7 @@ pub struct RmtSrc {
     pub last_sample: [i16; 4],
 }
 
-/// AXPBLPF
-///
 /// Low-pass filter.
-#[doc(alias = "AXPBLPF")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Lpf {
@@ -270,10 +252,6 @@ pub struct Lpf {
     pub b0: u16,
 }
 
-/// AXPBBIQUAD
-///
-/// Biquad IIR filter.
-#[doc(alias = "AXPBBIQUAD")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Biquad {
@@ -290,8 +268,6 @@ pub struct Biquad {
     pub a2: i16,
 }
 
-/// AXPBRMTIIR
-#[doc(alias = "AXPBRMTIIR")]
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub union RmtIir {
@@ -299,8 +275,6 @@ pub union RmtIir {
     pub biquad: Biquad,
 }
 
-/// AXPBMIX
-#[doc(alias = "AXPBMIX")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Mix {
@@ -318,8 +292,6 @@ pub struct Mix {
     pub aux_c_surround: VeData,
 }
 
-/// AXPBDRCMIX
-#[doc(alias = "AXPBDRCMIX")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DrcMix {
@@ -331,8 +303,6 @@ pub struct DrcMix {
     pub aux_surround: VeData,
 }
 
-/// AXPBRMTMIX
-#[doc(alias = "AXPBRMTMIX")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RmtMix {
@@ -394,7 +364,7 @@ unsafe extern "C" {
 
     /// AXVoiceBegin
     ///
-    /// Starts a protection clause for `voice`, ended by [end]. Not needed inside [user_begin][super::user_begin].
+    /// Starts a protection clause for `voice`, ended by [end].
     #[doc(alias = "AXVoiceBegin")]
     #[link_name = "AXVoiceBegin"]
     pub unsafe fn begin(voice: *mut Voice) -> SyncError;
@@ -427,12 +397,12 @@ unsafe extern "C" {
     /// AXSetVoiceMixerSelect
     ///
     /// Returns the previous renderer.
-    #[doc(alias = "AXSetVoiceMixerSelect", alias = "AXSetVoiceRenderer")]
+    #[doc(alias = "AXSetVoiceMixerSelect")]
     #[link_name = "AXSetVoiceMixerSelect"]
     pub unsafe fn set_renderer(voice: *mut Voice, renderer: Renderer) -> Renderer;
 
     /// AXGetVoiceMixerSelect
-    #[doc(alias = "AXGetVoiceMixerSelect", alias = "AXGetVoiceRenderer")]
+    #[doc(alias = "AXGetVoiceMixerSelect")]
     #[link_name = "AXGetVoiceMixerSelect"]
     pub unsafe fn get_renderer(voice: *mut Voice) -> Renderer;
 
@@ -448,7 +418,7 @@ unsafe extern "C" {
 
     /// AXSetVoiceDeviceMix
     ///
-    /// `mix` points to one [DeviceMixData] per channel of the device mode. `id` is 0 for the TV, 0-1 for DRCs and 0-3 for controllers.
+    /// `mix` points to one [DeviceMixData] per channel. `id` is 0 for the TV, 0-1 for DRCs and 0-3 for controllers.
     #[doc(alias = "AXSetVoiceDeviceMix")]
     #[link_name = "AXSetVoiceDeviceMix"]
     pub unsafe fn set_device_mix(
@@ -624,7 +594,7 @@ unsafe extern "C" {
 
     /// AXSetVoiceRmtIIRCoefs
     ///
-    /// `kind` must match the filter set with [set_rmt_iir]. For the low-pass filter (1) pass `a0, b0`, for the biquad filter (2) pass `b0, b1, b2, a1, a2`, each as [ffi::c_uint]. Not implemented by the PPC renderer.
+    /// `kind` must match the filter set with [set_rmt_iir]. For the low-pass filter (1) pass `a0, b0`, for the biquad filter (2) pass `b0, b1, b2, a1, a2`, each as [ffi::c_uint].
     #[doc(alias = "AXSetVoiceRmtIIRCoefs")]
     #[link_name = "AXSetVoiceRmtIIRCoefs"]
     pub unsafe fn set_rmt_iir_coefs(voice: *mut Voice, kind: u16, ...);

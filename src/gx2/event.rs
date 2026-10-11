@@ -3,8 +3,6 @@
 use super::enums::{CompareFunction, EventType};
 use crate::ffi;
 
-/// GX2PipeEvent
-#[doc(alias = "GX2PipeEvent")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct PipeEvent(pub u32);
@@ -30,7 +28,7 @@ pub struct DisplayListOverrunData {
 }
 
 /// GX2EventCallbackFunction
-#[doc(alias = "GX2EventCallbackFunction", alias = "GX2CallbackFunction")]
+#[doc(alias = "GX2EventCallbackFunction")]
 pub type EventCallback =
     Option<unsafe extern "C" fn(event: EventType, user_data: *mut ffi::c_void)>;
 

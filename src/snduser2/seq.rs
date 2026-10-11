@@ -10,8 +10,6 @@ pub const MAX_TRACKS: usize = 64;
 #[doc(alias = "SEQ_ALL_TRACKS")]
 pub const ALL_TRACKS: u32 = 0xFFFF_FFFF;
 
-/// SEQ_STATE
-#[doc(alias = "SEQ_STATE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct State(pub u32);
@@ -23,14 +21,9 @@ impl State {
     pub const PAUSE: Self = Self(3);
 }
 
-/// SEQCALLBACK
-///
 /// Called on a registered MIDI controller event.
-#[doc(alias = "SEQCALLBACK")]
 pub type ControllerCallback = Option<unsafe extern "C" fn(track: *mut Track, controller: u8)>;
 
-/// SEQTRACK
-#[doc(alias = "SEQTRACK")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Track {
@@ -48,8 +41,6 @@ pub struct Track {
     pub state: u32,
 }
 
-/// SEQSEQUENCE
-#[doc(alias = "SEQSEQUENCE")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct Sequence {
@@ -77,15 +68,13 @@ unsafe extern "C" {
     pub unsafe fn quit();
 
     /// SEQRunAudioFrame
-    ///
-    /// Call from the AX frame callback.
     #[doc(alias = "SEQRunAudioFrame")]
     #[link_name = "SEQRunAudioFrame"]
     pub unsafe fn run_audio_frame();
 
     /// SEQAddSequence
     ///
-    /// Initializes `sequence`, including its synth, and adds it to the sequence list. `zero_buffer` is unused. Priorities are 1-31.
+    /// Initializes `sequence`, including its synth, and adds it to the sequence list. `zero_buffer` is unused.
     #[doc(alias = "SEQAddSequence")]
     #[link_name = "SEQAddSequence"]
     pub unsafe fn add_sequence(
@@ -105,8 +94,6 @@ unsafe extern "C" {
     pub unsafe fn remove_sequence(sequence: *mut Sequence);
 
     /// SEQRegisterControllerCallback
-    ///
-    /// Applies to all tracks.
     #[doc(alias = "SEQRegisterControllerCallback")]
     #[link_name = "SEQRegisterControllerCallback"]
     pub unsafe fn register_controller_callback(
@@ -152,12 +139,12 @@ unsafe extern "C" {
     /// SEQDRCSetVolume
     ///
     /// `db` is in 0.1 dB.
-    #[doc(alias = "SEQDRCSetVolume", alias = "SEQMOVSetVolume")]
+    #[doc(alias = "SEQDRCSetVolume")]
     #[link_name = "SEQDRCSetVolume"]
     pub unsafe fn drc_set_volume(sequence: *mut Sequence, db: i32);
 
     /// SEQDRCGetVolume
-    #[doc(alias = "SEQDRCGetVolume", alias = "SEQMOVGetVolume")]
+    #[doc(alias = "SEQDRCGetVolume")]
     #[link_name = "SEQDRCGetVolume"]
     pub unsafe fn drc_get_volume(sequence: *mut Sequence) -> i32;
 

@@ -12,7 +12,7 @@ use crate::ffi;
 pub const FAST_CONDITION_TAG: u32 = 0x664E6456;
 
 /// OSFastCondition
-#[doc(alias = "OSFastCondition", alias = "OSFastCond")]
+#[doc(alias = "OSFastCondition")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct FastCondition {

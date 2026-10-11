@@ -2,14 +2,12 @@
 
 use crate::ffi;
 
-/// GX2MiscType
-#[doc(alias = "GX2MiscType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MiscType(pub u32);
 
 impl MiscType {
-    /// [HangState], read only.
+    /// [HangState].
     pub const HANG_STATE: Self = Self(0);
     /// [HangResponse].
     pub const HANG_RESPONSE: Self = Self(1);
@@ -17,8 +15,6 @@ impl MiscType {
     pub const HANG_RESET_SWAP_COUNT: Self = Self(3);
 }
 
-/// GX2HangState
-#[doc(alias = "GX2HangState")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct HangState(pub u32);
@@ -36,31 +32,25 @@ impl HangState {
     pub const ETC: Self = Self(5);
 }
 
-/// GX2HangResponse
-#[doc(alias = "GX2HangResponse")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct HangResponse(pub u32);
 
 impl HangResponse {
     pub const NONE: Self = Self(0);
-    /// Dumps the GPU state and loops forever.
+    /// Dumps the GPU state.
     pub const DEBUG: Self = Self(1);
     /// Resets the GPU in [swap_scan_buffers][super::swap::swap_scan_buffers].
     pub const RESET: Self = Self(2);
 }
 
-/// GX2ProfileMode
-///
 /// Value of [InitAttributes::PROFILE_MODE][super::enums::InitAttributes::PROFILE_MODE].
-#[doc(alias = "GX2ProfileMode")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ProfileMode(pub u32);
 
 impl ProfileMode {
     pub const NONE: Self = Self(0x00000);
-    /// Command buffers are built but not sent to the GPU.
     pub const INFINITELY_FAST_HARDWARE: Self = Self(0x00001);
     pub const WIREFRAME: Self = Self(0x00002);
     pub const DISABLE_ALPHABLEND: Self = Self(0x00004);
@@ -91,10 +81,7 @@ impl core::ops::BitOr for ProfileMode {
     }
 }
 
-/// GX2TossStage
-///
 /// Value of [InitAttributes::TOSS_STAGE][super::enums::InitAttributes::TOSS_STAGE]. Disables the pipeline after a stage.
-#[doc(alias = "GX2TossStage")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct TossStage(pub u32);

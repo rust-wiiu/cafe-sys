@@ -70,8 +70,6 @@ unsafe extern "C" {
     pub unsafe fn query_virt_addr(virtual_address: u32) -> MapMode;
 
     /// OSMapMemory
-    ///
-    /// Sizes and addresses must be multiples of [PAGE_SIZE].
     #[doc(alias = "OSMapMemory")]
     #[link_name = "OSMapMemory"]
     pub unsafe fn map_memory(

@@ -1,34 +1,18 @@
 //! GX2 performance counters
-//!
-//! Development hardware only.
 
 use crate::coreinit::mem::allocator::Allocator;
 use crate::ffi;
 
-/// GX2_INVALID_COUNTER_VALUE_U64
-#[doc(alias = "GX2_INVALID_COUNTER_VALUE_U64")]
 pub const INVALID_COUNTER_VALUE_U64: u64 = u64::MAX;
-/// GX2_NUM_COUNTER_SQ
-#[doc(alias = "GX2_NUM_COUNTER_SQ")]
 pub const NUM_COUNTER_SQ: usize = 4;
-/// GX2_NUM_COUNTER_PIPELINE
-#[doc(alias = "GX2_NUM_COUNTER_PIPELINE")]
 pub const NUM_COUNTER_PIPELINE: usize = 8;
 
-/// GX2PerfTag
-#[doc(alias = "GX2PerfTag")]
 pub type Tag = u32;
 
-/// GX2PerfTag2StringFunc
-///
 /// Returns the name of a tag for printing.
-#[doc(alias = "GX2PerfTag2StringFunc")]
 pub type Tag2StringFunc = Option<unsafe extern "C" fn(tag: Tag) -> *const ffi::c_char>;
 
-/// _GX2CounterId
-///
-/// Low-level hardware counter. Counters with two instances (`_0`/`_1` suffix) are configured through instance 0.
-#[doc(alias = "_GX2CounterId")]
+/// Low-level hardware counter.
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CounterId(pub u32);
@@ -106,18 +90,12 @@ impl CounterId {
     pub const PIPELINE: Self = Self(0x45);
 }
 
-/// _GX2StatId
-///
 /// Stat counted by a low-level counter, specific to the counter block.
-#[doc(alias = "_GX2StatId")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StatId(pub u32);
 
-/// _GX2SqType
-///
 /// Shader type of an SQ counter.
-#[doc(alias = "_GX2SqType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SqType(pub u32);
@@ -200,8 +178,6 @@ impl Metric {
     pub const U64_PA_INPUT_PRIM: Self = Self(61);
 }
 
-/// GX2PerfMetricType
-#[doc(alias = "GX2PerfMetricType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MetricType(pub u32);
@@ -211,8 +187,6 @@ impl MetricType {
     pub const F32: Self = Self(1);
 }
 
-/// GX2PerfCollectionMethod
-#[doc(alias = "GX2PerfCollectionMethod")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CollectionMethod(pub u32);
@@ -220,14 +194,12 @@ pub struct CollectionMethod(pub u32);
 impl CollectionMethod {
     /// Collection off.
     pub const NONE: Self = Self(0);
-    /// Results of all enabled tags are accumulated per pass.
+    /// Results of all enabled tags are accumulated.
     pub const TAGS_ACCUMULATE: Self = Self(1);
-    /// Results are collected at each tag start and end.
+    /// Results are collected per tag.
     pub const TAGS_INDIVIDUAL: Self = Self(2);
 }
 
-/// GX2PerfType
-#[doc(alias = "GX2PerfType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Type(pub u32);
@@ -240,10 +212,7 @@ impl Type {
     pub const MEM_STAT: Self = Self(2);
 }
 
-/// GX2MetricResult
-///
 /// Selected by the [MetricType] of the metric.
-#[doc(alias = "GX2MetricResult")]
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub union MetricResult {
@@ -251,18 +220,12 @@ pub union MetricResult {
     pub u64: u64,
 }
 
-/// GX2PerfData
-///
 /// Perf collection state, see [init].
-#[doc(alias = "GX2PerfData")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Data(ffi::unknown<0x8A0>);
 
-/// GX2CounterInfo
-///
 /// Low-level counter configuration followed by the results.
-#[doc(alias = "GX2CounterInfo")]
 #[repr(C, align(32))]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CounterInfo {
@@ -279,7 +242,7 @@ const _: () = {
 
 unsafe extern "C" {
     /// GX2GetPerfMetricType
-    #[doc(alias = "GX2GetPerfMetricType", alias = "GX2TempGetPerfMetricType")]
+    #[doc(alias = "GX2GetPerfMetricType")]
     #[link_name = "GX2GetPerfMetricType"]
     pub unsafe fn get_metric_type(metric: Metric) -> MetricType;
 
@@ -403,7 +366,7 @@ unsafe extern "C" {
 
     /// GX2PerfGetResultByTagId
     ///
-    /// `number` is the occurrence of `tag`.
+    /// `number` is the occurrence of `tag`. Returns false unless the collection method is [CollectionMethod::TAGS_INDIVIDUAL].
     #[doc(alias = "GX2PerfGetResultByTagId")]
     #[link_name = "GX2PerfGetResultByTagId"]
     pub unsafe fn get_result_by_tag_id(
@@ -463,7 +426,7 @@ unsafe extern "C" {
 
     /// GX2InitCounterInfo
     ///
-    /// Configures `counter` to count `stat`. Fails if the counter is already configured. Do not call between [start_counters] and [stop_counters].
+    /// Configures `counter` to count `stat`.
     #[doc(alias = "GX2InitCounterInfo")]
     #[link_name = "GX2InitCounterInfo"]
     pub unsafe fn init_counter_info(
@@ -485,7 +448,7 @@ unsafe extern "C" {
 
     /// GX2GetCounterResultSize
     ///
-    /// Size of a separate result buffer for [sample_counters_ex], a multiple of 32. The buffer must be 32-byte aligned.
+    /// Size of a separate result buffer for [sample_counters_ex], a multiple of 32.
     #[doc(alias = "GX2GetCounterResultSize")]
     #[link_name = "GX2GetCounterResultSize"]
     pub unsafe fn get_counter_result_size(info: *mut CounterInfo) -> u32;
@@ -502,7 +465,7 @@ unsafe extern "C" {
 
     /// GX2SampleCountersEx
     ///
-    /// Same as [sample_counters], but into a separate 32-byte aligned buffer.
+    /// Same as [sample_counters], but into a separate buffer.
     #[doc(alias = "GX2SampleCountersEx")]
     #[link_name = "GX2SampleCountersEx"]
     pub unsafe fn sample_counters_ex(info: *mut CounterInfo, results: *mut u64);
@@ -539,7 +502,7 @@ unsafe extern "C" {
     pub unsafe fn reset_counters(info: *const CounterInfo);
 }
 
-/// Deprecated counter API, replaced by the functions in [perf][super].
+/// Older counter API.
 pub mod legacy {
     use super::{CounterId, Metric, NUM_COUNTER_PIPELINE, NUM_COUNTER_SQ, SqType, StatId};
     use crate::ffi;
@@ -547,8 +510,6 @@ pub mod legacy {
     const COUNTER_COUNT: usize = CounterId::PIPELINE.0 as usize + 1;
     const RESULT_SIZE: usize = CounterId::PIPELINE.0 as usize + 2 * NUM_COUNTER_PIPELINE;
 
-    /// _GX2CounterInfo
-    #[doc(alias = "_GX2CounterInfo")]
     #[repr(C)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct CounterInfo {
@@ -559,15 +520,12 @@ pub mod legacy {
         pub sq_type: [SqType; NUM_COUNTER_SQ],
     }
 
-    /// GX2PerfInfo
-    #[doc(alias = "GX2PerfInfo")]
     #[repr(C)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct PerfInfo {
         pub counter_info: CounterInfo,
-        /// Number of used counters per block: CP, GRBM, PA_SU, VGT, SQ, SPI, SX, TA, TCP, TCC, DB, CB.
+        /// Number of used counters per block.
         pub used_counts: [u8; 12],
-        /// Counter indices of the individual stats used by the metrics.
         pub indices: [u8; 71],
     }
 

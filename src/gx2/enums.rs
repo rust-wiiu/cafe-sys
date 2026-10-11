@@ -205,7 +205,7 @@ impl ChannelMask {
 }
 
 /// GX2ClearFlags
-#[doc(alias = "GX2ClearFlags", alias = "GX2ClearMode")]
+#[doc(alias = "GX2ClearFlags")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ClearFlags(pub u32);
@@ -214,9 +214,7 @@ impl ClearFlags {
     pub const DEPTH: Self = Self(1);
     pub const STENCIL: Self = Self(2);
     pub const BOTH: Self = Self(3);
-    /// Stores the depth clear value in the current context.
     pub const D_REG: Self = Self(4);
-    /// Stores the stencil clear value in the current context.
     pub const S_REG: Self = Self(8);
     pub const D_S_REG: Self = Self(0xc);
     pub const DEPTH_D_REG: Self = Self(5);
@@ -251,7 +249,7 @@ impl CompareFunction {
 }
 
 /// GX2DrcRenderMode
-#[doc(alias = "GX2DrcRenderMode", alias = "GX2DRCMode")]
+#[doc(alias = "GX2DrcRenderMode")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DrcRenderMode(pub u32);
@@ -468,7 +466,7 @@ impl RoundingMode {
 }
 
 /// GX2SamplerVarType
-#[doc(alias = "GX2SamplerVarType", alias = "GX2SamplerType")]
+#[doc(alias = "GX2SamplerVarType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SamplerVarType(pub u32);

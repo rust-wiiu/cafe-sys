@@ -17,10 +17,7 @@ pub struct SystemInfo {
     pub cpu_freq_ratio: u32,
 }
 
-/// OS_GETINFO
-///
 /// Selector of [get_info] and [set_info].
-#[doc(alias = "OS_GETINFO", alias = "OS_SETINFO")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InfoSelector(pub u32);
@@ -31,8 +28,6 @@ impl InfoSelector {
     pub const HDP: Self = Self(1);
 }
 
-/// OSGetInfo_HDP
-#[doc(alias = "OSGetInfo_HDP")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InfoHdp {
@@ -52,7 +47,7 @@ unsafe extern "C" {
 
     /// OSEnableHomeButtonMenu
     ///
-    /// Returns the previous state.
+    /// Returns false if the menu cannot be disabled right now, otherwise true.
     #[doc(alias = "OSEnableHomeButtonMenu")]
     #[link_name = "OSEnableHomeButtonMenu"]
     pub unsafe fn enable_home_button_menu(enable: ffi::c_bool) -> ffi::c_bool;

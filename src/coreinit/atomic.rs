@@ -1,6 +1,6 @@
 //! Atomic
 //!
-//! Atomic operations on 32- and 64-bit values, coherent across cores.
+//! Atomic operations on 32- and 64-bit values.
 
 use crate::ffi;
 

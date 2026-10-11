@@ -1,4 +1,4 @@
-//! Launcher stub for Wii titles (HAI = Hybrid Application Interface?)
+//! Launcher stub for Wii titles (HAI)
 
 imports_section!(
     "nn_hai",

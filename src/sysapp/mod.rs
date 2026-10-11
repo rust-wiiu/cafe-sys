@@ -6,8 +6,6 @@ use crate::ffi;
 
 use crate::nn::ffl::StoreData;
 
-/// SYS_ERROR
-#[doc(alias = "SYS_ERROR")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub i32);
@@ -24,11 +22,7 @@ impl Error {
 /// SysAppPFID
 ///
 /// Process family ID.
-#[doc(
-    alias = "SysAppPFID",
-    alias = "SysCallerType",
-    alias = "SysCheckableSystemApplicationID"
-)]
+#[doc(alias = "SysAppPFID")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Pfid(pub i32);
@@ -71,18 +65,17 @@ pub enum SystemAppId {
 }
 
 /// SYSStandardArgsIn
-///
-/// `anchor` is returned by [get_arguments] when control returns from the jump. Up to 4096 bytes.
-#[doc(alias = "SYSStandardArgsIn", alias = "SysStandardArgsIn")]
+#[doc(alias = "SYSStandardArgsIn")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StandardArgsIn {
+    /// Null-terminated, up to 4096 characters.
     pub anchor: *const ffi::c_char,
     pub anchor_size: u32,
 }
 
 /// SYSStandardArgs
-#[doc(alias = "SYSStandardArgs", alias = "SysStandardArgs")]
+#[doc(alias = "SYSStandardArgs")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StandardArgs {
@@ -109,30 +102,25 @@ pub struct StandardArgsOut {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BrowserArgs {
     pub std_args: StandardArgsIn,
-    /// Null-terminated `http://` or `https://` URL, up to 1023 characters, percent-encoded.
+    /// Null-terminated URL, up to 1023 characters.
     pub url: *const ffi::c_char,
-    /// Including the terminator.
     pub url_size: u32,
 }
 
 /// SysAppBrowserArgsWithCallback
-#[doc(
-    alias = "SysAppBrowserArgsWithCallback",
-    alias = "SysBrowserArgsInForCallbackURL"
-)]
+#[doc(alias = "SysAppBrowserArgsWithCallback")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BrowserArgsWithCallback {
     pub browser_args: BrowserArgs,
     pub callback_url: *const ffi::c_char,
-    /// Including the terminator.
     pub callback_url_size: u32,
     /// Disables the HOME Menu in the browser.
     pub hbm_disable: ffi::c_bool,
 }
 
 /// SysAppEShopArgs
-#[doc(alias = "SysAppEShopArgs", alias = "SysEShopArgsIn")]
+#[doc(alias = "SysAppEShopArgs")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct EShopArgs {
@@ -141,8 +129,6 @@ pub struct EShopArgs {
     pub query_size: u32,
 }
 
-/// SysAccountArgsIn
-#[doc(alias = "SysAccountArgsIn")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AccountArgs {
@@ -152,7 +138,7 @@ pub struct AccountArgs {
 }
 
 /// SYSSettingsJumpToTarget
-#[doc(alias = "SYSSettingsJumpToTarget", alias = "SysSettingsJumpTo")]
+#[doc(alias = "SYSSettingsJumpToTarget")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SettingsJumpTo {
@@ -177,8 +163,6 @@ pub enum SettingsJumpTo {
     SoftwareTransfer = 255,
 }
 
-/// SysSettingsArgsIn
-#[doc(alias = "SysSettingsArgsIn")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SettingsArgs {
@@ -196,8 +180,6 @@ pub struct MiiMakerArgs {
     pub mii: *mut StoreData,
 }
 
-/// SysVodArgs
-#[doc(alias = "SysVodArgs")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VodArgs {
@@ -207,7 +189,7 @@ pub struct VodArgs {
 }
 
 /// SYSArgID
-#[doc(alias = "SYSArgID", alias = "SysArgID")]
+#[doc(alias = "SYSArgID")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ArgId(pub u32);
@@ -223,7 +205,7 @@ impl ArgId {
 }
 
 /// SYSArgType
-#[doc(alias = "SYSArgType", alias = "SysArgType")]
+#[doc(alias = "SYSArgType")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ArgType(pub u32);
@@ -254,7 +236,7 @@ pub union ArgValue {
 }
 
 /// SYSArgDataBlock
-#[doc(alias = "SYSArgDataBlock", alias = "SysArgSlot")]
+#[doc(alias = "SYSArgDataBlock")]
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct ArgSlot {
@@ -264,7 +246,7 @@ pub struct ArgSlot {
 }
 
 /// SYSCallerInfo
-#[doc(alias = "SYSCallerInfo", alias = "SysCallerData")]
+#[doc(alias = "SYSCallerInfo")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CallerInfo {
@@ -336,8 +318,6 @@ unsafe extern "C" {
     pub unsafe fn switch_to(pfid: Pfid) -> Error;
 
     /// SYSSwitchToBrowser
-    ///
-    /// Null `args` opens the browser without a URL.
     #[doc(alias = "SYSSwitchToBrowser")]
     #[link_name = "SYSSwitchToBrowser"]
     pub unsafe fn switch_to_browser(args: *const BrowserArgs) -> Error;
@@ -372,7 +352,7 @@ unsafe extern "C" {
 
     /// SYSSwitchToEShopTicketList
     ///
-    /// Opens the subscription list page of the title.
+    /// Opens the ticket list page of the title.
     #[doc(alias = "SYSSwitchToEShopTicketList")]
     #[link_name = "SYSSwitchToEShopTicketList"]
     pub unsafe fn switch_to_eshop_ticket_list(args: *const StandardArgsIn) -> Error;
@@ -398,7 +378,7 @@ unsafe extern "C" {
 
     /// SYSGetArguments
     ///
-    /// `slots` is terminated by [ArgId::END]. Slots without data get [ArgType::NO_DATA]. Returns [Error::NO_ARGS] if the caller passed none.
+    /// `slots` is terminated by [ArgId::END].
     #[doc(alias = "SYSGetArguments")]
     #[link_name = "SYSGetArguments"]
     pub unsafe fn get_arguments(slots: *mut ArgSlot, caller: *mut CallerInfo) -> Error;
@@ -409,8 +389,6 @@ unsafe extern "C" {
     pub unsafe fn get_standard_args(args: *mut StandardArgs) -> Error;
 
     /// SYSGetVodArgs
-    ///
-    /// Call after starting and after returning from the HOME Menu.
     #[doc(alias = "SYSGetVodArgs")]
     #[link_name = "SYSGetVodArgs"]
     pub unsafe fn get_vod_args(args: *mut VodArgs) -> Error;
@@ -496,7 +474,7 @@ unsafe extern "C" {
 
     /// SYSCheckSystemApplicationExists
     ///
-    /// Only [Pfid::EMANUAL], [Pfid::MINI_MIIVERSE], [Pfid::BROWSER], [Pfid::MIIVERSE] and [Pfid::ESHOP]. For debugging.
+    /// Only supports [Pfid::EMANUAL], [Pfid::MINI_MIIVERSE], [Pfid::BROWSER], [Pfid::MIIVERSE] and [Pfid::ESHOP], returns false otherwise.
     #[doc(alias = "SYSCheckSystemApplicationExists")]
     #[link_name = "SYSCheckSystemApplicationExists"]
     pub unsafe fn check_system_application_exists(pfid: Pfid) -> ffi::c_bool;

@@ -32,7 +32,7 @@ unsafe extern "C" {
 
     /// WBCRead
     ///
-    /// Converts the raw pressure values of `status` into weights. Requires [setup_calibration].
+    /// Converts the raw pressure values of `status` into weights. Requires [setup_calibration]. `size` must be at least 4.
     #[doc(alias = "WBCRead")]
     #[link_name = "WBCRead"]
     pub unsafe fn read(status: *mut BlStatus, weight: *mut f64, size: u32) -> Error;

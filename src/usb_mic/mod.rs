@@ -1,18 +1,14 @@
 //! USB Microphone (usb_mic)
 //!
-//! Input streaming from USB microphones. Cannot be used together with `uac_rpl`.
+//! Input streaming from USB microphones.
 
 use crate::coreinit::event::Event;
 use crate::ffi;
 
-/// usb_mic_handle_t
-#[doc(alias = "usb_mic_handle_t")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Handle(pub ffi::c_long);
 
-/// USB_MIC_ERROR
-#[doc(alias = "USB_MIC_ERROR")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub ffi::c_int);
@@ -28,8 +24,6 @@ impl Error {
     pub const DEVICE: Self = Self(-7);
 }
 
-/// usb_mic_state_t
-#[doc(alias = "usb_mic_state_t")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum State {
@@ -47,20 +41,14 @@ pub enum State {
     Core = 11,
 }
 
-/// usb_mic_ringbuffer_t
-///
-/// 16-bit PCM, at least 4-byte aligned.
-#[doc(alias = "usb_mic_ringbuffer_t")]
+/// 16-bit PCM.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RingBuffer {
-    /// Size in samples of all channels.
     pub modulus: ffi::c_ulong,
     pub base: *mut i16,
 }
 
-/// MIC_STATUS_FLAG
-#[doc(alias = "MIC_STATUS_FLAG")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StatusFlags(pub ffi::c_ulong);
@@ -69,8 +57,6 @@ impl StatusFlags {
     pub const PCM16: Self = Self(1 << 0);
 }
 
-/// usb_mic_status_t
-#[doc(alias = "usb_mic_status_t")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Status {
@@ -80,8 +66,6 @@ pub struct Status {
     pub read_idx: ffi::c_ulong,
 }
 
-/// usb_event_type_t
-#[doc(alias = "usb_event_type_t")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct EventType(pub u32);
@@ -92,8 +76,6 @@ impl EventType {
     pub const ERROR: Self = Self(2);
 }
 
-/// usb_event_data_t
-#[doc(alias = "usb_event_data_t")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct EventData {
@@ -104,10 +86,6 @@ pub struct EventData {
     pub handle: Handle,
 }
 
-/// usb_event_handler_t
-///
-/// Called on a driver thread for every device event. The functions except [init] and [uninit] may be called from here.
-#[doc(alias = "usb_event_handler_t")]
 pub type EventHandler = Option<
     unsafe extern "C" fn(
         context: *mut ffi::c_void,
@@ -117,8 +95,6 @@ pub type EventHandler = Option<
     ),
 >;
 
-/// mem_res_query_element_t
-#[doc(alias = "mem_res_query_element_t")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MemResQueryElement {
@@ -131,8 +107,6 @@ pub struct MemResQueryElement {
     pub links: [ffi::c_ulong; 3],
 }
 
-/// mem_res_query_t
-#[doc(alias = "mem_res_query_t")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MemResQuery {
@@ -140,8 +114,6 @@ pub struct MemResQuery {
     pub mem_res: *mut MemResQueryElement,
 }
 
-/// mem_res_element_t
-#[doc(alias = "mem_res_element_t")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MemResElement {
@@ -153,10 +125,6 @@ pub struct MemResElement {
     pub pv: *mut ffi::c_void,
 }
 
-/// mem_res_t
-///
-/// No longer used, pass zero resources.
-#[doc(alias = "mem_res_t")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MemRes {
@@ -166,8 +134,6 @@ pub struct MemRes {
 
 unsafe extern "C" {
     /// USBMICInit
-    ///
-    /// Must be called again after reacquiring the foreground.
     #[doc(alias = "USBMICInit")]
     #[link_name = "USBMICInit"]
     pub unsafe fn init(context: *mut ffi::c_void, handler: EventHandler) -> Error;
@@ -185,7 +151,7 @@ unsafe extern "C" {
 
     /// USBMICOpen
     ///
-    /// `ring_buffer` must stay valid until [close] or [uninit].
+    /// `mem_res` is unused.
     #[doc(alias = "USBMICOpen")]
     #[link_name = "USBMICOpen"]
     pub unsafe fn open(handle: Handle, mem_res: *mut MemRes, ring_buffer: *mut RingBuffer)
@@ -202,8 +168,6 @@ unsafe extern "C" {
     pub unsafe fn start(handle: Handle) -> Error;
 
     /// USBMICStartExt
-    ///
-    /// Signals `wait_event` when new input is available, at most every `delay_us`.
     #[doc(alias = "USBMICStartExt")]
     #[link_name = "USBMICStartExt"]
     pub unsafe fn start_ext(handle: Handle, wait_event: *mut Event, delay_us: ffi::c_uint)

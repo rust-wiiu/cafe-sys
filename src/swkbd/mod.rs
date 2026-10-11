@@ -6,23 +6,13 @@ use crate::coreinit::fs;
 use crate::ffi;
 
 /// cUnfixedStringLengthMax
-///
-/// Unfixed strings are finalized when they exceed this length.
 pub const UNFIXED_STRING_LENGTH_MAX: usize = 24;
-/// cProportionalStringTextMax
 pub const PROPORTIONAL_STRING_TEXT_MAX: usize = 9999;
-/// cProportionalStringLengthMax
 pub const PROPORTIONAL_STRING_LENGTH_MAX: usize = 65000;
-/// cMonospaceStringLengthMax
 pub const MONOSPACE_STRING_LENGTH_MAX: usize = 40;
-/// cGuideStringLengthMax
 pub const GUIDE_STRING_LENGTH_MAX: usize = 256;
-/// cOkStringLengthMax
 pub const OK_STRING_LENGTH_MAX: usize = 8;
-/// cUserWordMax
 pub const USER_WORD_MAX: usize = 500;
-/// cLearnDicSize
-///
 /// Size of a learning dictionary buffer, see [init_learn_dic].
 pub const LEARN_DIC_SIZE: usize = 80 + 42 * 1000;
 
@@ -62,8 +52,6 @@ pub enum LanguageType {
 }
 
 /// nn::swkbd::ControllerType
-///
-/// The keyboard is shown on the TV for Wii Remotes and on the GamePad for the DRC.
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ControllerType {
@@ -79,7 +67,7 @@ pub enum ControllerType {
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum KeyboardMode {
-    /// All layouts of the region, limited by [ConfigArg::keyboard_flags].
+    /// Allows all UTF-16 characters.
     #[default]
     Full = 0,
     Numpad = 1,
@@ -90,7 +78,6 @@ pub enum KeyboardMode {
 }
 
 /// nn::swkbd::KeyboardLayout
-#[doc(alias = "KeyboardType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct KeyboardLayout(pub u32);
@@ -119,10 +106,7 @@ impl KeyboardLayout {
     pub const LANGUAGE_DEFAULT: Self = Self(19);
 }
 
-/// KeyboardFlag
-///
-/// Layouts usable in [KeyboardMode::Full], one bit per [KeyboardLayout].
-#[doc(alias = "KeyboardFlag")]
+/// One bit per [KeyboardLayout].
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct KeyboardFlags(pub u32);
@@ -146,10 +130,7 @@ impl core::ops::BitOr for KeyboardFlags {
     }
 }
 
-/// InvalidChar
-///
 /// Characters that cannot be entered.
-#[doc(alias = "InvalidChar")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InvalidChars(pub u32);
@@ -166,9 +147,7 @@ impl InvalidChars {
     pub const HEART: Self = Self(1 << 7);
     pub const EURO_MARK: Self = Self(1 << 8);
     pub const OUTSIDE_OF_SJIS: Self = Self(1 << 9);
-    /// Everything not used in download codes. Use with [KeyboardMode::Nnid].
     pub const DOWNLOAD_CODE: Self = Self(1 << 10);
-    /// Everything not used in NNIDs. Use with [KeyboardMode::Nnid].
     pub const NNID: Self = Self(1 << 11);
 }
 
@@ -181,10 +160,7 @@ impl core::ops::BitOr for InvalidChars {
     }
 }
 
-/// LoadOffFlag
-///
 /// Features not to load, to reduce the work memory.
-#[doc(alias = "LoadOffFlag")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LoadOffFlags(pub u32);
@@ -234,7 +210,7 @@ pub enum PasswordMode {
     Clear = 0,
     /// Masks characters immediately.
     Hide = 1,
-    /// Masks characters after one second or the next input.
+    /// Masks characters after a short delay.
     Fade = 2,
 }
 
@@ -250,7 +226,6 @@ impl State {
     pub const FADE_OUT: Self = Self(3);
 }
 
-/// nn::swkbd::CursorMove
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CursorMove(pub u32);
@@ -282,7 +257,7 @@ impl Default for KeyboardCondition {
 
 /// nn::swkbd::UserWord
 ///
-/// User dictionary entry. Both strings are null-terminated; for Japanese, `reading` is in hiragana.
+/// User dictionary entry.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct UserWord {
@@ -306,14 +281,13 @@ pub struct ConfigArg {
     pub first_select_cursor: bool,
     /// Label of the OK button, up to [OK_STRING_LENGTH_MAX] characters.
     pub ok_string: *const u16,
-    /// Key label left of 0 on the numpad, 0 for none.
+    /// Extra key on the left side of the numpad.
     pub numpad_char_left: u16,
-    /// Key label right of 0 on the numpad, 0 for none.
+    /// Extra key on the right side of the numpad.
     pub numpad_char_right: u16,
     /// Predictive text input.
     pub predict: bool,
     pub invalid_chars: InvalidChars,
-    /// Must stay valid until the keyboard is closed.
     pub user_words: *mut UserWord,
     /// Up to [USER_WORD_MAX].
     pub num_user_words: i32,
@@ -321,11 +295,9 @@ pub struct ConfigArg {
     pub learn_dic: [*mut ffi::c_void; DIC_LANGUAGE_COUNT],
     /// Customized dictionaries per language.
     pub customize_dic: [*const ffi::c_void; DIC_LANGUAGE_COUNT],
-    /// 1 for 60 fps, 2 for 30 fps.
     pub frame_rate: i32,
     /// Draws the system Wii Remote pointer.
     pub draw_dpd_cursor: bool,
-    /// Initial lock in [KeyboardMode::Password]: 0 for caps lock, 1 for shift, -1 for none.
     pub first_lock: i32,
 }
 
@@ -361,10 +333,8 @@ pub struct ReceiverArg {
     pub event_receiver: *mut EventReceiver,
     pub string_buf: *mut u16,
     pub string_buf_size: i32,
-    /// Finalized strings are clipped to this many characters, -1 for none.
     pub fixed_char_num_limit: i32,
     pub cursor_pos: i32,
-    /// Selection start, -1 for none.
     pub select_from: i32,
 }
 
@@ -394,7 +364,6 @@ pub struct KeyboardArg {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InputFormArg {
     pub kind: InputFormType,
-    /// Initial cursor position, -1 for the end.
     pub cursor_pos: i32,
     /// Initial text.
     pub initial_text: *const u16,
@@ -403,13 +372,12 @@ pub struct InputFormArg {
     /// Maximum number of characters, -1 for unlimited.
     pub max_text_length: i32,
     pub password_mode: PasswordMode,
-    /// Separator bits between the boxes of [InputFormType::Monospace], e.g. `0x88` for groups of 4, 4, 4.
     pub separate_flags: u32,
     /// Shows the cursor in [InputFormType::Monospace].
     pub draw_cursor: bool,
     /// Selects the initial text in [InputFormType::Proportional].
     pub select_all_text: bool,
-    /// Shows copy and paste buttons in [InputFormType::Proportional].
+    /// Shows copy and paste buttons.
     pub copy_paste: bool,
 }
 
@@ -439,12 +407,9 @@ pub struct AppearArg {
 }
 
 /// nn::swkbd::ControllerInfo
-///
-/// The statuses are copied.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ControllerInfo {
-    /// Touch positions must already be calibrated.
     pub vpad: *const crate::vpad::Status,
     pub kpad: [*const crate::padscore::kpad::Status; 4],
 }
@@ -459,8 +424,6 @@ impl Default for ControllerInfo {
 }
 
 /// nn::swkbd::DrawStringInfo
-///
-/// Ranges of unfixed text, -1 if unused.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DrawStringInfo {
@@ -490,7 +453,7 @@ impl Default for DrawStringInfo {
 
 /// nn::swkbd::IEventReceiver
 ///
-/// C++ interface receiving text change and cursor move events.
+/// C++ interface receiving keyboard events.
 #[doc(alias = "IEventReceiver")]
 #[repr(C)]
 pub struct EventReceiver {
@@ -525,8 +488,6 @@ unsafe extern "C" {
     /// SwkbdCreate
     ///
     /// `work_memory` must be [get_work_memory_size] bytes. Call [set_version] first.
-    ///
-    /// Call from a thread with lower priority than the main thread, after `GX2Init`, and keep that thread alive until [destroy]. Overwrites the `OSDynLoad` allocator.
     #[doc(alias = "SwkbdCreate", alias = "Create")]
     #[link_name = "SwkbdCreate__3RplFPUcQ3_2nn5swkbd10RegionTypeUiP8FSClient"]
     pub unsafe fn create(
@@ -567,14 +528,14 @@ unsafe extern "C" {
 
     /// SwkbdAppearInputForm
     ///
-    /// Returns false if already appearing or visible.
+    /// Returns false on error.
     #[doc(alias = "SwkbdAppearInputForm", alias = "AppearInputForm")]
     #[link_name = "SwkbdAppearInputForm__3RplFRCQ3_2nn5swkbd9AppearArg"]
     pub unsafe fn appear_input_form(arg: *const AppearArg) -> bool;
 
     /// SwkbdDisappearInputForm
     ///
-    /// Returns false if already disappearing or hidden.
+    /// Returns false on error.
     #[doc(alias = "SwkbdDisappearInputForm", alias = "DisappearInputForm")]
     #[link_name = "SwkbdDisappearInputForm__3RplFv"]
     pub unsafe fn disappear_input_form() -> bool;
@@ -592,8 +553,6 @@ unsafe extern "C" {
     pub unsafe fn get_input_form_string() -> *const u16;
 
     /// SwkbdSetInputFormString
-    ///
-    /// Replaces the text and moves the cursor to the end. Null is an empty string.
     #[doc(alias = "SwkbdSetInputFormString", alias = "SetInputFormString")]
     #[link_name = "SwkbdSetInputFormString__3RplFPCw"]
     pub unsafe fn set_input_form_string(string: *const u16);
@@ -616,15 +575,11 @@ unsafe extern "C" {
     pub unsafe fn get_state_keyboard() -> State;
 
     /// SwkbdIsDecideOkButton
-    ///
-    /// `by_select_cursor` (nullable) is set if pressed with the selection cursor.
     #[doc(alias = "SwkbdIsDecideOkButton", alias = "IsDecideOkButton")]
     #[link_name = "SwkbdIsDecideOkButton__3RplFPb"]
     pub unsafe fn is_decide_ok_button(by_select_cursor: *mut bool) -> bool;
 
     /// SwkbdIsDecideCancelButton
-    ///
-    /// `by_select_cursor` (nullable) is set if pressed with the selection cursor.
     #[doc(alias = "SwkbdIsDecideCancelButton", alias = "IsDecideCancelButton")]
     #[link_name = "SwkbdIsDecideCancelButton__3RplFPb"]
     pub unsafe fn is_decide_cancel_button(by_select_cursor: *mut bool) -> bool;
@@ -636,7 +591,7 @@ unsafe extern "C" {
 
     /// SwkbdSetControllerRemo
     ///
-    /// Switches the Wii Remote operating a keyboard shown on the TV.
+    /// Switches the controller operating the keyboard.
     #[doc(alias = "SwkbdSetControllerRemo", alias = "SetControllerRemo")]
     #[link_name = "SwkbdSetControllerRemo__3RplFQ3_2nn5swkbd14ControllerType"]
     pub unsafe fn set_controller_remo(controller: ControllerType);
@@ -658,7 +613,7 @@ unsafe extern "C" {
 
     /// SwkbdCalcSubThreadFont
     ///
-    /// Generates fonts. Call from a thread with higher priority than the one calling [calc_sub_thread_predict].
+    /// Calculates font data, call when [is_need_calc_sub_thread_font] is true.
     #[doc(alias = "SwkbdCalcSubThreadFont", alias = "CalcSubThreadFont")]
     #[link_name = "SwkbdCalcSubThreadFont__3RplFv"]
     pub unsafe fn calc_sub_thread_font();
@@ -673,7 +628,7 @@ unsafe extern "C" {
 
     /// SwkbdCalcSubThreadPredict
     ///
-    /// Runs predictive text input. Call from a thread with lower priority than the main thread.
+    /// Calculates word prediction data, call when [is_need_calc_sub_thread_predict] is true.
     #[doc(alias = "SwkbdCalcSubThreadPredict", alias = "CalcSubThreadPredict")]
     #[link_name = "SwkbdCalcSubThreadPredict__3RplFv"]
     pub unsafe fn calc_sub_thread_predict();
@@ -687,8 +642,6 @@ unsafe extern "C" {
     pub unsafe fn set_user_controller_event_obj(obj: *mut ControllerEventObj);
 
     /// SwkbdSetUserSoundObj
-    ///
-    /// Null uses the default sounds.
     #[doc(alias = "SwkbdSetUserSoundObj", alias = "SetUserSoundObj")]
     #[link_name = "SwkbdSetUserSoundObj__3RplFPQ3_2nn5swkbd9ISoundObj"]
     pub unsafe fn set_user_sound_obj(obj: *mut SoundObj);
@@ -699,8 +652,6 @@ unsafe extern "C" {
     pub unsafe fn mute_all_sound(mute: bool);
 
     /// SwkbdSetReceiver
-    ///
-    /// Set again whenever the application edits the text.
     #[doc(alias = "SwkbdSetReceiver", alias = "SetReceiver")]
     #[link_name = "SwkbdSetReceiver__3RplFRCQ3_2nn5swkbd11ReceiverArg"]
     pub unsafe fn set_receiver(arg: *const ReceiverArg);
@@ -716,8 +667,6 @@ unsafe extern "C" {
     pub unsafe fn get_keyboard_condition(condition: *mut KeyboardCondition);
 
     /// SwkbdIsCoveredWithSubWindow
-    ///
-    /// Ignore input form operations while true.
     #[doc(
         alias = "SwkbdIsCoveredWithSubWindow",
         alias = "IsCoveredWithSubWindow"
@@ -726,8 +675,6 @@ unsafe extern "C" {
     pub unsafe fn is_covered_with_sub_window() -> bool;
 
     /// SwkbdIsSelectCursorActive
-    ///
-    /// Ignore input form operations while true.
     #[doc(alias = "SwkbdIsSelectCursorActive", alias = "IsSelectCursorActive")]
     #[link_name = "SwkbdIsSelectCursorActive__3RplFv"]
     pub unsafe fn is_select_cursor_active() -> bool;
@@ -758,8 +705,6 @@ unsafe extern "C" {
     pub unsafe fn set_cursor_pos(pos: ffi::c_int);
 
     /// SwkbdSetSelectFrom
-    ///
-    /// -1 if no text is selected.
     #[doc(alias = "SwkbdSetSelectFrom", alias = "SetSelectFrom")]
     #[link_name = "SwkbdSetSelectFrom__3RplFi"]
     pub unsafe fn set_select_from(from: ffi::c_int);

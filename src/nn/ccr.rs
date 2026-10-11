@@ -1,4 +1,4 @@
-//! GamePad (DRC) System Control (CCR = Cafe Controller?)
+//! GamePad (DRC) System Control (CCR)
 
 use crate::{coreinit::time::Time, ffi};
 

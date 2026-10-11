@@ -5,8 +5,6 @@
 use crate::coreinit::fs;
 use crate::ffi;
 
-/// TEMPStatus
-#[doc(alias = "TEMPStatus")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Status(pub i32);
@@ -51,7 +49,7 @@ pub enum DevicePreference {
     /// The device with the most free space.
     #[default]
     FreeSpace = 0,
-    /// The device with the fastest access.
+    /// Prefers USB storage if it has enough free space.
     AccessSpeed = 1,
 }
 
@@ -117,14 +115,14 @@ unsafe extern "C" {
 
     /// TEMPGetDirGlobalPath
     ///
-    /// Absolute path of the TEMP directory.
+    /// Path of the TEMP directory on the storage device.
     #[doc(alias = "TEMPGetDirGlobalPath")]
     #[link_name = "TEMPGetDirGlobalPath"]
     pub unsafe fn get_dir_global_path(dir: DirId, path: *mut ffi::c_char, path_len: u32) -> Status;
 
     /// TEMPGetDirPath
     ///
-    /// Path of the TEMP directory, relative to the mount point.
+    /// Path of the TEMP directory, `/vol/temp/` followed by the [DirId] in hex.
     #[doc(alias = "TEMPGetDirPath")]
     #[link_name = "TEMPGetDirPath"]
     pub unsafe fn get_dir_path(dir: DirId, path: *mut ffi::c_char, path_len: u32) -> Status;
@@ -263,8 +261,6 @@ unsafe extern "C" {
     ) -> Status;
 
     /// TEMPOpenNewFile
-    ///
-    /// Creates a file with a preallocated `size`.
     #[doc(alias = "TEMPOpenNewFile")]
     #[link_name = "TEMPOpenNewFile"]
     pub unsafe fn open_new_file(

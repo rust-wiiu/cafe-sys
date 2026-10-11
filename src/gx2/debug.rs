@@ -24,12 +24,7 @@ impl core::ops::BitOr for DebugMode {
     }
 }
 
-/// GX2DebugCaptureOptions
-#[doc(
-    alias = "GX2DebugCaptureOptions",
-    alias = "GX2DebugCaptureStartFlags",
-    alias = "GX2DebugCaptureEndFlags"
-)]
+#[doc(alias = "GX2DebugCaptureStartFlags", alias = "GX2DebugCaptureEndFlags")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DebugCaptureOptions(pub u32);
@@ -40,8 +35,6 @@ impl DebugCaptureOptions {
     pub const NO_FLUSH: Self = Self(1);
 }
 
-/// GX2DebugTagUserStringType
-#[doc(alias = "GX2DebugTagUserStringType")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DebugTagUserStringType(pub u32);
@@ -53,8 +46,6 @@ impl DebugTagUserStringType {
     pub const BOOKMARK: Self = Self(3);
 }
 
-/// GX2LogAttrib
-#[doc(alias = "GX2LogAttrib")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LogAttrib(pub u32);
@@ -63,8 +54,6 @@ impl LogAttrib {
     pub const ENABLE: Self = Self(0);
 }
 
-/// GX2VerifyLevel
-#[doc(alias = "GX2VerifyLevel")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VerifyLevel(pub u32);
@@ -76,10 +65,7 @@ impl VerifyLevel {
     pub const ALL: Self = Self(3);
 }
 
-/// GX2VerifyCallback
-///
 /// `format` is a printf format string for the arguments that follow.
-#[doc(alias = "GX2VerifyCallback")]
 pub type VerifyCallback = Option<
     unsafe extern "C" fn(
         file: *const ffi::c_char,
@@ -129,7 +115,7 @@ unsafe extern "C" {
 
     /// GX2DebugCaptureStart
     ///
-    /// Starts capturing GPU commands and buffers into `filename`.
+    /// Starts a debug capture. `filename` is passed to the capture interface.
     #[doc(alias = "GX2DebugCaptureStart")]
     #[link_name = "GX2DebugCaptureStart"]
     pub unsafe fn capture_start(filename: *const ffi::c_char, options: DebugCaptureOptions);
@@ -154,7 +140,7 @@ unsafe extern "C" {
 
     /// GX2DebugTagUserString
     ///
-    /// Inserts a printf formatted tag into the command stream for debugging tools.
+    /// Inserts a printf formatted tag into the command stream for debugging tools. Only while a debug capture is active.
     #[doc(alias = "GX2DebugTagUserString")]
     #[link_name = "GX2DebugTagUserString"]
     pub unsafe fn tag_user_string(kind: DebugTagUserStringType, format: *const ffi::c_char, ...);
@@ -176,15 +162,13 @@ unsafe extern "C" {
     pub unsafe fn set_debug_mode(mode: DebugMode);
 
     /// GX2SetVerifyLevel
-    ///
-    /// Level of runtime warnings of the debug library.
     #[doc(alias = "GX2SetVerifyLevel")]
     #[link_name = "GX2SetVerifyLevel"]
     pub unsafe fn set_verify_level(level: VerifyLevel);
 
     /// GX2SetVerifyCallback
     ///
-    /// Returns the previous callback.
+    /// Returns the previous callback. Has no effect and returns null in the release gx2.rpl.
     #[doc(alias = "GX2SetVerifyCallback")]
     #[link_name = "GX2SetVerifyCallback"]
     pub unsafe fn set_verify_callback(callback: VerifyCallback) -> VerifyCallback;

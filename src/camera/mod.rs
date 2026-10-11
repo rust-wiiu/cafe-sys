@@ -6,8 +6,6 @@ pub const STREAM_WIDTH: u32 = 640;
 pub const STREAM_PITCH: u32 = 768;
 pub const STREAM_HEIGHT: u32 = 480;
 
-/// NUM_STREAM_BUFFER
-#[doc(alias = "NUM_STREAM_BUFFER")]
 pub const STREAM_BUFFER_COUNT: u32 = 20;
 
 pub const Y_BUFFER_SIZE: u32 = STREAM_PITCH * STREAM_HEIGHT;
@@ -46,8 +44,6 @@ impl Error {
     pub const SEGMENT_VIOLATION: Self = Self(-15);
 }
 
-/// CAM_STATE
-#[doc(alias = "CAM_STATE")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum State {
@@ -72,11 +68,10 @@ pub enum State {
     WhiteBalanceComponentAuto = 14,
     /// 1: DRC attached, 0: DRC detached. Only implemented in [get_state].
     DrcConnectionState = 15,
+    /// Only implemented in [set_state].
     GenerateKeyFrame = 16,
 }
 
-/// CAMERA_INSTANCE
-#[doc(alias = "CAMERA_INSTANCE")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Instance {
@@ -84,8 +79,6 @@ pub enum Instance {
     I0 = 0,
 }
 
-/// CAMERA_PIXEL_FORMAT
-#[doc(alias = "CAMERA_PIXEL_FORMAT")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PixelFormat {
@@ -93,8 +86,6 @@ pub enum PixelFormat {
     Nv12 = 0,
 }
 
-/// CAMERA_TILE_MODE
-#[doc(alias = "CAMERA_TILE_MODE")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TileMode {
@@ -113,8 +104,6 @@ impl EventType {
     pub const DRC_DETACH: Self = Self(1);
 }
 
-/// DRC_CAMERA_DISPLAY_MODE
-#[doc(alias = "DRC_CAMERA_DISPLAY_MODE")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DisplayMode {
@@ -133,8 +122,6 @@ pub enum Fps {
     Fps30 = 1,
 }
 
-/// DRC_POWER_LINE_FREQUENCY
-#[doc(alias = "DRC_POWER_LINE_FREQUENCY")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PowerLineFrequency {
@@ -162,8 +149,6 @@ pub struct Mode {
     pub fps: Fps,
 }
 
-/// CAMStateInfo
-#[doc(alias = "CAMStateInfo")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct StateInfo {
@@ -185,8 +170,6 @@ pub struct EventHandlerInput {
 }
 
 /// CAMEventHandler
-///
-/// Called from an ISR, so keep processing to a minimum.
 #[doc(alias = "CAMEventHandler")]
 pub type EventHandler = Option<unsafe extern "C" fn(input: *mut EventHandlerInput)>;
 
@@ -288,8 +271,8 @@ unsafe extern "C" {
 
     /// CAMCheckMemSegmentation
     ///
-    /// Work memory and target surfaces must not cross a 256 MB boundary.
-    /// Returns [Error::SEGMENT_VIOLATION] if they do.
+    /// Checks that the range does not cross a 256 MB (physical) boundary.
+    /// Returns [Error::SEGMENT_VIOLATION] if they do, [Error::INVALID_ARG] for a null pointer or zero size.
     #[doc(alias = "CAMCheckMemSegmentation")]
     #[link_name = "CAMCheckMemSegmentation"]
     pub unsafe fn check_memory_segmentation(mem: *mut ffi::c_void, size: ffi::c_uint) -> Error;

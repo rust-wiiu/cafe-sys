@@ -7,18 +7,12 @@ use super::enums::{
 use super::r::Buffer;
 use crate::ffi;
 
-/// GX2_UNIFORM_BLOCK_INDEX_INVALID
-///
-/// [UniformVar::block_index] of uniform registers.
-#[doc(alias = "GX2_UNIFORM_BLOCK_INDEX_INVALID")]
-pub const UNIFORM_BLOCK_INDEX_INVALID: u32 = 0xFFFF_FFFF;
-
 /// GX2_MAX_STREAMOUT_BUFFERS
 #[doc(alias = "GX2_MAX_STREAMOUT_BUFFERS")]
 pub const MAX_STREAMOUT_BUFFERS: usize = 4;
 
 /// GX2_SQ_SEL
-#[doc(alias = "GX2_SQ_SEL", alias = "GX2Component")]
+#[doc(alias = "GX2_SQ_SEL")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Component(pub u32);
@@ -36,10 +30,7 @@ impl Component {
     pub const ONE: Self = Self(5);
 }
 
-/// GX2CompSel
-///
 /// Source component for each of the x, y, z and w destination components.
-#[doc(alias = "GX2CompSel")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ComponentSelection(pub u32);
@@ -171,9 +162,7 @@ pub struct UniformVar {
     pub kind: ShaderVarType,
     /// 1 for non-arrays.
     pub count: u32,
-    /// Offset in u32s into the uniform block or register file.
     pub offset: u32,
-    /// Index into the shader's uniform blocks, or [UNIFORM_BLOCK_INDEX_INVALID] for uniform registers.
     pub block_index: u32,
 }
 
@@ -262,7 +251,7 @@ pub struct FetchShader {
 pub struct VertexShader {
     pub regs: VertexShaderRegisters,
     pub size: u32,
-    /// 256-byte aligned. Null if `gx2r_buffer` is used.
+    /// 256-byte aligned. If null, `gx2r_buffer` is used.
     pub program: *mut ffi::c_void,
     pub mode: ShaderMode,
     pub uniform_block_count: u32,
@@ -277,7 +266,7 @@ pub struct VertexShader {
     pub sampler_vars: *mut SamplerVar,
     pub attrib_var_count: u32,
     pub attrib_vars: *mut AttribVar,
-    /// u32s per vertex in the geometry shader input ring buffer.
+    /// Item size of the geometry shader input ring buffer.
     pub ring_item_size: u32,
     pub has_stream_out: ffi::c_bool,
     pub stream_out_stride: [u32; MAX_STREAMOUT_BUFFERS],
@@ -291,11 +280,11 @@ pub struct VertexShader {
 pub struct GeometryShader {
     pub regs: GeometryShaderRegisters,
     pub size: u32,
-    /// 256-byte aligned. Null if `gx2r_buffer` is used.
+    /// 256-byte aligned. If null, `gx2r_buffer` is used.
     pub program: *mut ffi::c_void,
     /// Size of the copy shader.
     pub vertex_program_size: u32,
-    /// Copy shader, 256-byte aligned. Null if `vertex_gx2r_buffer` is used.
+    /// Copy shader, 256-byte aligned. If null, `vertex_gx2r_buffer` is used.
     pub vertex_program: *mut ffi::c_void,
     pub mode: ShaderMode,
     pub uniform_block_count: u32,
@@ -308,7 +297,7 @@ pub struct GeometryShader {
     pub loop_vars: *mut LoopVar,
     pub sampler_var_count: u32,
     pub sampler_vars: *mut SamplerVar,
-    /// u32s per primitive in the geometry shader output ring buffer.
+    /// Item size of the geometry shader output ring buffer.
     pub ring_item_size: u32,
     pub has_stream_out: ffi::c_bool,
     pub stream_out_stride: [u32; MAX_STREAMOUT_BUFFERS],
@@ -323,7 +312,7 @@ pub struct GeometryShader {
 pub struct PixelShader {
     pub regs: PixelShaderRegisters,
     pub size: u32,
-    /// 256-byte aligned. Null if `gx2r_buffer` is used.
+    /// 256-byte aligned. If null, `gx2r_buffer` is used.
     pub program: *mut ffi::c_void,
     pub mode: ShaderMode,
     pub uniform_block_count: u32,
@@ -346,7 +335,7 @@ pub struct PixelShader {
 pub struct ComputeShader {
     pub regs: [u32; 12],
     pub size: u32,
-    /// 256-byte aligned. Null if `gx2r_buffer` is used.
+    /// 256-byte aligned. If null, `gx2r_buffer` is used.
     pub program: *mut ffi::c_void,
     pub uniform_block_count: u32,
     pub uniform_blocks: *mut UniformBlock,
@@ -362,27 +351,23 @@ pub struct ComputeShader {
     pub layout_size: [u32; 3],
     /// The work-group size exceeds 64.
     pub over64_mode: ffi::c_bool,
-    /// Maximum wavefronts per SIMD, 0 for unrestricted.
+    /// Maximum wavefronts per SIMD, 0 for no limit.
     pub num_waves_per_simd: u32,
     pub gx2r_buffer: Buffer,
 }
 
-/// GX2StreamOutContext
-#[doc(alias = "GX2StreamOutContext")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StreamOutContext(pub ffi::unknown<4>);
 
-/// GX2StreamOutBuffer
-#[doc(alias = "GX2StreamOutBuffer")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct StreamOutBuffer {
     /// Size in bytes.
     pub size: u32,
-    /// Null if `gx2r_buffer` is used.
+    /// If null, `gx2r_buffer` is used.
     pub data: *mut ffi::c_void,
-    /// Bytes between vertices, at most 2048.
+    /// Bytes between vertices.
     pub vertex_stride: u32,
     pub gx2r_buffer: Buffer,
     pub context: *mut StreamOutContext,

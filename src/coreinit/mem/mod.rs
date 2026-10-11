@@ -13,8 +13,6 @@ pub mod frm_heap;
 pub mod list;
 pub mod unit_heap;
 
-/// MEM_HEAP_DEFAULT_ALIGNMENT
-#[doc(alias = "MEM_HEAP_DEFAULT_ALIGNMENT")]
 pub const DEFAULT_ALIGNMENT: i32 = 4;
 
 /// MEMHeapTag
@@ -59,7 +57,7 @@ impl core::ops::BitOr for HeapFlags {
 }
 
 /// MEMBaseHeapType
-#[doc(alias = "MEMBaseHeapType", alias = "MEMArena")]
+#[doc(alias = "MEMBaseHeapType")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BaseHeapType(pub u32);
@@ -90,7 +88,6 @@ impl HeapFillType {
     pub const FREED: Self = Self(2);
 }
 
-/// MEMHeapCheckFlags
 #[doc(alias = "MEMExpHeapCheckFlags")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -103,7 +100,7 @@ impl CheckFlags {
 }
 
 /// MEMHeapHeader
-#[doc(alias = "MEMHeapHeader", alias = "MEMiHeapHead")]
+#[doc(alias = "MEMHeapHeader")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
 pub struct HeapHeader {
@@ -146,7 +143,7 @@ unsafe extern "C" {
 
     /// MEMSetBaseHeapHandle
     ///
-    /// Returns the previous handle.
+    /// Only sets the handle if none is set for `kind` yet. Always returns [HeapHandle::INVALID].
     #[doc(alias = "MEMSetBaseHeapHandle")]
     #[link_name = "MEMSetBaseHeapHandle"]
     pub unsafe fn set_base_heap_handle(kind: BaseHeapType, heap: HeapHandle) -> HeapHandle;
@@ -158,7 +155,7 @@ unsafe extern "C" {
 
     /// MEMCreateUserHeapHandle
     ///
-    /// Creates a handle for a user-managed heap occupying `size` bytes at `heap`.
+    /// Creates a handle for a user-managed heap occupying `size` bytes at `heap`. The heap header uses the first 0x40 bytes.
     #[doc(alias = "MEMCreateUserHeapHandle")]
     #[link_name = "MEMCreateUserHeapHandle"]
     pub unsafe fn create_user_heap_handle(heap: *mut ffi::c_void, size: u32) -> HeapHandle;

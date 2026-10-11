@@ -6,7 +6,7 @@ use crate::ffi;
 
 /// OSTime
 ///
-/// Ticks since 2000-01-01.
+/// Ticks. Absolute times count from 2000-01-01.
 #[doc(alias = "OSTime")]
 pub type Time = i64;
 
@@ -50,7 +50,7 @@ const _: () = {
 unsafe extern "C" {
     /// OSGetTime
     ///
-    /// Local time as set in the system settings.
+    /// Current date and time.
     #[doc(alias = "OSGetTime")]
     #[link_name = "OSGetTime"]
     pub unsafe fn get_time() -> Time;

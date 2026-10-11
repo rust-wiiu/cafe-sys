@@ -5,10 +5,7 @@ use crate::{
     lzma920::{Alloc, CompressProgress, Error, SeqInStream, SeqOutStream, enc},
 };
 
-/// CLzma2EncProps
-///
 /// Initialize with [props_init].
-#[doc(alias = "CLzma2EncProps")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Props {
@@ -18,8 +15,6 @@ pub struct Props {
     pub num_total_threads: ffi::c_int,
 }
 
-/// CLzma2EncHandle
-#[doc(alias = "CLzma2EncHandle")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Handle(pub *mut ffi::c_void);

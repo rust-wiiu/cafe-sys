@@ -30,7 +30,7 @@ impl ExpHeapDirection {
 }
 
 /// MEMExpHeapBlockVisitor
-#[doc(alias = "MEMExpHeapBlockVisitor", alias = "MEMHeapVisitor")]
+#[doc(alias = "MEMExpHeapBlockVisitor")]
 pub type BlockVisitor = Option<
     unsafe extern "C" fn(block: *mut ffi::c_void, heap: HeapHandle, context: *mut ffi::c_void),
 >;
@@ -43,7 +43,7 @@ unsafe extern "C" {
 
     /// MEMDestroyExpHeap
     ///
-    /// Returns the start of the heap memory.
+    /// Returns `heap`, which is the start of the heap memory rounded up to 4 bytes.
     #[doc(alias = "MEMDestroyExpHeap")]
     #[link_name = "MEMDestroyExpHeap"]
     pub unsafe fn destroy(heap: HeapHandle) -> *mut ffi::c_void;
@@ -69,7 +69,7 @@ unsafe extern "C" {
 
     /// MEMAdjustExpHeap
     ///
-    /// Shrinks the heap to its used part. Returns the new size.
+    /// Removes the free space at the end of the heap. Returns the new size, or 0 if the heap does not end with free space.
     #[doc(alias = "MEMAdjustExpHeap")]
     #[link_name = "MEMAdjustExpHeap"]
     pub unsafe fn adjust(heap: HeapHandle) -> u32;

@@ -4,10 +4,7 @@
 
 use crate::ffi;
 
-/// OS_WAIT_CORE
-///
 /// Cores to wait for in [wait].
-#[doc(alias = "OS_WAIT_CORE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CoreMask(pub u32);

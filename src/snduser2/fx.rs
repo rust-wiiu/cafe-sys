@@ -5,28 +5,17 @@
 use crate::ffi;
 use crate::sndcore2::device::AuxCallbackInfo;
 
-/// AXFX_MULTI_CH_MAX_CHANNELS
-#[doc(alias = "AXFX_MULTI_CH_MAX_CHANNELS")]
 pub const MULTI_CH_MAX_CHANNELS: usize = 6;
 
-/// AXFXAlloc
-#[doc(alias = "AXFXAlloc")]
 pub type Alloc = Option<unsafe extern "C" fn(size: u32) -> *mut ffi::c_void>;
 
-/// AXFXFree
-#[doc(alias = "AXFXFree")]
 pub type Free = Option<unsafe extern "C" fn(ptr: *mut ffi::c_void)>;
 
-/// f32x2
-///
 /// Paired single.
-#[doc(alias = "f32x2")]
 #[repr(C, align(8))]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct F32x2(pub [f32; 2]);
 
-/// AXFX_BUFFERUPDATE
-#[doc(alias = "AXFX_BUFFERUPDATE")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BufferUpdate {
@@ -35,8 +24,6 @@ pub struct BufferUpdate {
     pub surround: *mut i32,
 }
 
-/// AXFX_BUFFERUPDATE_DPL2
-#[doc(alias = "AXFX_BUFFERUPDATE_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BufferUpdateDpl2 {
@@ -46,10 +33,7 @@ pub struct BufferUpdateDpl2 {
     pub right_surround: *mut i32,
 }
 
-/// AXFX_6CH_BUFFERUPDATE
-///
 /// Each buffer holds one aux block of samples.
-#[doc(alias = "AXFX_6CH_BUFFERUPDATE")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BufferUpdate6ch {
@@ -61,10 +45,7 @@ pub struct BufferUpdate6ch {
     pub subwoofer: *mut i32,
 }
 
-/// AXFX_BUS
-///
 /// Send bus for chaining effects.
-#[doc(alias = "AXFX_BUS")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Bus {
@@ -73,8 +54,6 @@ pub struct Bus {
     pub surround: *mut i32,
 }
 
-/// AXFX_BUS_DPL2
-#[doc(alias = "AXFX_BUS_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BusDpl2 {
@@ -84,13 +63,8 @@ pub struct BusDpl2 {
     pub right_surround: *mut i32,
 }
 
-/// AXFX_REVERBHI_EXP_EARLY_MODE
-///
 /// Early reflection mode.
-#[doc(
-    alias = "AXFX_REVERBHI_EXP_EARLY_MODE",
-    alias = "AXFX_REVERBSTD_EXP_EARLY_MODE"
-)]
+#[doc()]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ReverbEarlyMode(pub u32);
@@ -106,13 +80,8 @@ impl ReverbEarlyMode {
     pub const MS_40: Self = Self(7);
 }
 
-/// AXFX_REVERBHI_EXP_FUSED_MODE
-///
 /// Fused reverb mode.
-#[doc(
-    alias = "AXFX_REVERBHI_EXP_FUSED_MODE",
-    alias = "AXFX_REVERBSTD_EXP_FUSED_MODE"
-)]
+#[doc()]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ReverbFusedMode(pub u32);
@@ -124,14 +93,10 @@ impl ReverbFusedMode {
     pub const LARGE_ROOM: Self = Self(3);
     pub const HALL: Self = Self(4);
     pub const CAVERNOUS: Self = Self(5);
-    /// Do not use.
     pub const LONGEST: Self = Self(6);
 }
 
-/// AXFX_REVERBHI_EXP
-///
-/// High quality reverb. Fields up to `active` are internal.
-#[doc(alias = "AXFX_REVERBHI_EXP")]
+/// High quality reverb.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReverbHiExp {
@@ -162,33 +127,21 @@ pub struct ReverbHiExp {
     pub lpf_coef: f32,
     pub active: u32,
     pub early_mode: ReverbEarlyMode,
-    /// Seconds.
     pub pre_delay_time_max: f32,
-    /// Seconds.
     pub pre_delay_time: f32,
     pub fused_mode: ReverbFusedMode,
-    /// Seconds.
     pub fused_time: f32,
-    /// 0.0-1.0.
     pub coloration: f32,
-    /// 0.0-1.0.
     pub damping: f32,
-    /// 0.0-1.0.
     pub crosstalk: f32,
-    /// 0.0-1.0.
     pub early_gain: f32,
-    /// 0.0-1.0.
     pub fused_gain: f32,
     pub bus_in: *mut Bus,
     pub bus_out: *mut Bus,
-    /// 0.0-1.0.
     pub out_gain: f32,
-    /// 0.0-1.0.
     pub send_gain: f32,
 }
 
-/// AXFX_REVERBHI_EXP_DPL2
-#[doc(alias = "AXFX_REVERBHI_EXP_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReverbHiExpDpl2 {
@@ -234,26 +187,18 @@ pub struct ReverbHiExpDpl2 {
     pub send_gain: f32,
 }
 
-/// AXFX_REVERBHI
-#[doc(alias = "AXFX_REVERBHI")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReverbHi {
     pub reverb_inner: ReverbHiExp,
-    /// 0.0-1.0.
     pub coloration: f32,
-    /// 0.0-1.0.
     pub mix: f32,
     pub time: f32,
-    /// 0.0-1.0.
     pub damping: f32,
     pub pre_delay: f32,
-    /// 0.0-1.0.
     pub crosstalk: f32,
 }
 
-/// AXFX_REVERBHI_DPL2
-#[doc(alias = "AXFX_REVERBHI_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReverbHiDpl2 {
@@ -266,10 +211,7 @@ pub struct ReverbHiDpl2 {
     pub crosstalk: f32,
 }
 
-/// AXFX_REVERBSTD_EXP
-///
-/// Standard reverb. Fields up to `active` are internal.
-#[doc(alias = "AXFX_REVERBSTD_EXP")]
+/// Standard reverb.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReverbStdExp {
@@ -296,31 +238,20 @@ pub struct ReverbStdExp {
     pub lpf_coef: f32,
     pub active: u32,
     pub early_mode: ReverbEarlyMode,
-    /// Seconds.
     pub pre_delay_time_max: f32,
-    /// Seconds.
     pub pre_delay_time: f32,
     pub fused_mode: ReverbFusedMode,
-    /// Seconds.
     pub fused_time: f32,
-    /// 0.0-1.0.
     pub coloration: f32,
-    /// 0.0-1.0.
     pub damping: f32,
-    /// 0.0-1.0.
     pub early_gain: f32,
-    /// 0.0-1.0.
     pub fused_gain: f32,
     pub bus_in: *mut Bus,
     pub bus_out: *mut Bus,
-    /// 0.0-1.0.
     pub out_gain: f32,
-    /// 0.0-1.0.
     pub send_gain: f32,
 }
 
-/// AXFX_REVERBSTD_EXP_DPL2
-#[doc(alias = "AXFX_REVERBSTD_EXP_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReverbStdExpDpl2 {
@@ -361,24 +292,17 @@ pub struct ReverbStdExpDpl2 {
     pub send_gain: f32,
 }
 
-/// AXFX_REVERBSTD
-#[doc(alias = "AXFX_REVERBSTD")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReverbStd {
     pub reverb_inner: ReverbStdExp,
-    /// 0.0-1.0.
     pub coloration: f32,
-    /// 0.0-1.0.
     pub mix: f32,
     pub time: f32,
-    /// 0.0-1.0.
     pub damping: f32,
     pub pre_delay: f32,
 }
 
-/// AXFX_REVERBSTD_DPL2
-#[doc(alias = "AXFX_REVERBSTD_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ReverbStdDpl2 {
@@ -390,10 +314,6 @@ pub struct ReverbStdDpl2 {
     pub pre_delay: f32,
 }
 
-/// AXFX_DELAY_EXP
-///
-/// Fields up to `active` are internal.
-#[doc(alias = "AXFX_DELAY_EXP")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DelayExp {
@@ -409,13 +329,9 @@ pub struct DelayExp {
     pub out_gain_calc: i32,
     pub send_gain_calc: i32,
     pub active: u32,
-    /// Milliseconds, greater than 0.
     pub max_delay: f32,
-    /// Milliseconds, up to `max_delay`.
     pub delay: f32,
-    /// 0.0 to below 1.0.
     pub feedback: f32,
-    /// Low-pass cutoff, 0.0 (low) to 1.0 (high).
     pub lpf: f32,
     pub bus_in: *mut Bus,
     pub bus_out: *mut Bus,
@@ -423,8 +339,6 @@ pub struct DelayExp {
     pub send_gain: f32,
 }
 
-/// AXFX_DELAY_EXP_DPL2
-#[doc(alias = "AXFX_DELAY_EXP_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DelayExpDpl2 {
@@ -448,10 +362,6 @@ pub struct DelayExpDpl2 {
     pub send_gain: f32,
 }
 
-/// AXFX_DELAY
-///
-/// Fields up to `active` are internal.
-#[doc(alias = "AXFX_DELAY")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Delay {
@@ -461,16 +371,11 @@ pub struct Delay {
     pub feedback_gain: [i32; 3],
     pub out_gain: [i32; 3],
     pub active: u32,
-    /// Milliseconds per channel.
     pub delay: [u32; 3],
-    /// Percent per channel.
     pub feedback: [u32; 3],
-    /// Percent per channel.
     pub output: [u32; 3],
 }
 
-/// AXFX_DELAY_DPL2
-#[doc(alias = "AXFX_DELAY_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DelayDpl2 {
@@ -485,8 +390,6 @@ pub struct DelayDpl2 {
     pub output: [u32; 4],
 }
 
-/// AXFX_CHORUS_EXP_DELAY
-#[doc(alias = "AXFX_CHORUS_EXP_DELAY")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ChorusExpDelay {
@@ -498,8 +401,6 @@ pub struct ChorusExpDelay {
     pub size: u32,
 }
 
-/// AXFX_CHORUS_EXP_DELAY_DPL2
-#[doc(alias = "AXFX_CHORUS_EXP_DELAY_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ChorusExpDelayDpl2 {
@@ -511,8 +412,6 @@ pub struct ChorusExpDelayDpl2 {
     pub size: u32,
 }
 
-/// AXFX_6CH_CHORUS_DELAY
-#[doc(alias = "AXFX_6CH_CHORUS_DELAY")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ChorusDelay6ch {
@@ -524,12 +423,7 @@ pub struct ChorusDelay6ch {
     pub size: u32,
 }
 
-/// AXFX_CHORUS_EXP_LFO
-#[doc(
-    alias = "AXFX_CHORUS_EXP_LFO",
-    alias = "AXFX_CHORUS_EXP_LFO_DPL2",
-    alias = "AXFX_6CH_CHORUS_LFO"
-)]
+#[doc()]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ChorusLfo {
@@ -545,10 +439,6 @@ pub struct ChorusLfo {
     pub grad_factor: i32,
 }
 
-/// AXFX_CHORUS_EXP
-///
-/// Fields up to `active` are internal.
-#[doc(alias = "AXFX_CHORUS_EXP")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ChorusExp {
@@ -557,13 +447,9 @@ pub struct ChorusExp {
     pub history: [[f32; 4]; 3],
     pub hist_index: u32,
     pub active: u32,
-    /// 0.1-50.0 milliseconds.
     pub delay_time: f32,
-    /// 0.0-1.0.
     pub depth: f32,
-    /// 0.1-2.0 Hz.
     pub rate: f32,
-    /// 0.0 to below 1.0.
     pub feedback: f32,
     pub bus_in: *mut Bus,
     pub bus_out: *mut Bus,
@@ -571,8 +457,6 @@ pub struct ChorusExp {
     pub send_gain: f32,
 }
 
-/// AXFX_CHORUS_EXP_DPL2
-#[doc(alias = "AXFX_CHORUS_EXP_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ChorusExpDpl2 {
@@ -591,22 +475,15 @@ pub struct ChorusExpDpl2 {
     pub send_gain: f32,
 }
 
-/// AXFX_CHORUS
-#[doc(alias = "AXFX_CHORUS")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Chorus {
     pub chorus_inner: ChorusExp,
-    /// Milliseconds.
     pub base_delay: u32,
-    /// Variation of `base_delay` in milliseconds.
     pub variation: u32,
-    /// Period of the variation in milliseconds.
     pub period: u32,
 }
 
-/// AXFX_CHORUS_DPL2
-#[doc(alias = "AXFX_CHORUS_DPL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct ChorusDpl2 {
@@ -616,8 +493,6 @@ pub struct ChorusDpl2 {
     pub period: u32,
 }
 
-/// AXFX_SAMPLE_RATE
-#[doc(alias = "AXFX_SAMPLE_RATE")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SampleRate {
@@ -625,8 +500,6 @@ pub enum SampleRate {
     Hz48000 = 2,
 }
 
-/// REVERB_CONFIGURATION_TYPE
-#[doc(alias = "REVERB_CONFIGURATION_TYPE")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ReverbPreset {
@@ -637,8 +510,6 @@ pub enum ReverbPreset {
     MetalCorridor = 5,
 }
 
-/// AXFX_REVERB_MODE
-#[doc(alias = "AXFX_REVERB_MODE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ReverbMode(pub u32);
@@ -653,8 +524,6 @@ impl ReverbMode {
     pub const CH4_MONO_MIXED: Self = Self(6);
 }
 
-/// AXFX_CHORUS_MODE
-#[doc(alias = "AXFX_CHORUS_MODE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ChorusMode(pub u32);
@@ -664,16 +533,11 @@ impl ChorusMode {
     pub const CH2: Self = Self(1);
     pub const CH4: Self = Self(2);
     pub const CH6: Self = Self(3);
-    /// Optimized algorithm.
     pub const CH2_2: Self = Self(4);
-    /// Optimized algorithm.
     pub const CH4_2: Self = Self(5);
-    /// Optimized algorithm.
     pub const CH6_2: Self = Self(6);
 }
 
-/// AXFX_DELAY_MODE
-#[doc(alias = "AXFX_DELAY_MODE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DelayMode(pub u32);
@@ -685,8 +549,6 @@ impl DelayMode {
     pub const CH6: Self = Self(3);
 }
 
-/// AXFX_FLANGER_MODE
-#[doc(alias = "AXFX_FLANGER_MODE")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum FlangerMode {
@@ -695,8 +557,6 @@ pub enum FlangerMode {
     Ch6 = 3,
 }
 
-/// AXFX_OVERDRIVE_MODE
-#[doc(alias = "AXFX_OVERDRIVE_MODE")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OverdriveMode {
@@ -705,8 +565,6 @@ pub enum OverdriveMode {
     Ch6 = 3,
 }
 
-/// AXFX_COMPRESSOR_MODE
-#[doc(alias = "AXFX_COMPRESSOR_MODE")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CompressorMode {
@@ -715,8 +573,6 @@ pub enum CompressorMode {
     Ch6 = 3,
 }
 
-/// AXFX_PITCHSHIFT_MODE
-#[doc(alias = "AXFX_PITCHSHIFT_MODE")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PitchshiftMode {
@@ -725,8 +581,6 @@ pub enum PitchshiftMode {
     Ch6 = 3,
 }
 
-/// AXFX_DELAY_TYPE
-#[doc(alias = "AXFX_DELAY_TYPE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DelayType(pub u32);
@@ -737,8 +591,6 @@ impl DelayType {
     pub const ALLPASS: Self = Self(2);
 }
 
-/// AXFX_DELAY_LINE
-#[doc(alias = "AXFX_DELAY_LINE")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct DelayLine {
@@ -754,10 +606,7 @@ pub struct DelayLine {
     pub coef: f32,
 }
 
-/// AXFX_PS_DELAY_LINE
-///
 /// Delay line processing two channels at once.
-#[doc(alias = "AXFX_PS_DELAY_LINE")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PsDelayLine {
@@ -770,30 +619,17 @@ pub struct PsDelayLine {
     pub coef: F32x2,
 }
 
-/// AXFX_MULTI_CH_REVERB
-///
-/// Fields after `reverb_gain` are internal.
-#[doc(alias = "AXFX_MULTI_CH_REVERB")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct MultiChReverb {
-    /// Early reflection preset, 0-4.
     pub early_mode: u32,
-    /// Late reverb preset, 0-4.
     pub late_mode: u32,
-    /// 0-100 milliseconds.
     pub predelay_time: f32,
-    /// 0.1-20.0 seconds.
     pub decay_time: f32,
-    /// 0.1-1.0.
     pub hf_decay_ratio: f32,
-    /// 0.0-1.0.
     pub coloration: f32,
-    /// 0.0-1.0.
     pub early_gain: f32,
-    /// 0.0-1.0.
     pub late_gain: f32,
-    /// 0.0-1.0.
     pub reverb_gain: f32,
     pub mode: ReverbMode,
     pub fs: u32,
@@ -814,22 +650,13 @@ pub struct MultiChReverb {
     pub fdn_lp_z: [f32; 4],
 }
 
-/// AXFX_MULTI_CH_DELAY
-///
-/// Fields after `out_gain` are internal.
-#[doc(alias = "AXFX_MULTI_CH_DELAY")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct MultiChDelay {
-    /// 0-2000.0 milliseconds.
     pub delay_time: f32,
-    /// 0.1-1.0.
     pub feedback: f32,
-    /// 0.1-1.0.
     pub low_pass_amount: f32,
-    /// 0.1-1.0.
     pub channel_spread: f32,
-    /// 0.1-1.0.
     pub out_gain: f32,
     pub mode: DelayMode,
     pub fs: u32,
@@ -844,10 +671,6 @@ pub struct MultiChDelay {
     pub max_delay: f32,
 }
 
-/// AXFX_MULTI_CH_CHORUS
-///
-/// Fields up to `active` are internal.
-#[doc(alias = "AXFX_MULTI_CH_CHORUS")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct MultiChChorus {
@@ -858,57 +681,34 @@ pub struct MultiChChorus {
     pub history: [[f32; 4]; MULTI_CH_MAX_CHANNELS],
     pub hist_index: u32,
     pub active: u32,
-    /// 0.1-50.0 milliseconds.
     pub delay_time: f32,
-    /// 0.1-1.0.
     pub depth: f32,
-    /// 0.1-2.0 Hz.
     pub rate: f32,
-    /// 0.0 to below 1.0, 0.1-1.0 for the optimized modes.
     pub feedback: f32,
-    /// Unused by the optimized modes.
     pub bus_in: *mut BufferUpdate6ch,
-    /// Unused by the optimized modes.
     pub bus_out: *mut BufferUpdate6ch,
-    /// 0.0-1.0.
     pub out_gain: f32,
-    /// 0.0-1.0, unused by the optimized modes.
     pub send_gain: f32,
 }
 
-/// AXFX2_REVERB
-#[doc(alias = "AXFX2_REVERB")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Reverb2 {
-    /// 0.0-1.0.
     pub reverb_gain: f32,
-    /// Early reflection preset, 0-4.
     pub early_mode: u32,
-    /// Late reverb preset, 0-4.
     pub late_mode: u32,
-    /// 0-100 milliseconds.
     pub predelay_time: f32,
-    /// 0.1-20.0 seconds.
     pub decay_time: f32,
-    /// 0.1-1.0.
     pub hf_decay_ratio: f32,
-    /// 0.0-1.0.
     pub coloration: f32,
-    /// 0.0-1.0.
     pub early_gain: f32,
-    /// 0.0-1.0.
     pub late_gain: f32,
-    /// 0.0-1.0.
     pub out_gain: f32,
-    /// 0.0-1.0.
     pub dry_gain: f32,
     pub private: *mut ffi::c_void,
     _pad: ffi::unknown<16>,
 }
 
-/// AXFX2_REVERB_I3DL2
-#[doc(alias = "AXFX2_REVERB_I3DL2")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Reverb2I3dl2 {
@@ -920,11 +720,11 @@ pub struct Reverb2I3dl2 {
     pub decay_time: f32,
     /// 0.1-2.0.
     pub decay_hf_ratio: f32,
-    /// -10000 to 0 millibels.
+    /// Millibels.
     pub reflections: i32,
     /// 0.0-0.3 seconds.
     pub reflections_delay: f32,
-    /// -10000 to 20000 millibels.
+    /// Millibels.
     pub reverb: i32,
     /// 0.0-0.1 seconds.
     pub reverb_delay: f32,
@@ -934,80 +734,50 @@ pub struct Reverb2I3dl2 {
     pub density: f32,
     /// 20.0-20000.0 Hz.
     pub hf_reference: f32,
-    /// 0.0-1.0.
     pub out_gain: f32,
-    /// 0.0-1.0.
     pub dry_gain: f32,
     pub private: *mut ffi::c_void,
     _pad: ffi::unknown<16>,
 }
 
-/// AXFX2_DELAY
-#[doc(alias = "AXFX2_DELAY")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Delay2 {
-    /// Milliseconds, up to `max_delay_time`.
     pub delay_time: f32,
-    /// 0.1-1.0.
     pub gain: f32,
-    /// 0.1-1.0.
     pub feedback: f32,
-    /// 0.1-1.0.
     pub low_pass_amount: f32,
-    /// 0.1-1.0.
     pub channel_spread: f32,
-    /// 0.0-1.0.
     pub out_gain: f32,
-    /// 0.0-1.0.
     pub dry_gain: f32,
     pub private: *mut ffi::c_void,
-    /// Milliseconds.
     pub max_delay_time: f32,
     _pad: ffi::unknown<12>,
 }
 
-/// AXFX2_CHORUS
-#[doc(alias = "AXFX2_CHORUS")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Chorus2 {
-    /// Average delay, 1.0-50.0 milliseconds.
     pub delay_time: f32,
-    /// 0.1-1.0.
     pub mod_depth: f32,
-    /// 0.1-2.0 Hz.
     pub mod_rate: f32,
-    /// Phase spread of the modulation between channels, 0.0-1.0.
     pub mod_spread: f32,
-    /// 0.1-1.0.
     pub feedback: f32,
-    /// 0.0-1.0.
     pub out_gain: f32,
-    /// 0.0-1.0. Set when the mixer adds no dry signal.
     pub dry_gain: f32,
     pub private: *mut ffi::c_void,
     _pad: ffi::unknown<16>,
 }
 
-/// AXFX2_FLANGER
-#[doc(alias = "AXFX2_FLANGER")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Flanger2 {
-    /// 0.1-7.0 milliseconds.
     pub delay_time: f32,
-    /// 0.1-1.0.
     pub mod_depth: f32,
-    /// 0.1-10.0 Hz.
     pub mod_rate: f32,
-    /// -1.0-1.0.
     pub feedback: f32,
-    /// 0.0-1.0.
     pub feedforward: f32,
-    /// 0.0-1.0.
     pub out_gain: f32,
-    /// 0.0-1.0.
     pub dry_gain: f32,
     pub private: *mut ffi::c_void,
     _pad: ffi::unknown<16>,
@@ -1024,55 +794,37 @@ impl DistortionType {
     pub const HARD_CLIP: Self = Self(2);
 }
 
-/// AXFX2_OVERDRIVE
-#[doc(alias = "AXFX2_OVERDRIVE")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Overdrive2 {
-    /// Gain before the distortion, -30.0-30.0 dB.
     pub drive: f32,
     pub distortion_type: DistortionType,
-    /// Gain after the distortion, -30.0-10.0 dB.
     pub out_gain: f32,
-    /// -1.0 (low) to 1.0 (high).
     pub tone: f32,
-    /// 0.0-2.0.
     pub dry_gain: f32,
     pub private: *mut ffi::c_void,
     _pad: ffi::unknown<16>,
 }
 
-/// AXFX2_COMPRESSOR
-#[doc(alias = "AXFX2_COMPRESSOR")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Compressor2 {
-    /// -50.0-0.0 dB.
     pub threshold: f32,
-    /// 1.0 (none) to 30.0.
     pub ratio: f32,
-    /// 1.0-1000.0 milliseconds.
     pub attack_time: f32,
-    /// 1.0-5000.0 milliseconds.
     pub release_time: f32,
     /// Boosts the gain to make up for the compression.
     pub makeup_gain: ffi::c_bool,
-    /// -30.0-10.0 dB.
     pub out_gain: f32,
     pub private: *mut ffi::c_void,
     _pad: ffi::unknown<16>,
 }
 
-/// AXFX2_PITCHSHIFT
-#[doc(alias = "AXFX2_PITCHSHIFT")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Pitchshift2 {
-    /// -24.0-24.0 semitones.
     pub pitch_shift: f32,
-    /// 0.0-2.0.
     pub out_gain: f32,
-    /// 0.0-2.0.
     pub dry_gain: f32,
     pub private: *mut ffi::c_void,
     _pad: ffi::unknown<16>,

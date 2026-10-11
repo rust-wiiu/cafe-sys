@@ -2,8 +2,6 @@
 
 use crate::{ffi, vpad::Channel};
 
-/// NFC_MAX_UID_SIZE
-#[doc(alias = "NFC_MAX_UID_SIZE")]
 pub const MAX_UID_SIZE: usize = 10;
 
 /// NFCError
@@ -97,7 +95,6 @@ impl NdefFlags {
     pub const READ_ONLY: Self = Self(1 << 0);
     pub const FORMATTED: Self = Self(1 << 1);
     pub const SUPPORTED: Self = Self(1 << 2);
-    /// Unable to determine the other flags.
     pub const UNKNOWN: Self = Self(1 << 3);
     pub const FORMATTABLE: Self = Self(1 << 4);
     pub const SOFT_LOCKABLE: Self = Self(1 << 5);
@@ -332,7 +329,7 @@ unsafe extern "C" {
 
     /// NFCDetect
     ///
-    /// Timeouts in this module are in milliseconds, a discovery timeout of 0 waits forever.
+    /// Timeouts in this module are in milliseconds.
     #[doc(alias = "NFCDetect")]
     #[link_name = "NFCDetect"]
     pub unsafe fn detect(

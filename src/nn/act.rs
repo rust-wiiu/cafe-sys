@@ -50,14 +50,10 @@ pub struct LocalFriendCode(pub u64);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LoadOption(pub u32);
 
-/// ACTMiiImageType
-#[doc(alias = "ACTMiiImageType")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MiiImageType(pub i32);
 
-/// ACTUuid
-#[doc(alias = "ACTUuid")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Uuid {
@@ -99,8 +95,6 @@ unsafe extern "C" {
     #[link_name = "GetSlotNo__Q2_2nn3actFv"]
     pub unsafe fn get_slot_no() -> SlotNo;
 
-    /// GetSlotNoEx
-    #[doc(alias = "GetSlotNoEx")]
     #[link_name = "GetSlotNoEx__Q2_2nn3actFRC7ACTUuid"]
     pub unsafe fn get_slot_no_ex(uuid: *const Uuid) -> SlotNo;
 
@@ -109,13 +103,9 @@ unsafe extern "C" {
     #[link_name = "GetDefaultAccount__Q2_2nn3actFv"]
     pub unsafe fn get_default_account() -> SlotNo;
 
-    /// GetParentalControlSlotNo
-    #[doc(alias = "GetParentalControlSlotNo")]
     #[link_name = "GetParentalControlSlotNo__Q2_2nn3actFv"]
     pub unsafe fn get_parental_control_slot_no() -> SlotNo;
 
-    /// GetParentalControlSlotNoEx
-    #[doc(alias = "GetParentalControlSlotNoEx")]
     #[link_name = "GetParentalControlSlotNoEx__Q2_2nn3actFPUcUc"]
     pub unsafe fn get_parental_control_slot_no_ex(out: *mut SlotNo, slot: SlotNo) -> Result;
 
@@ -190,8 +180,6 @@ unsafe extern "C" {
     pub unsafe fn has_nfs_account() -> bool;
 
     /// GetAccountId
-    ///
-    /// Nintendo Network ID.
     #[doc(alias = "GetAccountId")]
     #[link_name = "GetAccountId__Q2_2nn3actFPc"]
     pub unsafe fn get_account_id(id: *mut [ffi::c_char; ACCOUNT_ID_SIZE]) -> Result;
@@ -219,13 +207,9 @@ unsafe extern "C" {
         slot: SlotNo,
     ) -> Result;
 
-    /// GetCountry
-    #[doc(alias = "GetCountry")]
     #[link_name = "GetCountry__Q2_2nn3actFPc"]
     pub unsafe fn get_country(country: *mut [ffi::c_char; COUNTRY_SIZE]) -> Result;
 
-    /// GetCountryEx
-    #[doc(alias = "GetCountryEx")]
     #[link_name = "GetCountryEx__Q2_2nn3actFPcUc"]
     pub unsafe fn get_country_ex(country: *mut [ffi::c_char; COUNTRY_SIZE], slot: SlotNo)
     -> Result;
@@ -347,8 +331,6 @@ unsafe extern "C" {
     #[link_name = "GetUuidEx__Q2_2nn3actFP7ACTUuidUcUi"]
     pub unsafe fn get_uuid_ex_unk(uuid: *mut Uuid, slot: SlotNo, unk1: u32) -> Result;
 
-    /// GenerateUuid
-    #[doc(alias = "GenerateUuid")]
     #[link_name = "GenerateUuid__Q2_2nn3actFP7ACTUuid"]
     pub unsafe fn generate_uuid(uuid: *mut Uuid) -> Result;
 }

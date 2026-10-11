@@ -29,7 +29,7 @@ impl core::ops::BitOr for FreeMode {
 }
 
 /// MEMFrmHeapState
-#[doc(alias = "MEMFrmHeapState", alias = "MEMiFrmHeapState")]
+#[doc(alias = "MEMFrmHeapState")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct FrmHeapState {
@@ -47,7 +47,7 @@ unsafe extern "C" {
 
     /// MEMDestroyFrmHeap
     ///
-    /// Returns the start of the heap memory.
+    /// Returns `heap`, which is the start of the heap memory rounded up to 4 bytes.
     #[doc(alias = "MEMDestroyFrmHeap")]
     #[link_name = "MEMDestroyFrmHeap"]
     pub unsafe fn destroy(heap: HeapHandle) -> *mut ffi::c_void;
@@ -80,7 +80,7 @@ unsafe extern "C" {
 
     /// MEMAdjustFrmHeap
     ///
-    /// Shrinks the heap to its used part. Returns the new size.
+    /// Shrinks the heap to its used part. Returns the new size, or 0 if blocks are allocated from the tail.
     #[doc(alias = "MEMAdjustFrmHeap")]
     #[link_name = "MEMAdjustFrmHeap"]
     pub unsafe fn adjust(heap: HeapHandle) -> u32;

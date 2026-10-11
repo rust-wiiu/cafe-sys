@@ -38,7 +38,6 @@ pub struct Surface {
     pub dim: SurfaceDim,
     pub width: u32,
     pub height: u32,
-    /// Depth for 3D surfaces, slices for arrays, 6 for cube maps.
     pub depth: u32,
     pub mip_levels: u32,
     pub format: SurfaceFormat,
@@ -111,7 +110,7 @@ pub struct DepthBuffer {
 }
 
 /// GX2Rect
-#[doc(alias = "GX2Rect", alias = "GX2RectInt")]
+#[doc(alias = "GX2Rect")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Rect {
@@ -122,7 +121,7 @@ pub struct Rect {
 }
 
 /// GX2Point
-#[doc(alias = "GX2Point", alias = "GX2PointInt")]
+#[doc(alias = "GX2Point")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Point {
@@ -136,25 +135,17 @@ pub struct Point {
 #[doc(alias = "GX2_MAX_COPY_SURFACE_EX_RECTS")]
 pub const MAX_COPY_SURFACE_EX_RECTS: u32 = 25;
 
-/// GX2ZRangeBase
-#[doc(alias = "GX2ZRangeBase")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ZRangeBase(pub u32);
 
 impl ZRangeBase {
-    /// Best for [CompareFunction::GREATER] depth tests.
     pub const ZMIN: Self = Self(0);
-    /// Best for [CompareFunction::LESS] depth tests.
     pub const ZMAX: Self = Self(1);
 }
 
-/// GX2_NUM_HISTENCIL_STATES
-#[doc(alias = "GX2_NUM_HISTENCIL_STATES")]
 pub const NUM_HI_STENCIL_STATES: usize = 2;
 
-/// GX2HiStencilState
-#[doc(alias = "GX2HiStencilState")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct HiStencilState {
@@ -164,8 +155,6 @@ pub struct HiStencilState {
     pub enable: ffi::c_bool,
 }
 
-/// GX2HiStencilInfo
-#[doc(alias = "GX2HiStencilInfo")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct HiStencilInfo {
@@ -173,10 +162,7 @@ pub struct HiStencilInfo {
     pub regs: [u32; NUM_HI_STENCIL_STATES],
 }
 
-/// GX2AASampleLoc
-///
-/// Sample positions from -8 to 7 around the pixel center.
-#[doc(alias = "GX2AASampleLoc")]
+/// Sample offsets from the pixel center in 1/16 pixels, from -8 to 7.
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AaSampleLoc {
@@ -221,15 +207,11 @@ unsafe extern "C" {
     );
 
     /// GX2SetColorBuffer
-    ///
-    /// Does not set the scissor box.
     #[doc(alias = "GX2SetColorBuffer")]
     #[link_name = "GX2SetColorBuffer"]
     pub unsafe fn set_color_buffer(color_buffer: *const ColorBuffer, target: RenderTarget);
 
     /// GX2SetDepthBuffer
-    ///
-    /// Does not set the scissor box.
     #[doc(alias = "GX2SetDepthBuffer")]
     #[link_name = "GX2SetDepthBuffer"]
     pub unsafe fn set_depth_buffer(depth_buffer: *const DepthBuffer);
@@ -294,7 +276,7 @@ unsafe extern "C" {
 
     /// GX2GetSurfaceFormatBits
     ///
-    /// Bits per pixel, or per 4x4 block for compressed formats.
+    /// Bits per pixel. Compressed formats return the bits of a 4x4 block divided by 16.
     #[doc(alias = "GX2GetSurfaceFormatBits")]
     #[link_name = "GX2GetSurfaceFormatBits"]
     pub unsafe fn get_format_bits(format: SurfaceFormat) -> u32;
@@ -363,8 +345,6 @@ unsafe extern "C" {
     pub unsafe fn expand_depth_buffer(buffer: *mut DepthBuffer);
 
     /// GX2ConvertDepthBufferToTextureSurface
-    ///
-    /// Changes render state, call `GX2SetContextState` afterwards.
     #[doc(alias = "GX2ConvertDepthBufferToTextureSurface")]
     #[link_name = "GX2ConvertDepthBufferToTextureSurface"]
     pub unsafe fn convert_depth_buffer_to_texture_surface(

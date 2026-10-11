@@ -5,8 +5,6 @@
 use crate::ffi;
 use crate::sndcore2::voice::Voice;
 
-/// AXART_TYPE
-#[doc(alias = "AXART_TYPE")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ArtType(pub u32);
@@ -39,10 +37,7 @@ impl ArtType {
     pub const DRC: Self = Self(26);
 }
 
-/// AXART_ART
-///
 /// Header of every articulator, maintained by the library.
-#[doc(alias = "AXART_ART")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Art {
@@ -50,17 +45,12 @@ pub struct Art {
     pub kind: ArtType,
 }
 
-/// AXART_LFO
-///
 /// LFO of the modulation articulators, see [init_lfo].
-#[doc(alias = "AXART_LFO")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Lfo {
-    /// Samples of one period.
     pub lfo: *mut f32,
     pub length: u32,
-    /// Delta per audio frame.
     pub delta: f32,
     pub sample_index: u32,
     pub counter: f32,
@@ -69,52 +59,36 @@ pub struct Lfo {
     pub output: f32,
 }
 
-/// AXART_3D
-#[doc(alias = "AXART_3D")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Art3d {
     pub art: Art,
-    /// Horizontal angle relative to the camera, in radians.
+    /// Horizontal angle in radians.
     pub h_angle: f32,
-    /// Vertical angle relative to the camera, in radians.
+    /// Vertical angle in radians.
     pub v_angle: f32,
-    /// Distance from the camera.
     pub dist: f32,
     /// Closing speed towards the camera, for doppler.
     pub closing_speed: f32,
     /// Set to true after changing the fields above.
     pub update: ffi::c_bool,
-    /// Generated, read only.
     pub pan: u8,
-    /// Generated, read only.
     pub span: u8,
-    /// Generated, read only.
     pub src: u8,
-    /// Generated, read only.
     pub itd_left: u16,
-    /// Generated, read only.
     pub itd_right: u16,
-    /// Generated, read only.
     pub pitch: f32,
-    /// Generated, read only.
     pub attenuation: i32,
 }
 
-/// AXART_PANNING
-#[doc(alias = "AXART_PANNING")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Panning {
     pub art: Art,
-    /// Left to right 0-127, 64 is center.
     pub pan: u8,
-    /// Rear to front 0-127, 127 is front.
     pub span: u8,
 }
 
-/// AXART_SRCTYPE
-#[doc(alias = "AXART_SRCTYPE")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SrcType {
@@ -123,20 +97,14 @@ pub struct SrcType {
     pub src: u8,
 }
 
-/// AXART_ITD
-#[doc(alias = "AXART_ITD")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Itd {
     pub art: Art,
-    /// Sample shift, 0-31.
     pub itd_left: u16,
-    /// Sample shift, 0-31.
     pub itd_right: u16,
 }
 
-/// AXART_PITCH
-#[doc(alias = "AXART_PITCH")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Pitch {
@@ -145,8 +113,6 @@ pub struct Pitch {
     pub cents: i32,
 }
 
-/// AXART_PITCH_ENV
-#[doc(alias = "AXART_PITCH_ENV")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct PitchEnv {
@@ -159,8 +125,6 @@ pub struct PitchEnv {
     pub cents: i32,
 }
 
-/// AXART_PITCH_MOD
-#[doc(alias = "AXART_PITCH_MOD")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PitchMod {
@@ -170,8 +134,6 @@ pub struct PitchMod {
     pub cents: i32,
 }
 
-/// AXART_VOLUME
-#[doc(alias = "AXART_VOLUME")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Volume {
@@ -180,8 +142,6 @@ pub struct Volume {
     pub attenuation: i32,
 }
 
-/// AXART_AUXA_VOLUME
-#[doc(alias = "AXART_AUXA_VOLUME")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AuxAVolume {
@@ -190,8 +150,6 @@ pub struct AuxAVolume {
     pub attenuation: i32,
 }
 
-/// AXART_AUXB_VOLUME
-#[doc(alias = "AXART_AUXB_VOLUME")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AuxBVolume {
@@ -200,8 +158,6 @@ pub struct AuxBVolume {
     pub attenuation: i32,
 }
 
-/// AXART_AUXC_VOLUME
-#[doc(alias = "AXART_AUXC_VOLUME")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AuxCVolume {
@@ -210,8 +166,6 @@ pub struct AuxCVolume {
     pub attenuation: i32,
 }
 
-/// AXART_VOLUME_ENV
-#[doc(alias = "AXART_VOLUME_ENV")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VolumeEnv {
@@ -224,8 +178,6 @@ pub struct VolumeEnv {
     pub attenuation: i32,
 }
 
-/// AXART_AUXA_VOLUME_ENV
-#[doc(alias = "AXART_AUXA_VOLUME_ENV")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AuxAVolumeEnv {
@@ -238,8 +190,6 @@ pub struct AuxAVolumeEnv {
     pub attenuation: i32,
 }
 
-/// AXART_AUXB_VOLUME_ENV
-#[doc(alias = "AXART_AUXB_VOLUME_ENV")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AuxBVolumeEnv {
@@ -252,8 +202,6 @@ pub struct AuxBVolumeEnv {
     pub attenuation: i32,
 }
 
-/// AXART_AUXC_VOLUME_ENV
-#[doc(alias = "AXART_AUXC_VOLUME_ENV")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct AuxCVolumeEnv {
@@ -266,8 +214,6 @@ pub struct AuxCVolumeEnv {
     pub attenuation: i32,
 }
 
-/// AXART_VOLUME_MOD
-#[doc(alias = "AXART_VOLUME_MOD")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct VolumeMod {
@@ -277,8 +223,6 @@ pub struct VolumeMod {
     pub attenuation: i32,
 }
 
-/// AXART_AUXA_VOLUME_MOD
-#[doc(alias = "AXART_AUXA_VOLUME_MOD")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct AuxAVolumeMod {
@@ -288,8 +232,6 @@ pub struct AuxAVolumeMod {
     pub attenuation: i32,
 }
 
-/// AXART_AUXB_VOLUME_MOD
-#[doc(alias = "AXART_AUXB_VOLUME_MOD")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct AuxBVolumeMod {
@@ -299,8 +241,6 @@ pub struct AuxBVolumeMod {
     pub attenuation: i32,
 }
 
-/// AXART_AUXC_VOLUME_MOD
-#[doc(alias = "AXART_AUXC_VOLUME_MOD")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct AuxCVolumeMod {
@@ -310,8 +250,6 @@ pub struct AuxCVolumeMod {
     pub attenuation: i32,
 }
 
-/// AXART_LPF_FREQ
-#[doc(alias = "AXART_LPF_FREQ")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct LpfFrequency(pub u32);
@@ -343,8 +281,6 @@ impl LpfFrequency {
     pub const HZ_80: Self = Self(23);
 }
 
-/// AXART_LPF
-#[doc(alias = "AXART_LPF")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Lpf {
@@ -356,8 +292,6 @@ pub struct Lpf {
     pub update: ffi::c_bool,
 }
 
-/// AXART_FADER
-#[doc(alias = "AXART_FADER")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Fader {
@@ -366,10 +300,7 @@ pub struct Fader {
     pub attenuation: i32,
 }
 
-/// AXART_RMT
-///
 /// Enables the controller speaker output.
-#[doc(alias = "AXART_RMT")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Rmt {
@@ -377,10 +308,7 @@ pub struct Rmt {
     pub on: u16,
 }
 
-/// AXART_DRC
-///
 /// Enables the DRC output.
-#[doc(alias = "AXART_DRC")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Drc {
@@ -388,10 +316,7 @@ pub struct Drc {
     pub on: u16,
 }
 
-/// AXART_RMT_FADER
-///
 /// Fader of each controller speaker.
-#[doc(alias = "AXART_RMT_FADER")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RmtFader {
@@ -400,10 +325,7 @@ pub struct RmtFader {
     pub attenuation: [i32; 4],
 }
 
-/// AXART_RMT_AUX_VOLUME
-///
 /// Aux send level of each controller speaker.
-#[doc(alias = "AXART_RMT_AUX_VOLUME")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct RmtAuxVolume {
@@ -412,8 +334,6 @@ pub struct RmtAuxVolume {
     pub attenuation: [i32; 4],
 }
 
-/// AXART_SOUND
-#[doc(alias = "AXART_SOUND")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Sound {
@@ -437,14 +357,14 @@ unsafe extern "C" {
 
     /// AXARTServiceSounds
     ///
-    /// Runs the articulators of all added sounds for one audio frame. Call from the AX frame callback.
+    /// Runs the articulators of all added sounds for one audio frame.
     #[doc(alias = "AXARTServiceSounds")]
     #[link_name = "AXARTServiceSounds"]
     pub unsafe fn service_sounds();
 
     /// AXARTInitSound
     ///
-    /// Call before adding articulators. `sample_rate` is in Hz.
+    /// `sample_rate` is in Hz.
     #[doc(alias = "AXARTInitSound")]
     #[link_name = "AXARTInitSound"]
     pub unsafe fn init_sound(sound: *mut Sound, voice: *mut Voice, sample_rate: u32);
@@ -487,7 +407,7 @@ unsafe extern "C" {
 
     /// AXARTInitLfo
     ///
-    /// `samples` is one period of `length` samples. `delta` is `hz * length / 333`.
+    /// `samples` is one period of `length` samples.
     #[doc(alias = "AXARTInitLfo")]
     #[link_name = "AXARTInitLfo"]
     pub unsafe fn init_lfo(lfo: *mut Lfo, samples: *mut f32, length: u32, delta: f32);

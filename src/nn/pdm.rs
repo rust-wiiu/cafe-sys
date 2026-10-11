@@ -118,14 +118,14 @@ unsafe extern "C" {
 
     /// GetPlayDiary
     ///
-    /// Like [get_play_diary], without returning the number of entries read.
+    /// Like [get_play_diary], but returns the number of entries read, or -1 on failure.
     #[doc(alias = "GetPlayDiary")]
     #[link_name = "GetPlayDiary__Q2_2nn3pdmFPQ3_2nn3pdm9PlayDiaryiT2"]
     pub unsafe fn get_play_diary_without_count(
         diaries: *mut PlayDiary,
         user_id: i32,
         max_count: i32,
-    ) -> Result;
+    ) -> i32;
 
     /// GetPlayEventMaxLength
     #[doc(alias = "GetPlayEventMaxLength")]
@@ -169,14 +169,14 @@ unsafe extern "C" {
 
     /// GetPlayLog
     ///
-    /// Like [get_play_log], without returning the number of entries read.
+    /// Like [get_play_log], but returns the number of entries read, or -1 on failure.
     #[doc(alias = "GetPlayLog")]
     #[link_name = "GetPlayLog__Q2_2nn3pdmFPQ3_2nn3pdm7PlayLogiT2"]
     pub unsafe fn get_play_log_without_count(
         logs: *mut PlayLog,
         user_id: i32,
         max_count: i32,
-    ) -> Result;
+    ) -> i32;
 
     /// GetPlayStatsMaxLength
     #[doc(alias = "GetPlayStatsMaxLength")]
@@ -209,14 +209,14 @@ unsafe extern "C" {
 
     /// GetPlayStats
     ///
-    /// Like [get_play_stats], without returning the number of entries read.
+    /// Like [get_play_stats], but returns the number of entries read, or -1 on failure.
     #[doc(alias = "GetPlayStats")]
     #[link_name = "GetPlayStats__Q2_2nn3pdmFPQ3_2nn3pdm9PlayStatsiT2"]
     pub unsafe fn get_play_stats_without_count(
         stats: *mut PlayStats,
         user_id: i32,
         max_count: i32,
-    ) -> Result;
+    ) -> i32;
 }
 
 imports_section!(

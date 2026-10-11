@@ -5,8 +5,6 @@
 use super::socket::FileDescriptor;
 use crate::ffi;
 
-/// NSSL_RVAL
-#[doc(alias = "NSSL_RVAL")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub i32);
@@ -80,14 +78,10 @@ pub struct ContextHandle(pub i32);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ConnectionHandle(pub i32);
 
-/// NSSLSessionHandle
-#[doc(alias = "NSSLSessionHandle")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SessionHandle(pub i32);
 
-/// NSSLSSLVersion
-#[doc(alias = "NSSLSSLVersion")]
 #[repr(i32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SslVersion {
@@ -97,8 +91,6 @@ pub enum SslVersion {
     Sslv3 = 2,
 }
 
-/// NSSLCertType
-#[doc(alias = "NSSLCertType")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CertType(pub u32);
@@ -107,8 +99,6 @@ impl CertType {
     pub const DER: Self = Self(0);
 }
 
-/// NSSLPrivKeyType
-#[doc(alias = "NSSLPrivKeyType")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct PrivKeyType(pub u32);
@@ -117,8 +107,6 @@ impl PrivKeyType {
     pub const RSA: Self = Self(0);
 }
 
-/// NSSLCrlType
-#[doc(alias = "NSSLCrlType")]
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CrlType {
@@ -126,8 +114,6 @@ pub enum CrlType {
     Der = 0,
 }
 
-/// NSSLHandshakeError
-#[doc(alias = "NSSLHandshakeError")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct HandshakeError(pub u32);
@@ -144,8 +130,6 @@ impl HandshakeError {
     pub const SERVER_CERT_VERIFY_FAILED: Self = Self(8);
 }
 
-/// NSSLCertValidationStatus
-#[doc(alias = "NSSLCertValidationStatus")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CertValidationStatus(pub i32);
@@ -210,7 +194,6 @@ impl CertValidationStatus {
 }
 
 /// NSSL_VERIFY_*
-#[doc(alias = "NSSL_VERIFY")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VerifyOptions(pub i32);
@@ -232,7 +215,6 @@ impl core::ops::BitOr for VerifyOptions {
 }
 
 /// NSSL_CTX_FLAG_*
-#[doc(alias = "NSSL_CTX_FLAG")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ContextFlags(pub u32);
@@ -249,8 +231,6 @@ impl core::ops::BitOr for ContextFlags {
     }
 }
 
-/// NSSLClientCertID
-#[doc(alias = "NSSLClientCertID")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ClientCertId(pub i32);
@@ -260,10 +240,7 @@ impl ClientCertId {
     pub const DEFAULT: Self = Self(1);
 }
 
-/// NSSLServerCertID
-///
 /// Built-in root certificates.
-#[doc(alias = "NSSLServerCertID")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ServerCertId(pub i32);
@@ -454,8 +431,6 @@ unsafe extern "C" {
     pub unsafe fn get_session(connection: ConnectionHandle) -> SessionHandle;
 
     /// NSSLSetSession
-    ///
-    /// Resumes a previous session.
     #[doc(alias = "NSSLSetSession")]
     #[link_name = "NSSLSetSession"]
     pub unsafe fn set_session(connection: ConnectionHandle, session: SessionHandle) -> Error;
@@ -471,8 +446,6 @@ unsafe extern "C" {
     pub unsafe fn remove_session(session: SessionHandle) -> Error;
 
     /// NSSLGetPending
-    ///
-    /// Number of bytes that can be read without blocking.
     #[doc(alias = "NSSLGetPending")]
     #[link_name = "NSSLGetPending"]
     pub unsafe fn get_pending(connection: ConnectionHandle, pending: *mut ffi::c_int) -> Error;

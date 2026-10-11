@@ -6,16 +6,16 @@ use super::HeapHandle;
 use crate::ffi;
 
 /// MEMAllocatorAllocFn
-#[doc(alias = "MEMAllocatorAllocFn", alias = "MEMFuncAllocatorAlloc")]
+#[doc(alias = "MEMAllocatorAllocFn")]
 pub type AllocFn =
     Option<unsafe extern "C" fn(allocator: *mut Allocator, size: u32) -> *mut ffi::c_void>;
 
 /// MEMAllocatorFreeFn
-#[doc(alias = "MEMAllocatorFreeFn", alias = "MEMFuncAllocatorFree")]
+#[doc(alias = "MEMAllocatorFreeFn")]
 pub type FreeFn = Option<unsafe extern "C" fn(allocator: *mut Allocator, ptr: *mut ffi::c_void)>;
 
 /// MEMAllocatorFunctions
-#[doc(alias = "MEMAllocatorFunctions", alias = "MEMAllocatorFunc")]
+#[doc(alias = "MEMAllocatorFunctions")]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy)]
 pub struct AllocatorFunctions {

@@ -2,8 +2,6 @@
 
 use crate::ffi;
 
-/// MAX_ENV_VALUE_SIZE
-#[doc(alias = "MAX_ENV_VALUE_SIZE")]
 pub const MAX_VALUE_SIZE: u32 = 256;
 
 unsafe extern "C" {

@@ -5,19 +5,11 @@
 use super::system::Upid;
 use crate::ffi;
 
-/// OS_ARGS_SIZE
-///
-/// Size of the buffer for all arguments.
-#[doc(alias = "OS_ARGS_SIZE")]
 pub const ARGS_SIZE: u32 = 4096;
-/// OS_MAX_NUM_ARGS
-#[doc(alias = "OS_MAX_NUM_ARGS")]
 pub const MAX_NUM_ARGS: u32 = 32;
 
 unsafe extern "C" {
     /// OSLaunchTitlev
-    ///
-    /// Returns 0 on success.
     #[doc(alias = "OSLaunchTitlev")]
     #[link_name = "OSLaunchTitlev"]
     pub unsafe fn launch_title_v(
@@ -83,7 +75,7 @@ unsafe extern "C" {
 
     /// OSGetCallArgs
     ///
-    /// Arguments of the last [send_app_switch_request] to this process.
+    /// Arguments passed by the calling process.
     #[doc(alias = "OSGetCallArgs")]
     #[link_name = "OSGetCallArgs"]
     pub unsafe fn get_call_args(

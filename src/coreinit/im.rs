@@ -6,7 +6,7 @@ use super::ios::{self, IoctlVec};
 use crate::ffi;
 
 /// IMError
-#[doc(alias = "IMError", alias = "IM_ERROR_CODE")]
+#[doc(alias = "IMError")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub i32);
@@ -104,8 +104,6 @@ impl core::ops::BitOr for EventMask {
 }
 
 /// IMRequest
-///
-/// Storage for an asynchronous request, must stay valid until it completes.
 #[doc(alias = "IMRequest")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]

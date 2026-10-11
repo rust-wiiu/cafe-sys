@@ -2,13 +2,9 @@
 
 use crate::ffi;
 
-/// H264DEC_BUFFER_ALIGNMENT
-#[doc(alias = "H264DEC_BUFFER_ALIGNMENT")]
 pub const BUFFER_ALIGNMENT: u32 = 256;
 
 /// H264Error
-///
-/// The result of [execute] additionally carries the decode status in the lower 8 bits, see [Error::STATUS_MASK].
 #[doc(alias = "H264Error")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -27,11 +23,8 @@ impl Error {
     pub const MEMSEGMENT: Self = Self(0x01060000);
     pub const MAX_SIZE: Self = Self(0x01070000);
     pub const BUFFEREMPTY: Self = Self(0x00080000);
-    /// Set in the result of [execute] if the decoded frame was stored in frame memory.
-    #[doc(alias = "H264DEC_ERR_USE_FM")]
     pub const FRAME_STORED: Self = Self(0x00000080);
-    /// Mask for the decode status of [execute]: [Error::FRAME_STORED] and the percentage (0-100) of correctly decoded macro blocks.
-    #[doc(alias = "H264DEC_ERR_FM_STAT")]
+    /// Lower 8 bits of the result of [execute]: [Error::FRAME_STORED] and the percentage (0-100) of decoded macroblocks.
     pub const STATUS_MASK: Self = Self(0x000000FF);
 }
 
@@ -42,27 +35,23 @@ impl Error {
 pub enum ParamId {
     /// `param` is an [OutputCallback].
     FptrOutput = 0x00000001,
-    /// `param` points to an [OutputPerFrame].
+    /// `param` points to a `u8` holding the [OutputPerFrame] value.
     OutputPerFrame = 0x20000002,
-    /// `param` points to a `*mut c_void` passed back in [Output::user_memory].
+    /// `param` itself is passed back in [Output::user_memory].
     UserMemory = 0x70000001,
 }
 
-/// BUFFERING_OUTPUT_PER_FRAME / UNBUFFERING_OUTPUT_PER_FRAME
-#[repr(i32)]
+#[repr(u8)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OutputPerFrame {
-    /// Frames are reordered into display order, buffering 5 frames.
+    /// Frames are buffered internally.
     #[default]
-    #[doc(alias = "BUFFERING_OUTPUT_PER_FRAME")]
     Buffering = 0,
-    /// Frames are output in decode order.
-    #[doc(alias = "UNBUFFERING_OUTPUT_PER_FRAME")]
+    /// The output callback is called as soon as a frame is emitted.
     Unbuffering = 1,
 }
 
 /// H264_*_PROFILE
-#[doc(alias = "H264_PROFILE")]
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Profile {
@@ -119,7 +108,6 @@ pub struct DecodeResult {
     pub timestamp: f64,
     pub width: i32,
     pub height: i32,
-    /// Pitch in pixels.
     pub next_line: i32,
     pub crop_enable_flag: u8,
     pub top_crop: i32,
@@ -131,7 +119,6 @@ pub struct DecodeResult {
     pub bottom_pan_scan: i32,
     pub left_pan_scan: i32,
     pub right_pan_scan: i32,
-    /// Decoded NV12 image.
     pub result: *mut ffi::c_void,
     pub vui_parameters_present_flag: u8,
     pub vui_parameters: *mut VuiParameters,
@@ -188,8 +175,7 @@ unsafe extern "C" {
 
     /// H264DECExecute
     ///
-    /// The upper 24 bits of the result are an error code, the lower 8 bits the decode status ([Error::STATUS_MASK]).
-    /// A frame decoded without errors returns `0xE4`.
+    /// The upper bits of the result are an error code, the lower 8 bits the decode status ([Error::STATUS_MASK]). A fully decoded frame returns `0xE4`.
     #[doc(alias = "H264DECExecute")]
     #[link_name = "H264DECExecute"]
     pub unsafe fn execute(mem: *mut ffi::c_void, frame: *mut ffi::c_void) -> Error;
@@ -211,7 +197,7 @@ unsafe extern "C" {
 
     /// H264DECMemoryRequirement
     ///
-    /// `level` is the H.264 level multiplied by 10 (e.g. 41 for level 4.1).
+    /// `level` is the H.264 level multiplied by 10 (e.g. 41 for level 4.1). `max_width` must be in 64..=2800 and `max_height` in 64..=1408.
     #[doc(alias = "H264DECMemoryRequirement")]
     #[link_name = "H264DECMemoryRequirement"]
     pub unsafe fn memory_requirement(
@@ -260,7 +246,7 @@ unsafe extern "C" {
 
     /// H264DECCheckMemSegmentation
     ///
-    /// Returns [Error::MEMSEGMENT] if the memory crosses a 256 MB boundary.
+    /// Returns -1 if the memory crosses a 256 MB boundary, [Error::PARAM] for a null pointer or zero size.
     #[doc(alias = "H264DECCheckMemSegmentation")]
     #[link_name = "H264DECCheckMemSegmentation"]
     pub unsafe fn check_memory_segmentation(mem: *mut ffi::c_void, size: u32) -> Error;
@@ -289,7 +275,7 @@ unsafe extern "C" {
 
     /// H264DECSetParam_USER_MEMORY
     ///
-    /// Same as [set_param] with [ParamId::UserMemory].
+    /// Like [set_param] with [ParamId::UserMemory], but passes `*user_memory`.
     #[doc(alias = "H264DECSetParam_USER_MEMORY")]
     #[link_name = "H264DECSetParam_USER_MEMORY"]
     pub unsafe fn set_param_user_memory(

@@ -19,7 +19,7 @@ unsafe extern "C" {
 
     /// MEMDestroyUnitHeap
     ///
-    /// Returns the start of the heap memory.
+    /// Returns `heap`, which is the start of the heap memory rounded up to 4 bytes.
     #[doc(alias = "MEMDestroyUnitHeap")]
     #[link_name = "MEMDestroyUnitHeap"]
     pub unsafe fn destroy(heap: HeapHandle) -> *mut ffi::c_void;

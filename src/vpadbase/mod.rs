@@ -18,8 +18,6 @@ pub enum Channel {
     C1 = 1,
 }
 
-/// VPADBASE_BATTERY_LEVEL
-#[doc(alias = "VPADBASE_BATTERY_LEVEL")]
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct BatteryLevel(pub u8);
