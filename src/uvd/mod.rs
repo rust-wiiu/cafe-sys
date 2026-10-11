@@ -1,6 +1,5 @@
-//! uvd
+//! USB Video Decoder driver
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "uvd",
     [
