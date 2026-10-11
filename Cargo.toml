@@ -3,7 +3,7 @@ name = "cafe-sys"
 version = "0.1.0"
 authors = ["29th-Day"]
 edition = "2024"
-license-file = "LICENSE"
+license = "MIT"
 keywords = ["wiiu", "homebrew"]
 description = "Bindings for the Wii U system APIs"
 repository = "https://github.com/rust-wiiu/cafe-sys"
@@ -13,6 +13,7 @@ test = false
 bench = false
 
 [dependencies]
-bitfields = "3.0.0"
-bitflags = "2.13.0"
-num_enum = { version = "0.7.6", default-features = false }
+core = { version = "1.0.0", optional = true, package = "rustc-std-workspace-core" }
+
+[features]
+rustc-dep-of-std = ["dep:core"]
