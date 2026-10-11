@@ -1,6 +1,5 @@
-//! NN VCTL
+//! Title Version Control (VCTL)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_vctl",
     [
