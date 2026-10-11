@@ -1,6 +1,5 @@
-//! NN EC
+//! E-Commerce (EC)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_ec",
     [

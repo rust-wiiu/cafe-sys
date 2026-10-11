@@ -6,6 +6,7 @@ pub mod boss;
 pub mod ccr;
 pub mod cmpt;
 pub mod dlp;
+pub mod ec;
 pub mod hai;
 pub mod hpad;
 pub mod idbe;
