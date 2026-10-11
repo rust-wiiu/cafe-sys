@@ -1,4 +1,4 @@
-//! Auto Connection (AC)
+//! Auto Connect
 
 use super::Result;
 use crate::ffi;
