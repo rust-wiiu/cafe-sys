@@ -1,8 +1,8 @@
 //! padscore
 
 pub mod kpad;
+pub mod wbc;
 pub mod wpad;
-// pub mod wbc;
 
 // #[cfg(target_arch = "powerpc")]
 imports_section!(
