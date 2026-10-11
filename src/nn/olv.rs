@@ -1,6 +1,5 @@
-//! NN OLV
+//! OLiVe (Miiverse codename) Client Library (OLV)
 
-// #[cfg(target_arch = "powerpc")]
 imports_section!(
     "nn_olv",
     [
