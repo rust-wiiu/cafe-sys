@@ -151,6 +151,11 @@ pub enum SockOpt {
     Keepcnt = 0x101B,
     // Level::IP
     IpTos = 3,
+    IpMulticastIf = 9,
+    IpMulticastTtl = 10,
+    IpMulticastLoop = 11,
+    IpAddMembership = 12,
+    IpDropMembership = 13,
     // Level::TCP
     TcpAckdelaytime = 0x2001,
     TcpNoackdelay = 0x2002,
