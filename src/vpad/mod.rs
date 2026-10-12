@@ -82,9 +82,11 @@ impl Error {
 }
 
 /// VPADButtonProcMode
-#[doc(alias = "VPADButtonProcMode")]
+///
+/// Also used as KPADButtonProcMode.
+#[doc(alias("VPADButtonProcMode", "KPADButtonProcMode"))]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ButtonProcMode(pub u8);
 
 impl ButtonProcMode {
@@ -146,9 +148,11 @@ impl GyroZeroDriftMode {
 }
 
 /// VPADPlayMode
-#[doc(alias = "VPADPlayMode")]
+///
+/// Also used as KPADPlayMode.
+#[doc(alias("VPADPlayMode", "KPADPlayMode"))]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct PlayMode(pub u32);
 
 impl PlayMode {
@@ -165,7 +169,9 @@ impl MicStatus {
 }
 
 /// VPADVec2D
-#[doc(alias = "VPADVec2D")]
+///
+/// Also used as KPADVec2D.
+#[doc(alias("VPADVec2D", "KPADVec2D"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Vec2 {
@@ -174,7 +180,9 @@ pub struct Vec2 {
 }
 
 /// VPADVec3D
-#[doc(alias = "VPADVec3D")]
+///
+/// Also used as KPADVec3D.
+#[doc(alias("VPADVec3D", "KPADVec3D", "Vec"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Vec3 {
@@ -186,7 +194,9 @@ pub struct Vec3 {
 /// VPADDirection
 ///
 /// Orientation of the GamePad as three axis vectors.
-#[doc(alias = "VPADDirection")]
+///
+/// Also used as KPADMPDir.
+#[doc(alias("VPADDirection", "KPADMPDir", "KPADBase3D"))]
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct Direction {

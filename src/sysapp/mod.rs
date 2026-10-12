@@ -6,6 +6,8 @@ use crate::ffi;
 
 use crate::nn::ffl::StoreData;
 
+pub use crate::coreinit::system::Upid as Pfid;
+
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Error(pub i32);
@@ -17,32 +19,6 @@ impl Error {
     pub const FATAL: Self = Self(-100000);
     pub const SERIALIZE_ANCHOR_SIZE_MAX: Self = Self(-40000);
     pub const SERIALIZE_URL_SIZE_MAX: Self = Self(-50000);
-}
-
-/// SysAppPFID
-///
-/// Process family ID.
-#[doc(alias = "SysAppPFID")]
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Pfid(pub i32);
-
-impl Pfid {
-    pub const INVALID: Self = Self(-1);
-    pub const WII_U_MENU: Self = Self(2);
-    pub const TVII: Self = Self(3);
-    pub const EMANUAL: Self = Self(4);
-    pub const HOME_MENU: Self = Self(5);
-    pub const MINI_MIIVERSE: Self = Self(7);
-    pub const BROWSER: Self = Self(8);
-    pub const MIIVERSE: Self = Self(9);
-    pub const ESHOP: Self = Self(10);
-    pub const FRIEND_LIST: Self = Self(11);
-    pub const DOWNLOAD_MANAGEMENT: Self = Self(12);
-    pub const GAME: Self = Self(15);
-    pub const MINT_U: Self = Self(16);
-    pub const CABINET_U: Self = Self(17);
-    pub const TEST_OVERLAY: Self = Self(31);
 }
 
 /// SYSTEM_APP_ID

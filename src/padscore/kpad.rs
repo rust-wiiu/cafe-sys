@@ -5,6 +5,8 @@
 use super::wpad;
 use crate::ffi;
 
+pub use crate::vpad::{ButtonProcMode, Direction as MpDir, PlayMode, Vec2, Vec3};
+
 #[doc(alias("KPAD_RING_BUFS", "KPAD_MAX_READ_BUFS"))]
 pub const RING_BUFS: usize = 16;
 
@@ -188,28 +190,6 @@ impl WbcTgcError {
     pub const BUSY: Self = Self(-4);
 }
 
-/// KPADPlayMode
-#[doc(alias = "KPADPlayMode")]
-#[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct PlayMode(pub u32);
-
-impl PlayMode {
-    pub const LOOSE: Self = Self(0);
-    pub const TIGHT: Self = Self(1);
-}
-
-/// KPADButtonProcMode
-#[doc(alias = "KPADButtonProcMode")]
-#[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ButtonProcMode(pub u8);
-
-impl ButtonProcMode {
-    pub const LOOSE: Self = Self(0);
-    pub const TIGHT: Self = Self(1);
-}
-
 /// KPADMplsZeroDriftMode
 #[doc(alias = "KPADMplsZeroDriftMode")]
 #[repr(transparent)]
@@ -252,23 +232,6 @@ impl MplsControlState {
     pub const FINISHED: Self = Self(1);
 }
 
-#[doc(alias = "KPADVec2D")]
-#[repr(C)]
-#[derive(Debug, Default, Clone, Copy, PartialEq)]
-pub struct Vec2 {
-    pub x: f32,
-    pub y: f32,
-}
-
-#[doc(alias("Vec", "KPADVec3D"))]
-#[repr(C)]
-#[derive(Debug, Default, Clone, Copy, PartialEq)]
-pub struct Vec3 {
-    pub x: f32,
-    pub y: f32,
-    pub z: f32,
-}
-
 /// Rect
 #[doc(alias = "KPADRect")]
 #[repr(C)]
@@ -278,15 +241,6 @@ pub struct Rect {
     pub top: f32,
     pub right: f32,
     pub bottom: f32,
-}
-
-#[doc(alias("KPADMPDir", "KPADBase3D"))]
-#[repr(C)]
-#[derive(Debug, Default, Clone, Copy, PartialEq)]
-pub struct MpDir {
-    pub x: Vec3,
-    pub y: Vec3,
-    pub z: Vec3,
 }
 
 /// MotionPlus.

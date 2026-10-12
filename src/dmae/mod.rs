@@ -23,9 +23,12 @@ pub enum Endian {
     Swap8In64 = 3,
 }
 
+/// Also used as GX2SemaphoreAction.
+#[doc(alias = "GX2SemaphoreAction")]
 #[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SemaphoreAction {
+    #[default]
     Wait = 0,
     Signal = 1,
 }

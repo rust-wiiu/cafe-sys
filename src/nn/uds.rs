@@ -57,6 +57,8 @@ pub struct ConnectionStatus {
 pub struct EndpointDescriptor(pub u32);
 
 /// PollStateChangeFlags
+///
+/// Also used by [dlp](super::dlp).
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct PollStateChangeFlags(pub u8);
@@ -64,7 +66,7 @@ pub struct PollStateChangeFlags(pub u8);
 impl PollStateChangeFlags {
     pub const NONE: Self = Self(0);
     /// Don't block if there is no state change.
-    #[doc(alias = "UDS_POLL_NONBLOCK")]
+    #[doc(alias("UDS_POLL_NONBLOCK", "DLP_POLL_NONBLOCK"))]
     pub const NONBLOCK: Self = Self(1 << 0);
 }
 

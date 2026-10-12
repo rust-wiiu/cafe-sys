@@ -5,24 +5,10 @@
 use crate::coreinit::event::Event;
 use crate::ffi;
 
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Handle(pub ffi::c_long);
-
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Error(pub ffi::c_int);
-
-impl Error {
-    pub const SUCCESS: Self = Self(0);
-    pub const NOT_SUPPORTED: Self = Self(-1);
-    pub const INVALID_ARG: Self = Self(-2);
-    pub const INVALID_STATE: Self = Self(-3);
-    pub const NO_MEMORY: Self = Self(-4);
-    pub const ALREADY_OPEN: Self = Self(-5);
-    pub const NOT_OPEN: Self = Self(-6);
-    pub const DEVICE: Self = Self(-7);
-}
+pub use crate::uac_rpl::{
+    Error, EventData, EventHandler, EventType, Handle, MemRes, MemResElement, MemResQuery,
+    MemResQueryElement, RingBuffer, Status, StatusFlags,
+};
 
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -39,97 +25,6 @@ pub enum State {
     MaxQueueDepth = 9,
     MaxXferPerEntry = 10,
     Core = 11,
-}
-
-/// 16-bit PCM.
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct RingBuffer {
-    pub modulus: ffi::c_ulong,
-    pub base: *mut i16,
-}
-
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct StatusFlags(pub ffi::c_ulong);
-
-impl StatusFlags {
-    pub const PCM16: Self = Self(1 << 0);
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Status {
-    pub flags: StatusFlags,
-    /// Samples available to read.
-    pub available: ffi::c_ulong,
-    pub read_idx: ffi::c_ulong,
-}
-
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct EventType(pub u32);
-
-impl EventType {
-    pub const ATTACH: Self = Self(0);
-    pub const DETACH: Self = Self(1);
-    pub const ERROR: Self = Self(2);
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct EventData {
-    pub host: ffi::c_ulong,
-    pub port: ffi::c_ulong,
-    pub vid: ffi::c_ulong,
-    pub pid: ffi::c_ulong,
-    pub handle: Handle,
-}
-
-pub type EventHandler = Option<
-    unsafe extern "C" fn(
-        context: *mut ffi::c_void,
-        kind: EventType,
-        data: *mut EventData,
-        error: ffi::c_int,
-    ),
->;
-
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct MemResQueryElement {
-    pub size: ffi::c_ulong,
-    pub alignment: ffi::c_ulong,
-    pub quantum: ffi::c_ulong,
-    pub num_quanta: ffi::c_ulong,
-    pub max_quanta: ffi::c_ulong,
-    pub flags: ffi::c_ulong,
-    pub links: [ffi::c_ulong; 3],
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct MemResQuery {
-    pub num_mem_res: ffi::c_ulong,
-    pub mem_res: *mut MemResQueryElement,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct MemResElement {
-    pub size: ffi::c_ulong,
-    pub alignment: ffi::c_ulong,
-    pub quantum: ffi::c_ulong,
-    pub num_quanta: ffi::c_ulong,
-    pub flags: ffi::c_ulong,
-    pub pv: *mut ffi::c_void,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct MemRes {
-    pub num_mem_res: ffi::c_ulong,
-    pub mem_res: *mut MemResElement,
 }
 
 unsafe extern "C" {

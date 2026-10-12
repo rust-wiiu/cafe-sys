@@ -8,7 +8,7 @@ use crate::ffi;
 /// UPID
 ///
 /// Process ID of a system process or the game. Also used as PFID.
-#[doc(alias = "UPID", alias = "PFID")]
+#[doc(alias("UPID", "PFID", "SysAppPFID"))]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Upid(pub u32);
@@ -32,6 +32,13 @@ impl Upid {
     pub const MINT_U: Self = Self(16);
     pub const CABINET_U: Self = Self(17);
     pub const TEST_OVERLAY: Self = Self(31);
+
+    pub const INVALID: Self = Self::ERROR;
+    pub const WII_U_MENU: Self = Self::CAFE_MENU;
+    pub const TVII: Self = Self::CAFE_TV;
+    pub const HOME_MENU: Self = Self::HOME_BUTTON_MENU;
+    pub const FRIEND_LIST: Self = Self::FLV;
+    pub const DOWNLOAD_MANAGEMENT: Self = Self::DOWNLOAD_MANAGER;
 }
 
 #[repr(u32)]

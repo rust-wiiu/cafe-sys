@@ -60,13 +60,17 @@ impl AppType {
 }
 
 /// MCPDeviceType
-#[doc(alias = "MCPDeviceType")]
+///
+/// Also used as ACPDeviceType.
+#[doc(alias("MCPDeviceType", "ACPDeviceType"))]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DeviceType {
     /// Optical disc, MLC and USB. Values above [DeviceType::Usb] behave the same.
     Auto = 1,
+    /// Disc drive, or emulated disc (HFIO).
     Odd = 2,
+    /// Internal storage, or emulated internal storage (HFIO).
     Mlc = 3,
     Usb = 4,
 }

@@ -5,6 +5,8 @@
 use crate::coreinit::fs;
 use crate::ffi;
 
+pub use crate::swkbd::{ControllerInfo, LanguageType as LangType, RegionType, State};
+
 /// Error code shown by the error viewer.
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -148,50 +150,6 @@ pub enum RemoteHoldType {
     Horizontal = 1,
 }
 
-/// nn::erreula::RegionType
-#[repr(u32)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum RegionType {
-    #[default]
-    Japan = 0,
-    Usa = 1,
-    Europe = 2,
-    China = 3,
-    Korea = 4,
-    Taiwan = 5,
-}
-
-/// nn::erreula::LangType
-#[repr(u32)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum LangType {
-    #[default]
-    Japanese = 0,
-    English = 1,
-    French = 2,
-    German = 3,
-    Italian = 4,
-    Spanish = 5,
-    SimplifiedChinese = 6,
-    Korean = 7,
-    Dutch = 8,
-    Portuguese = 9,
-    Russian = 10,
-    TraditionalChinese = 11,
-}
-
-/// nn::erreula::State
-#[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct State(pub u32);
-
-impl State {
-    pub const HIDDEN: Self = Self(0);
-    pub const FADE_IN: Self = Self(1);
-    pub const VISIBLE: Self = Self(2);
-    pub const FADE_OUT: Self = Self(3);
-}
-
 /// nn::erreula::ResultType
 ///
 /// What to do after the user closed the error viewer.
@@ -267,23 +225,6 @@ pub struct HomeNixSignArg {
 impl Default for HomeNixSignArg {
     fn default() -> Self {
         Self { frame_rate: 1 }
-    }
-}
-
-/// nn::erreula::ControllerInfo
-#[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ControllerInfo {
-    pub vpad: *const crate::vpad::Status,
-    pub kpad: [*const crate::padscore::kpad::Status; 4],
-}
-
-impl Default for ControllerInfo {
-    fn default() -> Self {
-        Self {
-            vpad: core::ptr::null(),
-            kpad: [core::ptr::null(); 4],
-        }
     }
 }
 

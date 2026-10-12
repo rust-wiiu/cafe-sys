@@ -2,6 +2,7 @@
 
 use crate::ffi;
 
+pub use crate::coreinit::mcp::DeviceType;
 use crate::coreinit::mcp::TitleListType;
 
 /// ACPResult
@@ -77,19 +78,6 @@ impl Error {
     pub const MII: Self = Self(-2200);
     pub const ENCRYPTION_ERROR: Self = Self(-2201);
     pub const GENERIC_ERROR: Self = Self(-4096);
-}
-
-/// ACPDeviceType
-#[doc(alias = "ACPDeviceType")]
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum DeviceType {
-    Auto = 1,
-    /// Disc drive, or emulated disc (HFIO).
-    Odd = 2,
-    /// Internal storage, or emulated internal storage (HFIO).
-    Mlc = 3,
-    Usb = 4,
 }
 
 /// ACPSaveDirInfo

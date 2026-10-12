@@ -1,5 +1,7 @@
 //! GX2 enums
 
+pub use crate::dmae::SemaphoreAction;
+
 /// GX2_COMMAND_BUFFER_ALIGNMENT
 pub const COMMAND_BUFFER_ALIGNMENT: u32 = 0x40;
 /// GX2_CONTEXT_STATE_ALIGNMENT
@@ -522,16 +524,6 @@ pub enum ScanTarget {
 impl ScanTarget {
     pub const TV: Self = Self::Tv0;
     pub const DRC: Self = Self::Drc0;
-}
-
-/// GX2SemaphoreAction
-#[doc(alias = "GX2SemaphoreAction")]
-#[repr(u32)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum SemaphoreAction {
-    #[default]
-    Wait = 0,
-    Signal = 1,
 }
 
 /// GX2ShaderMode

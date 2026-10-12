@@ -13,10 +13,10 @@ use crate::ffi;
 pub struct Status(pub i32);
 
 impl Status {
-    pub const OK: Self = Self(0);
-    pub const NOT_FOUND: Self = Self(-6);
-    pub const STORAGE_FULL: Self = Self(-12);
-    pub const FATAL_ERROR: Self = Self(-1024);
+    pub const OK: Self = Self(fs::Status::SUCCESS.0);
+    pub const NOT_FOUND: Self = Self(fs::Status::NOT_FOUND.0);
+    pub const STORAGE_FULL: Self = Self(fs::Status::STORAGE_FULL.0);
+    pub const FATAL_ERROR: Self = Self(fs::Status::FATAL_ERROR.0);
     pub const BUFFER_TOO_SHORT: Self = Self(-1025);
 }
 

@@ -3,6 +3,7 @@
 //! Console output, fatal errors, crash handling, the system log and the disassembler.
 
 use super::dynload::{Module, NotifyData};
+use super::exception::ExceptionType;
 use super::system::Upid;
 use crate::ffi;
 
@@ -48,21 +49,21 @@ pub struct FatalError {
 pub struct LastError(pub u32);
 
 impl LastError {
-    pub const SYSTEM_RESET: Self = Self(0);
-    pub const MACHINE_CHECK: Self = Self(1);
-    pub const DSI: Self = Self(2);
-    pub const ISI: Self = Self(3);
-    pub const EXTERNAL_INTERRUPT: Self = Self(4);
-    pub const ALIGNMENT: Self = Self(5);
-    pub const PROGRAM: Self = Self(6);
+    pub const SYSTEM_RESET: Self = Self(ExceptionType::SYSTEM_RESET.0);
+    pub const MACHINE_CHECK: Self = Self(ExceptionType::MACHINE_CHECK.0);
+    pub const DSI: Self = Self(ExceptionType::DSI.0);
+    pub const ISI: Self = Self(ExceptionType::ISI.0);
+    pub const EXTERNAL_INTERRUPT: Self = Self(ExceptionType::EXTERNAL_INTERRUPT.0);
+    pub const ALIGNMENT: Self = Self(ExceptionType::ALIGNMENT.0);
+    pub const PROGRAM: Self = Self(ExceptionType::PROGRAM.0);
     /// Floating-point unavailable.
-    pub const FLOATING_POINT: Self = Self(7);
-    pub const DECREMENTER: Self = Self(8);
-    pub const SYSTEM_CALL: Self = Self(9);
-    pub const TRACE: Self = Self(10);
-    pub const PERFORMANCE_MONITOR: Self = Self(11);
-    pub const BREAKPOINT: Self = Self(12);
-    pub const SYSTEM_INTERRUPT: Self = Self(13);
+    pub const FLOATING_POINT: Self = Self(ExceptionType::FLOATING_POINT.0);
+    pub const DECREMENTER: Self = Self(ExceptionType::DECREMENTER.0);
+    pub const SYSTEM_CALL: Self = Self(ExceptionType::SYSTEM_CALL.0);
+    pub const TRACE: Self = Self(ExceptionType::TRACE.0);
+    pub const PERFORMANCE_MONITOR: Self = Self(ExceptionType::PERFORMANCE_MONITOR.0);
+    pub const BREAKPOINT: Self = Self(ExceptionType::BREAKPOINT.0);
+    pub const SYSTEM_INTERRUPT: Self = Self(ExceptionType::SYSTEM_INTERRUPT.0);
     pub const THERMAL_INTERRUPT: Self = Self(14);
     pub const PROTECTION: Self = Self(15);
     /// Floating-point exception.

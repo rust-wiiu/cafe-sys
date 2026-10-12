@@ -10,22 +10,22 @@ use crate::ffi;
 pub struct Status(pub i32);
 
 impl Status {
-    pub const OK: Self = Self(0);
-    pub const CANCELED: Self = Self(-1);
-    pub const END: Self = Self(-2);
-    pub const MAX: Self = Self(-3);
-    pub const ALREADY_OPEN: Self = Self(-4);
-    pub const EXISTS: Self = Self(-5);
-    pub const NOT_FOUND: Self = Self(-6);
-    pub const NOT_FILE: Self = Self(-7);
-    pub const NOT_DIR: Self = Self(-8);
-    pub const ACCESS_ERROR: Self = Self(-9);
-    pub const PERMISSION_ERROR: Self = Self(-10);
-    pub const FILE_TOO_BIG: Self = Self(-11);
-    pub const STORAGE_FULL: Self = Self(-12);
-    pub const JOURNAL_FULL: Self = Self(-13);
-    pub const UNSUPPORTED_CMD: Self = Self(-14);
-    pub const FATAL_ERROR: Self = Self(-1024);
+    pub const OK: Self = Self(fs::Status::SUCCESS.0);
+    pub const CANCELED: Self = Self(fs::Status::CANCELLED.0);
+    pub const END: Self = Self(fs::Status::END.0);
+    pub const MAX: Self = Self(fs::Status::MAX.0);
+    pub const ALREADY_OPEN: Self = Self(fs::Status::ALREADY_OPEN.0);
+    pub const EXISTS: Self = Self(fs::Status::EXISTS.0);
+    pub const NOT_FOUND: Self = Self(fs::Status::NOT_FOUND.0);
+    pub const NOT_FILE: Self = Self(fs::Status::NOT_FILE.0);
+    pub const NOT_DIR: Self = Self(fs::Status::NOT_DIR.0);
+    pub const ACCESS_ERROR: Self = Self(fs::Status::ACCESS_ERROR.0);
+    pub const PERMISSION_ERROR: Self = Self(fs::Status::PERMISSION_ERROR.0);
+    pub const FILE_TOO_BIG: Self = Self(fs::Status::FILE_TOO_BIG.0);
+    pub const STORAGE_FULL: Self = Self(fs::Status::STORAGE_FULL.0);
+    pub const JOURNAL_FULL: Self = Self(fs::Status::JOURNAL_FULL.0);
+    pub const UNSUPPORTED_CMD: Self = Self(fs::Status::UNSUPPORTED_CMD.0);
+    pub const FATAL_ERROR: Self = Self(fs::Status::FATAL_ERROR.0);
     pub const INVALID_PARAM: Self = Self(-1025);
 }
 

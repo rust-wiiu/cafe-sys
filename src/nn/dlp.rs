@@ -6,19 +6,9 @@ use super::{
     Result,
     uds::{NodeInformation, UserName},
 };
+
+pub use super::uds::PollStateChangeFlags;
 use crate::ffi;
-
-/// PollStateChangeFlags
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct PollStateChangeFlags(pub u8);
-
-impl PollStateChangeFlags {
-    pub const NONE: Self = Self(0);
-    /// Don't block if there is no state change.
-    #[doc(alias = "DLP_POLL_NONBLOCK")]
-    pub const NONBLOCK: Self = Self(1 << 0);
-}
 
 /// ClientState
 #[repr(transparent)]

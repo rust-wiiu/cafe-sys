@@ -17,6 +17,8 @@ pub const USER_WORD_MAX: usize = 500;
 pub const LEARN_DIC_SIZE: usize = 80 + 42 * 1000;
 
 /// nn::swkbd::RegionType
+///
+/// Also used as nn::erreula::RegionType.
 #[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RegionType {
@@ -30,6 +32,8 @@ pub enum RegionType {
 }
 
 /// nn::swkbd::LanguageType
+///
+/// Also used as nn::erreula::LangType.
 ///
 /// Must be supported by the [RegionType], otherwise English (Japanese for [RegionType::Japan]) is used.
 #[doc(alias = "LangType")]
@@ -215,6 +219,8 @@ pub enum PasswordMode {
 }
 
 /// nn::swkbd::State
+///
+/// Also used as nn::erreula::State.
 #[repr(transparent)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct State(pub u32);
@@ -407,6 +413,8 @@ pub struct AppearArg {
 }
 
 /// nn::swkbd::ControllerInfo
+///
+/// Also used as nn::erreula::ControllerInfo.
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ControllerInfo {
