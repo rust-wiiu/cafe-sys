@@ -26,9 +26,6 @@ pub const MAX_ENTRY_NAME_SIZE: usize = 256;
 /// Maximum size of an open mode string.
 #[doc(alias = "FS_MODE_LENGTH")]
 pub const MODE_LENGTH: usize = 16;
-pub const PRIORITY_DEFAULT: i32 = 16;
-pub const PRIORITY_HIGHEST: i32 = 0;
-pub const PRIORITY_LOWEST: i32 = 31;
 
 /// FSTime
 ///
@@ -41,6 +38,18 @@ pub type Time = u64;
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Client(ffi::unknown<0x1700>);
+
+/// FSPriority
+#[doc(alias = "FSPriority")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct CmdPriority(pub u32);
+
+impl CmdPriority {
+    pub const HIGHEST: Self = Self(0);
+    pub const DEFAULT: Self = Self(16);
+    pub const LOWEST: Self = Self(31);
+}
 
 /// FSCmdBlock
 ///
@@ -574,7 +583,7 @@ unsafe extern "C" {
 
     /// FSInitCmdBlock
     ///
-    /// Also resets the command priority to [PRIORITY_DEFAULT].
+    /// Also resets the command priority to [CmdPriority::DEFAULT].
     #[doc(alias = "FSInitCmdBlock")]
     #[link_name = "FSInitCmdBlock"]
     pub unsafe fn init_cmd_block(block: *mut CmdBlock);
@@ -1592,15 +1601,15 @@ unsafe extern "C" {
 
     /// FSSetCmdPriority
     ///
-    /// From [PRIORITY_HIGHEST] to [PRIORITY_LOWEST].
+    /// From [CmdPriority::HIGHEST] to [CmdPriority::LOWEST].
     #[doc(alias = "FSSetCmdPriority")]
     #[link_name = "FSSetCmdPriority"]
-    pub unsafe fn set_cmd_priority(block: *mut CmdBlock, priority: i32) -> Status;
+    pub unsafe fn set_cmd_priority(block: *mut CmdBlock, priority: CmdPriority) -> Status;
 
     /// FSGetCmdPriority
     #[doc(alias = "FSGetCmdPriority")]
     #[link_name = "FSGetCmdPriority"]
-    pub unsafe fn get_cmd_priority(block: *mut CmdBlock) -> i32;
+    pub unsafe fn get_cmd_priority(block: *mut CmdBlock) -> CmdPriority;
 
     /// FSGetLastError
     #[doc(alias = "FSGetLastError")]

@@ -22,12 +22,6 @@ pub const UC_STICK_RESO: u32 = 4096;
 /// Not needed, [register_blc_workarea] ignores its work area.
 pub const BLCINT_WORK_LEN: usize = 307200;
 
-pub const BATTERY_LEVEL_CRITICAL: u8 = 0;
-pub const BATTERY_LEVEL_LOW: u8 = 1;
-pub const BATTERY_LEVEL_MEDIUM: u8 = 2;
-pub const BATTERY_LEVEL_HIGH: u8 = 3;
-pub const BATTERY_LEVEL_MAX: u8 = 4;
-
 /// Balance Board calibration blocks, see [get_bl_calibration].
 pub const BLCLB_BLK1_ADDR: u16 = 0x0024;
 pub const BLCLB_BLK1_LEN: u16 = 16;
@@ -310,6 +304,19 @@ impl MplsType {
     pub const READING: Self = Self(-1);
     pub const STANDARD: Self = Self(0);
     pub const INTEGRATED: Self = Self(1);
+}
+
+/// Controller battery level.
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct BatteryLevel(pub u8);
+
+impl BatteryLevel {
+    pub const CRITICAL: Self = Self(0);
+    pub const LOW: Self = Self(1);
+    pub const MEDIUM: Self = Self(2);
+    pub const HIGH: Self = Self(3);
+    pub const MAX: Self = Self(4);
 }
 
 /// WPADLed
@@ -716,7 +723,7 @@ pub struct Info {
     pub attach: ffi::c_bool,
     pub low_battery: ffi::c_bool,
     pub near_empty: ffi::c_bool,
-    pub battery: u8,
+    pub battery: BatteryLevel,
     pub led: u8,
     pub protocol: u8,
     pub firmware: u8,
@@ -838,11 +845,9 @@ unsafe extern "C" {
     pub unsafe fn get_radio_sensitivity(chan: Channel) -> u8;
 
     /// WPADGetBatteryLevel
-    ///
-    /// See the `BATTERY_LEVEL_*` constants.
     #[doc(alias = "WPADGetBatteryLevel")]
     #[link_name = "WPADGetBatteryLevel"]
-    pub unsafe fn get_battery_level(chan: Channel) -> u8;
+    pub unsafe fn get_battery_level(chan: Channel) -> BatteryLevel;
 
     /// WPADGetDataFormat
     #[doc(alias = "WPADGetDataFormat")]

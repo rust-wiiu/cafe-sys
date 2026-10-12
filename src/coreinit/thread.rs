@@ -19,17 +19,33 @@ pub const THREAD_TAG: u32 = 0x74487244;
 ///
 /// Number of thread specific values, see [get_specific].
 pub const SPECIFIC_MAX: usize = 16;
-/// Highest priority.
-pub const PRIORITY_MIN: i32 = 0;
-pub const PRIORITY_DEFAULT: i32 = 16;
-/// Lowest priority.
-pub const PRIORITY_MAX: i32 = 31;
-/// OS_THREAD_QUANTUM_INFINITE
-pub const QUANTUM_INFINITE: u32 = 0;
-/// OS_THREAD_QUANTUM_MIN_MICROSECONDS
-pub const QUANTUM_MIN_MICROSECONDS: u32 = 10;
-/// OS_THREAD_QUANTUM_MAX_MICROSECONDS
-pub const QUANTUM_MAX_MICROSECONDS: u32 = 0xFFFFF;
+
+/// Thread priority, 0 is the highest and 31 the lowest.
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Priority(pub i32);
+
+impl Priority {
+    /// Highest priority.
+    pub const MIN: Self = Self(0);
+    pub const DEFAULT: Self = Self(16);
+    /// Lowest priority.
+    pub const MAX: Self = Self(31);
+}
+
+/// Time slice of a thread in microseconds.
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Quantum(pub u32);
+
+impl Quantum {
+    /// OS_THREAD_QUANTUM_INFINITE
+    pub const INFINITE: Self = Self(0);
+    /// OS_THREAD_QUANTUM_MIN_MICROSECONDS
+    pub const MIN: Self = Self(10);
+    /// OS_THREAD_QUANTUM_MAX_MICROSECONDS
+    pub const MAX: Self = Self(0xFFFFF);
+}
 
 /// OSThreadState
 #[doc(alias = "OSThreadState")]
@@ -174,8 +190,8 @@ pub struct Thread {
     /// Increased by [suspend].
     pub suspend_counter: i32,
     /// Current priority, see also [Thread::base_priority].
-    pub priority: i32,
-    pub base_priority: i32,
+    pub priority: Priority,
+    pub base_priority: Priority,
     pub exit_value: i32,
     pub core_run_queue: [*mut ThreadQueue; 3],
     pub core_run_queue_link: [ThreadLink; 3],
@@ -246,7 +262,7 @@ unsafe extern "C" {
         ptr_arg: *mut ffi::c_void,
         stack: *mut ffi::c_void,
         stack_size: u32,
-        priority: i32,
+        priority: Priority,
         attributes: ThreadAttributes,
     ) -> ffi::c_bool;
 
@@ -262,7 +278,7 @@ unsafe extern "C" {
         ptr_arg: *mut ffi::c_void,
         stack: *mut ffi::c_void,
         stack_size: u32,
-        priority: i32,
+        priority: Priority,
         attributes: ThreadAttributes,
         kind: ThreadType,
     ) -> ffi::c_bool;
@@ -392,12 +408,12 @@ unsafe extern "C" {
     /// OSGetThreadPriority
     #[doc(alias = "OSGetThreadPriority")]
     #[link_name = "OSGetThreadPriority"]
-    pub unsafe fn get_priority(thread: *mut Thread) -> i32;
+    pub unsafe fn get_priority(thread: *mut Thread) -> Priority;
 
     /// OSSetThreadPriority
     #[doc(alias = "OSSetThreadPriority")]
     #[link_name = "OSSetThreadPriority"]
-    pub unsafe fn set_priority(thread: *mut Thread, priority: i32) -> ffi::c_bool;
+    pub unsafe fn set_priority(thread: *mut Thread, priority: Priority) -> ffi::c_bool;
 
     /// OSGetThreadAffinity
     #[doc(alias = "OSGetThreadAffinity")]
@@ -425,10 +441,10 @@ unsafe extern "C" {
 
     /// OSSetThreadRunQuantum
     ///
-    /// Time slice in microseconds, [QUANTUM_INFINITE] or between [QUANTUM_MIN_MICROSECONDS] and [QUANTUM_MAX_MICROSECONDS].
+    /// Time slice in microseconds, [Quantum::INFINITE] or between [Quantum::MIN] and [Quantum::MAX].
     #[doc(alias = "OSSetThreadRunQuantum")]
     #[link_name = "OSSetThreadRunQuantum"]
-    pub unsafe fn set_run_quantum(thread: *mut Thread, quantum_us: u32) -> ffi::c_bool;
+    pub unsafe fn set_run_quantum(thread: *mut Thread, quantum: Quantum) -> ffi::c_bool;
 
     /// OSGetThreadSpecific
     ///

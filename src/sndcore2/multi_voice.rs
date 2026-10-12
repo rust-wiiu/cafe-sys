@@ -4,8 +4,8 @@
 
 use super::device::DeviceType;
 use super::voice::{
-    AdpcmLoopData, Biquad, Bus, CallbackEx, Lpf, Offsets, Renderer, Src, SrcRatioResult, SrcType,
-    State, Type, VeData, Voice,
+    AdpcmLoopData, Biquad, Bus, CallbackEx, Lpf, Offsets, Priority, Renderer, Src, SrcRatioResult,
+    SrcType, State, Type, VeData, Voice,
 };
 use super::{DspAdpcm, Error};
 use crate::ffi;
@@ -30,7 +30,7 @@ unsafe extern "C" {
     #[doc(alias = "AXAcquireMultiVoice")]
     #[link_name = "AXAcquireMultiVoice"]
     pub unsafe fn acquire(
-        priority: u32,
+        priority: Priority,
         callback: CallbackEx,
         user_context: *mut ffi::c_void,
         adpcm: *mut DspAdpcm,
@@ -60,7 +60,7 @@ unsafe extern "C" {
     /// AXSetMultiVoicePriority
     #[doc(alias = "AXSetMultiVoicePriority")]
     #[link_name = "AXSetMultiVoicePriority"]
-    pub unsafe fn set_priority(multi_voice: *mut MultiVoice, priority: u32);
+    pub unsafe fn set_priority(multi_voice: *mut MultiVoice, priority: Priority);
 
     /// AXSetMultiVoiceState
     #[doc(alias = "AXSetMultiVoiceState")]

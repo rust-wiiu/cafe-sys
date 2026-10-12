@@ -6,13 +6,21 @@ use crate::ffi;
 
 pub const PROFILE_COUNT: usize = 6;
 pub const SSID_SIZE: usize = 32;
-pub const DEFAULT_INTERFACE_MTU: u32 = 1400;
-pub const MAX_MTU: u32 = 1500;
-pub const MIN_MTU: u32 = 576;
 pub const MAX_PROXY_HOST_LEN: usize = 128;
 pub const MAX_NO_PROXY_HOSTS_LEN: usize = 128;
 pub const MAX_PROXY_USERNAME_LEN: usize = 128;
 pub const MAX_PROXY_PASSWORD_LEN: usize = 64;
+
+/// Maximum transmission unit of an [Interface].
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Mtu(pub u32);
+
+impl Mtu {
+    pub const DEFAULT: Self = Self(1400);
+    pub const MAX: Self = Self(1500);
+    pub const MIN: Self = Self(576);
+}
 
 /// NETCONF_ERROR
 #[doc(alias = "NETCONF_ERROR")]
@@ -282,7 +290,7 @@ pub struct Ipv4Info {
 pub struct Interface {
     pub if_index: u16,
     pub if_state: u16,
-    pub if_mtu: u32,
+    pub if_mtu: Mtu,
     pub ipv4_info: Ipv4Info,
 }
 
@@ -567,11 +575,11 @@ unsafe extern "C" {
 
     /// netconf_get_interface_mtu
     #[link_name = "netconf_get_interface_mtu"]
-    pub unsafe fn get_interface_mtu(nic: Nic, mtu: *mut u32) -> Error;
+    pub unsafe fn get_interface_mtu(nic: Nic, mtu: *mut Mtu) -> Error;
 
     /// netconf_set_interface_mtu
     #[link_name = "netconf_set_interface_mtu"]
-    pub unsafe fn set_interface_mtu(nic: Nic, mtu: u32) -> Error;
+    pub unsafe fn set_interface_mtu(nic: Nic, mtu: Mtu) -> Error;
 
     /// netconf_get_assigned_address
     #[link_name = "netconf_get_assigned_address"]

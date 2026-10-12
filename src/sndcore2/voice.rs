@@ -4,10 +4,17 @@ use super::device::DeviceType;
 use super::{Error, SyncError};
 use crate::ffi;
 
-pub const PRIORITY_FREE: u32 = 0;
-pub const PRIORITY_LOWEST: u32 = 1;
-/// Voices with this priority are never dropped.
-pub const PRIORITY_NODROP: u32 = 31;
+/// Voice priority.
+#[repr(transparent)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Priority(pub u32);
+
+impl Priority {
+    pub const FREE: Self = Self(0);
+    pub const LOWEST: Self = Self(1);
+    /// Voices with this priority are never dropped.
+    pub const NODROP: Self = Self(31);
+}
 
 /// AXVoiceFormat
 #[doc(alias = "AXVoiceFormat")]
@@ -148,7 +155,7 @@ pub struct Voice {
     pub next: *mut Voice,
     pub prev: *mut Voice,
     pub callback_next: *mut Voice,
-    pub priority: u32,
+    pub priority: Priority,
     pub callback: Callback,
     pub user_context: *mut ffi::c_void,
     pub sync: u32,
@@ -338,7 +345,7 @@ unsafe extern "C" {
     #[doc(alias = "AXAcquireVoice")]
     #[link_name = "AXAcquireVoice"]
     pub unsafe fn acquire(
-        priority: u32,
+        priority: Priority,
         callback: Callback,
         user_context: *mut ffi::c_void,
     ) -> *mut Voice;
@@ -347,7 +354,7 @@ unsafe extern "C" {
     #[doc(alias = "AXAcquireVoiceEx")]
     #[link_name = "AXAcquireVoiceEx"]
     pub unsafe fn acquire_ex(
-        priority: u32,
+        priority: Priority,
         callback: CallbackEx,
         user_context: *mut ffi::c_void,
     ) -> *mut Voice;
@@ -360,7 +367,7 @@ unsafe extern "C" {
     /// AXSetVoicePriority
     #[doc(alias = "AXSetVoicePriority")]
     #[link_name = "AXSetVoicePriority"]
-    pub unsafe fn set_priority(voice: *mut Voice, priority: u32);
+    pub unsafe fn set_priority(voice: *mut Voice, priority: Priority);
 
     /// AXVoiceBegin
     ///
