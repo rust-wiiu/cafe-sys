@@ -18,14 +18,12 @@ pub struct SystemInfo {
 }
 
 /// Selector of [get_info] and [set_info].
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct InfoSelector(pub u32);
-
-impl InfoSelector {
-    pub const PMC_THREADS: Self = Self(0);
+pub enum InfoSelector {
+    PmcThreads = 0,
     /// Get only, [InfoHdp].
-    pub const HDP: Self = Self(1);
+    Hdp = 1,
 }
 
 #[repr(C)]

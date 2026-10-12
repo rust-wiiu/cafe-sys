@@ -46,33 +46,29 @@ impl DeviceState {
 
 /// IMParameter
 #[doc(alias = "IMParameter")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Parameter(pub u32);
-
-impl Parameter {
-    pub const INACTIVE_SECONDS: Self = Self(0);
-    pub const DIM_ENABLED: Self = Self(1);
-    pub const DIM_PERIOD: Self = Self(2);
-    pub const APD_ENABLED: Self = Self(3);
-    pub const APD_PERIOD: Self = Self(4);
-    pub const RESET_ENABLE: Self = Self(5);
-    pub const RESET_SECONDS: Self = Self(6);
-    pub const POWER_OFF_ENABLE: Self = Self(7);
-    pub const APD_OCCURRED: Self = Self(8);
-    pub const DIM_ENABLE_TV: Self = Self(9);
-    pub const DIM_ENABLE_DRC: Self = Self(10);
+pub enum Parameter {
+    InactiveSeconds = 0,
+    DimEnabled = 1,
+    DimPeriod = 2,
+    ApdEnabled = 3,
+    ApdPeriod = 4,
+    ResetEnable = 5,
+    ResetSeconds = 6,
+    PowerOffEnable = 7,
+    ApdOccurred = 8,
+    DimEnableTv = 9,
+    DimEnableDrc = 10,
 }
 
 /// IMTimer
 #[doc(alias = "IMTimer")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Timer(pub u32);
-
-impl Timer {
-    pub const DIM: Self = Self(0);
-    pub const APD: Self = Self(1);
+pub enum Timer {
+    Dim = 0,
+    Apd = 1,
 }
 
 /// IMEventMask

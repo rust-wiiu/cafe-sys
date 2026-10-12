@@ -10,26 +10,24 @@ use crate::ffi;
 ///
 /// Inter-core interrupt commands.
 #[doc(alias = "OSICICommand")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct IciCommand(pub u32);
-
-impl IciCommand {
-    pub const INVALID_IC_RANGE: Self = Self(1);
-    pub const RESCHEDULE_CORE: Self = Self(2);
-    pub const HALT_CORE: Self = Self(3);
-    pub const PROC_EXIT: Self = Self(4);
-    pub const SET_DABR: Self = Self(5);
-    pub const PROC_SCHED: Self = Self(6);
-    pub const FAST_BG_EXIT: Self = Self(7);
-    pub const IOP_SHELL_CORE_TRACE: Self = Self(8);
-    pub const SYSTEM_FATAL: Self = Self(9);
-    pub const SET_IABR: Self = Self(10);
-    pub const PANIC_0X15: Self = Self(0xB);
-    pub const PROC_KILL: Self = Self(0xC);
-    pub const PROC_CRASH: Self = Self(0xD);
-    pub const UNKNOWN: Self = Self(0xE);
-    pub const OVERLAY_ARENA: Self = Self(0xF);
+pub enum IciCommand {
+    InvalidIcRange = 1,
+    RescheduleCore = 2,
+    HaltCore = 3,
+    ProcExit = 4,
+    SetDabr = 5,
+    ProcSched = 6,
+    FastBgExit = 7,
+    IopShellCoreTrace = 8,
+    SystemFatal = 9,
+    SetIabr = 10,
+    Panic0x15 = 0xB,
+    ProcKill = 0xC,
+    ProcCrash = 0xD,
+    Unknown = 0xE,
+    OverlayArena = 0xF,
 }
 
 /// OSExceptionCallbackExFn

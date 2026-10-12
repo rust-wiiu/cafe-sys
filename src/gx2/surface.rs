@@ -135,13 +135,12 @@ pub struct Point {
 #[doc(alias = "GX2_MAX_COPY_SURFACE_EX_RECTS")]
 pub const MAX_COPY_SURFACE_EX_RECTS: u32 = 25;
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ZRangeBase(pub u32);
-
-impl ZRangeBase {
-    pub const ZMIN: Self = Self(0);
-    pub const ZMAX: Self = Self(1);
+pub enum ZRangeBase {
+    #[default]
+    Zmin = 0,
+    Zmax = 1,
 }
 
 pub const NUM_HI_STENCIL_STATES: usize = 2;

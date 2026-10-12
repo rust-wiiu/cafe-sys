@@ -34,15 +34,13 @@ impl Upid {
     pub const TEST_OVERLAY: Self = Self(31);
 }
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct PolicyRequest(pub u32);
-
-impl PolicyRequest {
-    pub const EXIT: Self = Self(1);
-    pub const NOTIFY_NET_IO_START: Self = Self(2);
-    pub const NOTIFY_NET_IO_END: Self = Self(3);
-    pub const NOTIFY_HOME_BUTTON_DENIED: Self = Self(4);
+pub enum PolicyRequest {
+    Exit = 1,
+    NotifyNetIoStart = 2,
+    NotifyNetIoEnd = 3,
+    NotifyHomeButtonDenied = 4,
 }
 
 #[repr(transparent)]

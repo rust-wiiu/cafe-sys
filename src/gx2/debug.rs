@@ -35,15 +35,14 @@ impl DebugCaptureOptions {
     pub const NO_FLUSH: Self = Self(1);
 }
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct DebugTagUserStringType(pub u32);
-
-impl DebugTagUserStringType {
-    pub const INDENT: Self = Self(0);
-    pub const UNDENT: Self = Self(1);
-    pub const COMMENT: Self = Self(2);
-    pub const BOOKMARK: Self = Self(3);
+pub enum DebugTagUserStringType {
+    #[default]
+    Indent = 0,
+    Undent = 1,
+    Comment = 2,
+    Bookmark = 3,
 }
 
 #[repr(transparent)]

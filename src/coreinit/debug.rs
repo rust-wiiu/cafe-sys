@@ -146,15 +146,13 @@ impl LogCategory {
     pub const ALL: Self = Self(256);
 }
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct LogLevel(pub u32);
-
-impl LogLevel {
-    pub const NOISE: Self = Self(0);
-    pub const NOTICE: Self = Self(1);
-    pub const WARNING: Self = Self(2);
-    pub const ERROR: Self = Self(3);
+pub enum LogLevel {
+    Noise = 0,
+    Notice = 1,
+    Warning = 2,
+    Error = 3,
 }
 
 #[repr(C, packed)]

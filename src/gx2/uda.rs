@@ -13,15 +13,14 @@ impl UdaAlertId {
     pub const ENABLE_STATE_SHADOWING: Self = Self(0);
 }
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct UdaAlertLevel(pub u32);
-
-impl UdaAlertLevel {
-    pub const NONE: Self = Self(0);
-    pub const SEVERE: Self = Self(1);
-    pub const ORDINARY: Self = Self(2);
-    pub const PEDANTIC: Self = Self(3);
+pub enum UdaAlertLevel {
+    #[default]
+    None = 0,
+    Severe = 1,
+    Ordinary = 2,
+    Pedantic = 3,
 }
 
 unsafe extern "C" {

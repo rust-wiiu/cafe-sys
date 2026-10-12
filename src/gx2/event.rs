@@ -3,14 +3,13 @@
 use super::enums::{CompareFunction, EventType};
 use crate::ffi;
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct PipeEvent(pub u32);
-
-impl PipeEvent {
-    pub const TOP: Self = Self(0);
-    pub const BOTTOM: Self = Self(1);
-    pub const BOTTOM_AFTER_FLUSH: Self = Self(2);
+pub enum PipeEvent {
+    #[default]
+    Top = 0,
+    Bottom = 1,
+    BottomAfterFlush = 2,
 }
 
 /// GX2DisplayListOverrunData

@@ -78,14 +78,12 @@ impl BaseHeapType {
 
 /// MEMHeapFillType
 #[doc(alias = "MEMHeapFillType")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct HeapFillType(pub u32);
-
-impl HeapFillType {
-    pub const UNUSED: Self = Self(0);
-    pub const ALLOCATED: Self = Self(1);
-    pub const FREED: Self = Self(2);
+pub enum HeapFillType {
+    Unused = 0,
+    Allocated = 1,
+    Freed = 2,
 }
 
 #[doc(alias = "MEMExpHeapCheckFlags")]

@@ -2,17 +2,16 @@
 
 use crate::ffi;
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct QueryType(pub u32);
-
-impl QueryType {
+pub enum QueryType {
     /// Occlusion query read by the CPU.
-    pub const OCCLUSION_CPU: Self = Self(0);
-    pub const STREAM_OUT_STATS_CPU: Self = Self(1);
+    #[default]
+    OcclusionCpu = 0,
+    StreamOutStatsCpu = 1,
     /// Occlusion query used by the GPU for conditional rendering.
-    pub const OCCLUSION_GPU: Self = Self(2);
-    pub const STREAM_OUT_STATS_GPU: Self = Self(3);
+    OcclusionGpu = 2,
+    StreamOutStatsGpu = 3,
 }
 
 /// Written by the GPU, little-endian.

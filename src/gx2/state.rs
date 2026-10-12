@@ -2,17 +2,16 @@
 
 use crate::ffi;
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct MiscType(pub u32);
-
-impl MiscType {
+pub enum MiscType {
     /// [HangState].
-    pub const HANG_STATE: Self = Self(0);
+    #[default]
+    HangState = 0,
     /// [HangResponse].
-    pub const HANG_RESPONSE: Self = Self(1);
-    pub const HANG_RESET_SWAP_TIMEOUT: Self = Self(2);
-    pub const HANG_RESET_SWAP_COUNT: Self = Self(3);
+    HangResponse = 1,
+    HangResetSwapTimeout = 2,
+    HangResetSwapCount = 3,
 }
 
 #[repr(transparent)]

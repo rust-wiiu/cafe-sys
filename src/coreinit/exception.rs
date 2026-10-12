@@ -30,18 +30,16 @@ impl ExceptionType {
 
 /// OSExceptionMode
 #[doc(alias = "OSExceptionMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ExceptionMode(pub u32);
-
-impl ExceptionMode {
-    pub const SYSTEM: Self = Self(0);
+pub enum ExceptionMode {
+    System = 0,
     /// Current thread, on the current core.
-    pub const THREAD: Self = Self(1);
+    Thread = 1,
     /// Current core.
-    pub const GLOBAL: Self = Self(2);
-    pub const THREAD_ALL_CORES: Self = Self(3);
-    pub const GLOBAL_ALL_CORES: Self = Self(4);
+    Global = 2,
+    ThreadAllCores = 3,
+    GlobalAllCores = 4,
 }
 
 /// FPSCR exception enable bits, for the FPU exception functions.
@@ -81,7 +79,7 @@ pub type ExceptionCallback =
 unsafe extern "C" {
     /// OSSetExceptionCallback
     ///
-    /// Same as [set_callback_ex] with [ExceptionMode::THREAD]. Returns the previous callback.
+    /// Same as [set_callback_ex] with [ExceptionMode::Thread]. Returns the previous callback.
     #[doc(alias = "OSSetExceptionCallback")]
     #[link_name = "OSSetExceptionCallback"]
     pub unsafe fn set_callback(

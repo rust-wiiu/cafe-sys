@@ -8,29 +8,28 @@ use super::enums::{
 };
 use crate::ffi;
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SpecialState(pub u32);
-
-impl SpecialState {
+pub enum SpecialState {
     /// Accelerated surface clears.
-    pub const CLEAR: Self = Self(0);
+    #[default]
+    Clear = 0,
     /// Fast HiZ clears.
-    pub const CLEAR_HIZ: Self = Self(1);
+    ClearHiz = 1,
     /// Accelerated surface copies.
-    pub const COPY: Self = Self(2);
+    Copy = 2,
     /// Expansion of compressed AA color buffers.
-    pub const EXPAND_COLOR: Self = Self(3);
+    ExpandColor = 3,
     /// Expansion of compressed depth buffers.
-    pub const EXPAND_DEPTH: Self = Self(4);
+    ExpandDepth = 4,
     /// Depth buffer to color conversion.
-    pub const CONVERT_DEPTH: Self = Self(5);
+    ConvertDepth = 5,
     /// AA depth buffer to color conversion.
-    pub const CONVERT_AA_DEPTH: Self = Self(6);
+    ConvertAaDepth = 6,
     /// Multisample to single sample resolves.
-    pub const RESOLVE_COLOR: Self = Self(7);
+    ResolveColor = 7,
     /// Color clears as depth.
-    pub const CLEAR_COLOR_AS_DEPTH: Self = Self(8);
+    ClearColorAsDepth = 8,
 }
 
 /// GX2AAMaskReg

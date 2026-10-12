@@ -76,13 +76,11 @@ impl ProfileId {
 ///
 /// Network interface.
 #[doc(alias = "NetConfInterfaceType")]
-#[repr(transparent)]
+#[repr(u16)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Nic(pub u16);
-
-impl Nic {
-    pub const WIFI: Self = Self(0);
-    pub const ETH: Self = Self(1);
+pub enum Nic {
+    Wifi = 0,
+    Eth = 1,
 }
 
 /// NetConfAdminState

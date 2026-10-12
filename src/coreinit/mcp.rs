@@ -61,16 +61,14 @@ impl AppType {
 
 /// MCPDeviceType
 #[doc(alias = "MCPDeviceType")]
-#[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct DeviceType(pub u32);
-
-impl DeviceType {
-    /// Optical disc, MLC and USB. Values above [DeviceType::USB] behave the same.
-    pub const AUTO: Self = Self(1);
-    pub const ODD: Self = Self(2);
-    pub const MLC: Self = Self(3);
-    pub const USB: Self = Self(4);
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum DeviceType {
+    /// Optical disc, MLC and USB. Values above [DeviceType::Usb] behave the same.
+    Auto = 1,
+    Odd = 2,
+    Mlc = 3,
+    Usb = 4,
 }
 
 /// MCPDeviceFlags
@@ -116,15 +114,14 @@ impl core::ops::BitOr for Region {
 
 /// MCPCompatAVFile
 #[doc(alias = "MCPCompatAVFile")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct CompatAvFile(pub u32);
-
-impl CompatAvFile {
+pub enum CompatAvFile {
     /// DMCU firmware.
-    pub const DMCU: Self = Self(0x00);
+    #[default]
+    Dmcu = 0x00,
     /// Deinterlacer parameters.
-    pub const DEINT: Self = Self(0x01);
+    Deint = 0x01,
 }
 
 /// MCPSystemMode

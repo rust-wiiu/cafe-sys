@@ -8,17 +8,15 @@ pub const DISPLAY_LIST_ALIGNMENT: u32 = 0x20;
 
 /// GX2PatchType
 #[doc(alias = "GX2PatchType")]
-#[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct PatchType(pub u32);
-
-impl PatchType {
-    pub const FETCH_SHADER: Self = Self(1);
-    pub const VERTEX_SHADER: Self = Self(2);
-    pub const GEOMETRY_COPY_SHADER: Self = Self(3);
-    pub const GEOMETRY_SHADER: Self = Self(4);
-    pub const PIXEL_SHADER: Self = Self(5);
-    pub const COMPUTE_SHADER: Self = Self(6);
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PatchType {
+    FetchShader = 1,
+    VertexShader = 2,
+    GeometryCopyShader = 3,
+    GeometryShader = 4,
+    PixelShader = 5,
+    ComputeShader = 6,
 }
 
 unsafe extern "C" {

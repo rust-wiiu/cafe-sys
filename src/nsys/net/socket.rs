@@ -106,84 +106,61 @@ impl Protocol {
 }
 
 /// Option level for [get_sockopt] and [set_sockopt].
-#[repr(transparent)]
+#[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Level(pub i32);
-
-impl Level {
+pub enum Level {
     #[doc(alias = "SOL_SOCKET")]
-    pub const SOCKET: Self = Self(-1);
-    pub const IP: Self = Self(0);
-    pub const TCP: Self = Self(6);
-    pub const UDP: Self = Self(17);
+    Socket = -1,
+    Ip = 0,
+    Tcp = 6,
+    Udp = 17,
 }
 
 /// Option for [get_sockopt] and [set_sockopt].
-#[repr(transparent)]
+#[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SockOpt(pub i32);
+pub enum SockOpt {
+    // Level::SOCKET
+    Reuseaddr = 0x00004,
+    Keepalive = 0x00008,
+    Dontroute = 0x00010,
+    Broadcast = 0x00020,
+    /// Takes a [Linger].
+    Linger = 0x00080,
+    Oobinline = 0x00100,
+    Tcpsack = 0x00200,
+    Winscale = 0x00400,
+    Hdrincl = 0x02000,
+    Rusrbuf = 0x10000,
+    Sndbuf = 0x1001,
+    Rcvbuf = 0x1002,
+    Lasterror = 0x1007,
+    Type = 0x1008,
+    Hopcnt = 0x1009,
+    Maxmsg = 0x1010,
+    Rxdata = 0x1011,
+    Txdata = 0x1012,
+    Myaddr = 0x1013,
+    /// Non-blocking IO.
+    Nbio = 0x1014,
+    /// Blocking IO.
+    Bio = 0x1015,
+    Nonblock = 0x1016,
+    Keepidle = 0x1019,
+    Keepintvl = 0x101A,
+    Keepcnt = 0x101B,
+    // Level::IP
+    IpTos = 3,
+    // Level::TCP
+    TcpAckdelaytime = 0x2001,
+    TcpNoackdelay = 0x2002,
+    TcpMaxseg = 0x2003,
+    TcpNodelay = 0x2004,
+    TcpAckfrequency = 0x2005,
+}
 
 impl SockOpt {
-    // Level::SOCKET
-    #[doc(alias = "SO_REUSEADDR")]
-    pub const REUSEADDR: Self = Self(0x00004);
-    #[doc(alias = "SO_KEEPALIVE")]
-    pub const KEEPALIVE: Self = Self(0x00008);
-    #[doc(alias = "SO_DONTROUTE")]
-    pub const DONTROUTE: Self = Self(0x00010);
-    #[doc(alias = "SO_BROADCAST")]
-    pub const BROADCAST: Self = Self(0x00020);
-    /// Takes a [Linger].
-    #[doc(alias = "SO_LINGER")]
-    pub const LINGER: Self = Self(0x00080);
-    #[doc(alias = "SO_OOBINLINE")]
-    pub const OOBINLINE: Self = Self(0x00100);
-    #[doc(alias = "SO_TCPSACK")]
-    pub const TCPSACK: Self = Self(0x00200);
-    #[doc(alias = "SO_WINSCALE")]
-    pub const WINSCALE: Self = Self(0x00400);
-    pub const HDRINCL: Self = Self(0x02000);
-    #[doc(alias = "SO_RUSRBUF")]
-    pub const RUSRBUF: Self = Self(0x10000);
-    #[doc(alias = "SO_SNDBUF")]
-    pub const SNDBUF: Self = Self(0x1001);
-    #[doc(alias = "SO_RCVBUF")]
-    pub const RCVBUF: Self = Self(0x1002);
-    pub const LASTERROR: Self = Self(0x1007);
-    #[doc(alias = "SO_TYPE")]
-    pub const TYPE: Self = Self(0x1008);
-    #[doc(alias = "SO_HOPCNT")]
-    pub const HOPCNT: Self = Self(0x1009);
-    #[doc(alias = "SO_MAXMSG")]
-    pub const MAXMSG: Self = Self(0x1010);
-    #[doc(alias = "SO_RXDATA")]
-    pub const RXDATA: Self = Self(0x1011);
-    #[doc(alias = "SO_TXDATA")]
-    pub const TXDATA: Self = Self(0x1012);
-    #[doc(alias = "SO_MYADDR")]
-    pub const MYADDR: Self = Self(0x1013);
-    /// Non-blocking IO.
-    #[doc(alias = "SO_NBIO")]
-    pub const NBIO: Self = Self(0x1014);
-    /// Blocking IO.
-    #[doc(alias = "SO_BIO")]
-    pub const BIO: Self = Self(0x1015);
-    #[doc(alias = "SO_NONBLOCK")]
-    pub const NONBLOCK: Self = Self(0x1016);
-    pub const KEEPIDLE: Self = Self(0x1019);
-    pub const KEEPINTVL: Self = Self(0x101A);
-    pub const KEEPCNT: Self = Self(0x101B);
-
-    // Level::IP
-    pub const IP_TOS: Self = Self(3);
-    pub const IP_TTL: Self = Self(4);
-
-    // Level::TCP
-    pub const TCP_ACKDELAYTIME: Self = Self(0x2001);
-    pub const TCP_NOACKDELAY: Self = Self(0x2002);
-    pub const TCP_MAXSEG: Self = Self(0x2003);
-    pub const TCP_NODELAY: Self = Self(0x2004);
-    pub const TCP_ACKFREQUENCY: Self = Self(0x2005);
+    pub const IP_TTL: Self = Self::Reuseaddr;
 }
 
 /// MSG_*
@@ -226,15 +203,13 @@ pub enum Shutdown {
 }
 
 /// SOLIB_OPT_*
-#[repr(transparent)]
+#[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct LibOpt(pub i32);
-
-impl LibOpt {
-    pub const AVOID_CLOSE_ALL: Self = Self(0x3000);
-    pub const SOCKFD_TBL_INIT_COUNT: Self = Self(0x3001);
+pub enum LibOpt {
+    AvoidCloseAll = 0x3000,
+    SockfdTblInitCount = 0x3001,
     /// Takes one of the `SOCKBUF_CONSUMPTION_*` values.
-    pub const SOCKBUF_CONSUMPTION: Self = Self(0x3002);
+    SockbufConsumption = 0x3002,
 }
 
 pub const SOCKBUF_CONSUMPTION_LOW: i32 = 0x01;

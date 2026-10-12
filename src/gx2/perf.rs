@@ -13,81 +13,80 @@ pub type Tag = u32;
 pub type Tag2StringFunc = Option<unsafe extern "C" fn(tag: Tag) -> *const ffi::c_char>;
 
 /// Low-level hardware counter.
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct CounterId(pub u32);
-
-impl CounterId {
-    pub const CP_0: Self = Self(0x00);
-    pub const GRBM_0: Self = Self(0x01);
-    pub const GRBM_1: Self = Self(0x02);
-    pub const PA_SU_0: Self = Self(0x03);
-    pub const PA_SU_1: Self = Self(0x04);
-    pub const PA_SU_2: Self = Self(0x05);
-    pub const PA_SU_3: Self = Self(0x06);
-    pub const PA_SC_0: Self = Self(0x07);
-    pub const PA_SC_1: Self = Self(0x08);
-    pub const PA_SC_2: Self = Self(0x09);
-    pub const PA_SC_3: Self = Self(0x0a);
-    pub const VGT_0: Self = Self(0x0b);
-    pub const VGT_1: Self = Self(0x0c);
-    pub const VGT_2: Self = Self(0x0d);
-    pub const VGT_3: Self = Self(0x0e);
-    pub const SQ_0: Self = Self(0x0f);
-    pub const SQ_1: Self = Self(0x10);
-    pub const SQ_2: Self = Self(0x11);
-    pub const SQ_3: Self = Self(0x12);
-    pub const SPI_0: Self = Self(0x13);
-    pub const SPI_1: Self = Self(0x14);
-    pub const SPI_2: Self = Self(0x15);
-    pub const SPI_3: Self = Self(0x16);
-    pub const SX_0: Self = Self(0x17);
-    pub const SX_1: Self = Self(0x18);
-    pub const SX_2: Self = Self(0x19);
-    pub const SX_3: Self = Self(0x1a);
-    pub const SMX_0: Self = Self(0x1b);
-    pub const SMX_1: Self = Self(0x1c);
-    pub const SMX_2: Self = Self(0x1d);
-    pub const SMX_3: Self = Self(0x1e);
-    pub const TD_0_0: Self = Self(0x1f);
-    pub const TD_0_1: Self = Self(0x20);
-    pub const TA_0_0: Self = Self(0x21);
-    pub const TA_0_1: Self = Self(0x22);
-    pub const TA_1_0: Self = Self(0x23);
-    pub const TA_1_1: Self = Self(0x24);
-    pub const TCP_0_0: Self = Self(0x25);
-    pub const TCP_0_1: Self = Self(0x26);
-    pub const TCP_1_0: Self = Self(0x27);
-    pub const TCP_1_1: Self = Self(0x28);
-    pub const TCP_2_0: Self = Self(0x29);
-    pub const TCP_2_1: Self = Self(0x2a);
-    pub const TCP_3_0: Self = Self(0x2b);
-    pub const TCP_3_1: Self = Self(0x2c);
-    pub const TCC_0_0: Self = Self(0x2d);
-    pub const TCC_0_1: Self = Self(0x2e);
-    pub const TCC_1_0: Self = Self(0x2f);
-    pub const TCC_1_1: Self = Self(0x30);
-    pub const TCC_2_0: Self = Self(0x31);
-    pub const TCC_2_1: Self = Self(0x32);
-    pub const TCC_3_0: Self = Self(0x33);
-    pub const TCC_3_1: Self = Self(0x34);
-    pub const CB_0_0: Self = Self(0x3d);
-    pub const CB_0_1: Self = Self(0x3e);
-    pub const CB_1_0: Self = Self(0x3f);
-    pub const CB_1_1: Self = Self(0x40);
-    pub const CB_2_0: Self = Self(0x41);
-    pub const CB_2_1: Self = Self(0x42);
-    pub const CB_3_0: Self = Self(0x43);
-    pub const CB_3_1: Self = Self(0x44);
-    pub const DB_0_0: Self = Self(0x35);
-    pub const DB_0_1: Self = Self(0x36);
-    pub const DB_1_0: Self = Self(0x37);
-    pub const DB_1_1: Self = Self(0x38);
-    pub const DB_2_0: Self = Self(0x39);
-    pub const DB_2_1: Self = Self(0x3a);
-    pub const DB_3_0: Self = Self(0x3b);
-    pub const DB_3_1: Self = Self(0x3c);
-    pub const PIPELINE: Self = Self(0x45);
+pub enum CounterId {
+    #[default]
+    Cp0 = 0x00,
+    Grbm0 = 0x01,
+    Grbm1 = 0x02,
+    PaSu0 = 0x03,
+    PaSu1 = 0x04,
+    PaSu2 = 0x05,
+    PaSu3 = 0x06,
+    PaSc0 = 0x07,
+    PaSc1 = 0x08,
+    PaSc2 = 0x09,
+    PaSc3 = 0x0a,
+    Vgt0 = 0x0b,
+    Vgt1 = 0x0c,
+    Vgt2 = 0x0d,
+    Vgt3 = 0x0e,
+    Sq0 = 0x0f,
+    Sq1 = 0x10,
+    Sq2 = 0x11,
+    Sq3 = 0x12,
+    Spi0 = 0x13,
+    Spi1 = 0x14,
+    Spi2 = 0x15,
+    Spi3 = 0x16,
+    Sx0 = 0x17,
+    Sx1 = 0x18,
+    Sx2 = 0x19,
+    Sx3 = 0x1a,
+    Smx0 = 0x1b,
+    Smx1 = 0x1c,
+    Smx2 = 0x1d,
+    Smx3 = 0x1e,
+    Td00 = 0x1f,
+    Td01 = 0x20,
+    Ta00 = 0x21,
+    Ta01 = 0x22,
+    Ta10 = 0x23,
+    Ta11 = 0x24,
+    Tcp00 = 0x25,
+    Tcp01 = 0x26,
+    Tcp10 = 0x27,
+    Tcp11 = 0x28,
+    Tcp20 = 0x29,
+    Tcp21 = 0x2a,
+    Tcp30 = 0x2b,
+    Tcp31 = 0x2c,
+    Tcc00 = 0x2d,
+    Tcc01 = 0x2e,
+    Tcc10 = 0x2f,
+    Tcc11 = 0x30,
+    Tcc20 = 0x31,
+    Tcc21 = 0x32,
+    Tcc30 = 0x33,
+    Tcc31 = 0x34,
+    Cb00 = 0x3d,
+    Cb01 = 0x3e,
+    Cb10 = 0x3f,
+    Cb11 = 0x40,
+    Cb20 = 0x41,
+    Cb21 = 0x42,
+    Cb30 = 0x43,
+    Cb31 = 0x44,
+    Db00 = 0x35,
+    Db01 = 0x36,
+    Db10 = 0x37,
+    Db11 = 0x38,
+    Db20 = 0x39,
+    Db21 = 0x3a,
+    Db30 = 0x3b,
+    Db31 = 0x3c,
+    Pipeline = 0x45,
 }
 
 /// Stat counted by a low-level counter, specific to the counter block.
@@ -109,73 +108,72 @@ impl SqType {
 
 /// GX2PerfMetric
 #[doc(alias = "GX2PerfMetric")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Metric(pub u32);
-
-impl Metric {
-    pub const U64_TIME: Self = Self(0);
-    pub const U64_GPU_TIME: Self = Self(1);
-    pub const F32_GPU_BUSY: Self = Self(2);
-    pub const F32_SHADER_BUSY: Self = Self(3);
-    pub const U64_REUSED_INDICES_VS: Self = Self(4);
-    pub const F32_SHADER_BUSY_VS: Self = Self(5);
-    pub const F32_SHADER_BUSY_GS: Self = Self(6);
-    pub const F32_SHADER_BUSY_PS: Self = Self(7);
-    pub const F32_ALU_BUSY: Self = Self(8);
-    pub const F32_TEX_BUSY: Self = Self(9);
-    pub const U64_VS_VERTICES_IN: Self = Self(10);
-    pub const F32_VS_TEX_INST_COUNT: Self = Self(11);
-    pub const F32_VS_TEX_BUSY: Self = Self(12);
-    pub const F32_VS_ALU_INST_COUNT: Self = Self(13);
-    pub const F32_VS_ALU_BUSY: Self = Self(14);
-    pub const F32_VS_ALU_EFFICIENCY: Self = Self(15);
-    pub const F32_VS_ALU_TEX_RATIO: Self = Self(16);
-    pub const F32_GS_TEX_INST_COUNT: Self = Self(17);
-    pub const F32_GS_TEX_BUSY: Self = Self(18);
-    pub const F32_GS_ALU_INST_COUNT: Self = Self(19);
-    pub const F32_GS_ALU_BUSY: Self = Self(20);
-    pub const F32_GS_ALU_EFFICIENCY: Self = Self(21);
-    pub const F32_GS_ALU_TEX_RATIO: Self = Self(22);
-    pub const F32_PRIMITIVE_ASSEMBLY_BUSY: Self = Self(23);
-    pub const U64_PRIMITIVES_IN: Self = Self(24);
-    pub const F32_PA_STALLED_ON_RASTERIZER: Self = Self(25);
-    pub const F32_INTERP_BUSY: Self = Self(26);
-    pub const U64_PS_PIXELS_IN: Self = Self(27);
-    pub const F32_PS_TEX_INST_COUNT: Self = Self(28);
-    pub const F32_PS_TEX_BUSY: Self = Self(29);
-    pub const F32_PS_ALU_INST_COUNT: Self = Self(30);
-    pub const F32_PS_ALU_BUSY: Self = Self(31);
-    pub const F32_PS_ALU_EFFICIENCY: Self = Self(32);
-    pub const F32_PS_ALU_TEX_RATIO: Self = Self(33);
-    pub const U64_PS_PIXELS_OUT: Self = Self(34);
-    pub const F32_PS_EXPORT_STALLS: Self = Self(35);
-    pub const F32_TEX_UNIT_BUSY: Self = Self(36);
-    pub const U64_TEXEL_FETCH_COUNT: Self = Self(37);
-    pub const F32_TEX_CACHE_STALLED: Self = Self(38);
-    pub const F32_TEX_MISS_RATE: Self = Self(39);
-    pub const U64_TEX_MEM_BYTES_READ: Self = Self(40);
-    pub const F32_DEPTH_STENCIL_TEST_BUSY: Self = Self(41);
-    pub const F32_HIZ_TRIVIAL_ACCEPT: Self = Self(42);
-    pub const F32_HIZ_REJECT: Self = Self(43);
-    pub const U64_PRE_Z_SAMPLES_PASSING: Self = Self(44);
-    pub const U64_PRE_Z_SAMPLES_FAILING_S: Self = Self(45);
-    pub const U64_PRE_Z_SAMPLES_FAILING_Z: Self = Self(46);
-    pub const U64_POST_Z_SAMPLES_PASSING: Self = Self(47);
-    pub const U64_POST_Z_SAMPLES_FAILING_S: Self = Self(48);
-    pub const U64_POST_Z_SAMPLES_FAILING_Z: Self = Self(49);
-    pub const F32_Z_UNIT_STALLED: Self = Self(50);
-    pub const U64_PIXELS_AT_CB: Self = Self(51);
-    pub const U64_PIXELS_CB_MEM_WRITTEN: Self = Self(52);
-    pub const U64_IA_VERTICES: Self = Self(53);
-    pub const U64_IA_PRIMITIVES: Self = Self(54);
-    pub const U64_VS_INVOCATIONS: Self = Self(55);
-    pub const U64_GS_INVOCATIONS: Self = Self(56);
-    pub const U64_GS_PRIMITIVES: Self = Self(57);
-    pub const U64_C_INVOCATIONS: Self = Self(58);
-    pub const U64_C_PRIMITIVES: Self = Self(59);
-    pub const U64_PS_INVOCATIONS: Self = Self(60);
-    pub const U64_PA_INPUT_PRIM: Self = Self(61);
+pub enum Metric {
+    #[default]
+    U64Time = 0,
+    U64GpuTime = 1,
+    F32GpuBusy = 2,
+    F32ShaderBusy = 3,
+    U64ReusedIndicesVs = 4,
+    F32ShaderBusyVs = 5,
+    F32ShaderBusyGs = 6,
+    F32ShaderBusyPs = 7,
+    F32AluBusy = 8,
+    F32TexBusy = 9,
+    U64VsVerticesIn = 10,
+    F32VsTexInstCount = 11,
+    F32VsTexBusy = 12,
+    F32VsAluInstCount = 13,
+    F32VsAluBusy = 14,
+    F32VsAluEfficiency = 15,
+    F32VsAluTexRatio = 16,
+    F32GsTexInstCount = 17,
+    F32GsTexBusy = 18,
+    F32GsAluInstCount = 19,
+    F32GsAluBusy = 20,
+    F32GsAluEfficiency = 21,
+    F32GsAluTexRatio = 22,
+    F32PrimitiveAssemblyBusy = 23,
+    U64PrimitivesIn = 24,
+    F32PaStalledOnRasterizer = 25,
+    F32InterpBusy = 26,
+    U64PsPixelsIn = 27,
+    F32PsTexInstCount = 28,
+    F32PsTexBusy = 29,
+    F32PsAluInstCount = 30,
+    F32PsAluBusy = 31,
+    F32PsAluEfficiency = 32,
+    F32PsAluTexRatio = 33,
+    U64PsPixelsOut = 34,
+    F32PsExportStalls = 35,
+    F32TexUnitBusy = 36,
+    U64TexelFetchCount = 37,
+    F32TexCacheStalled = 38,
+    F32TexMissRate = 39,
+    U64TexMemBytesRead = 40,
+    F32DepthStencilTestBusy = 41,
+    F32HizTrivialAccept = 42,
+    F32HizReject = 43,
+    U64PreZSamplesPassing = 44,
+    U64PreZSamplesFailingS = 45,
+    U64PreZSamplesFailingZ = 46,
+    U64PostZSamplesPassing = 47,
+    U64PostZSamplesFailingS = 48,
+    U64PostZSamplesFailingZ = 49,
+    F32ZUnitStalled = 50,
+    U64PixelsAtCb = 51,
+    U64PixelsCbMemWritten = 52,
+    U64IaVertices = 53,
+    U64IaPrimitives = 54,
+    U64VsInvocations = 55,
+    U64GsInvocations = 56,
+    U64GsPrimitives = 57,
+    U64CInvocations = 58,
+    U64CPrimitives = 59,
+    U64PsInvocations = 60,
+    U64PaInputPrim = 61,
 }
 
 #[repr(transparent)]
@@ -507,8 +505,8 @@ pub mod legacy {
     use super::{CounterId, Metric, NUM_COUNTER_PIPELINE, NUM_COUNTER_SQ, SqType, StatId};
     use crate::ffi;
 
-    const COUNTER_COUNT: usize = CounterId::PIPELINE.0 as usize + 1;
-    const RESULT_SIZE: usize = CounterId::PIPELINE.0 as usize + 2 * NUM_COUNTER_PIPELINE;
+    const COUNTER_COUNT: usize = CounterId::Pipeline as usize + 1;
+    const RESULT_SIZE: usize = CounterId::Pipeline as usize + 2 * NUM_COUNTER_PIPELINE;
 
     #[repr(C)]
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

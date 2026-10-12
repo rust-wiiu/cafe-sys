@@ -6,26 +6,22 @@ use crate::ffi;
 
 /// OSMemoryType
 #[doc(alias = "OSMemoryType")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct MemoryType(pub u32);
-
-impl MemoryType {
-    pub const MEM1: Self = Self(1);
-    pub const MEM2: Self = Self(2);
+pub enum MemoryType {
+    Mem1 = 1,
+    Mem2 = 2,
 }
 
 /// OSSharedDataType
 #[doc(alias = "OSSharedDataType", alias = "OSShared")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SharedDataType(pub u32);
-
-impl SharedDataType {
-    pub const FONT_CHINESE: Self = Self(0);
-    pub const FONT_KOREAN: Self = Self(1);
-    pub const FONT_STANDARD: Self = Self(2);
-    pub const FONT_TAIWANESE: Self = Self(3);
+pub enum SharedDataType {
+    FontChinese = 0,
+    FontKorean = 1,
+    FontStandard = 2,
+    FontTaiwanese = 3,
 }
 
 #[repr(transparent)]

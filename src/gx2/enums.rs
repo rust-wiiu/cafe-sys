@@ -170,14 +170,12 @@ impl BlendCombineMode {
 
 /// GX2BufferingMode
 #[doc(alias = "GX2BufferingMode")]
-#[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct BufferingMode(pub u32);
-
-impl BufferingMode {
-    pub const SINGLE: Self = Self(1);
-    pub const DOUBLE: Self = Self(2);
-    pub const TRIPLE: Self = Self(3);
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum BufferingMode {
+    Single = 1,
+    Double = 2,
+    Triple = 3,
 }
 
 /// GX2ChannelMask
@@ -314,15 +312,14 @@ impl FrontFace {
 
 /// GX2IndexType
 #[doc(alias = "GX2IndexType")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct IndexType(pub u32);
-
-impl IndexType {
-    pub const U16_LE: Self = Self(0);
-    pub const U32_LE: Self = Self(1);
-    pub const U16: Self = Self(4);
-    pub const U32: Self = Self(9);
+pub enum IndexType {
+    #[default]
+    U16Le = 0,
+    U32Le = 1,
+    U16 = 4,
+    U32 = 9,
 }
 
 /// GX2InvalidateMode
@@ -404,25 +401,23 @@ impl LogicOp {
 
 /// GX2PrimitiveMode
 #[doc(alias = "GX2PrimitiveMode")]
-#[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct PrimitiveMode(pub u32);
-
-impl PrimitiveMode {
-    pub const POINTS: Self = Self(1);
-    pub const LINES: Self = Self(2);
-    pub const LINE_STRIP: Self = Self(3);
-    pub const TRIANGLES: Self = Self(4);
-    pub const TRIANGLE_FAN: Self = Self(5);
-    pub const TRIANGLE_STRIP: Self = Self(6);
-    pub const LINES_ADJACENCY: Self = Self(0xa);
-    pub const LINE_STRIP_ADJACENCY: Self = Self(0xb);
-    pub const TRIANGLES_ADJACENCY: Self = Self(0xc);
-    pub const TRIANGLE_STRIP_ADJACENCY: Self = Self(0xd);
-    pub const RECTS: Self = Self(0x11);
-    pub const LINE_LOOP: Self = Self(0x12);
-    pub const QUADS: Self = Self(0x13);
-    pub const QUAD_STRIP: Self = Self(0x14);
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PrimitiveMode {
+    Points = 1,
+    Lines = 2,
+    LineStrip = 3,
+    Triangles = 4,
+    TriangleFan = 5,
+    TriangleStrip = 6,
+    LinesAdjacency = 0xa,
+    LineStripAdjacency = 0xb,
+    TrianglesAdjacency = 0xc,
+    TriangleStripAdjacency = 0xd,
+    Rects = 0x11,
+    LineLoop = 0x12,
+    Quads = 0x13,
+    QuadStrip = 0x14,
 }
 
 /// GX2PolygonMode
@@ -456,13 +451,12 @@ impl RenderTarget {
 
 /// GX2RoundingMode
 #[doc(alias = "GX2RoundingMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct RoundingMode(pub u32);
-
-impl RoundingMode {
-    pub const ROUND_TO_EVEN: Self = Self(0);
-    pub const TRUNCATE: Self = Self(1);
+pub enum RoundingMode {
+    #[default]
+    RoundToEven = 0,
+    Truncate = 1,
 }
 
 /// GX2SamplerVarType
@@ -516,37 +510,28 @@ impl SamplerVarType {
 
 /// GX2ScanTarget
 #[doc(alias = "GX2ScanTarget")]
-#[repr(transparent)]
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct ScanTarget(pub u32);
-
-impl ScanTarget {
-    pub const TV0: Self = Self(1);
-    pub const TV1: Self = Self(2);
-    pub const DRC0: Self = Self(4);
-    pub const DRC1: Self = Self(8);
-    pub const TV: Self = Self(1);
-    pub const DRC: Self = Self(4);
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ScanTarget {
+    Tv0 = 1,
+    Tv1 = 2,
+    Drc0 = 4,
+    Drc1 = 8,
 }
 
-impl core::ops::BitOr for ScanTarget {
-    type Output = Self;
-
-    #[inline]
-    fn bitor(self, rhs: Self) -> Self {
-        Self(self.0 | rhs.0)
-    }
+impl ScanTarget {
+    pub const TV: Self = Self::Tv0;
+    pub const DRC: Self = Self::Drc0;
 }
 
 /// GX2SemaphoreAction
 #[doc(alias = "GX2SemaphoreAction")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SemaphoreAction(pub u32);
-
-impl SemaphoreAction {
-    pub const WAIT: Self = Self(0);
-    pub const SIGNAL: Self = Self(1);
+pub enum SemaphoreAction {
+    #[default]
+    Wait = 0,
+    Signal = 1,
 }
 
 /// GX2ShaderMode
@@ -746,114 +731,105 @@ impl core::ops::BitOr for SurfaceUse {
 
 /// GX2TessellationMode
 #[doc(alias = "GX2TessellationMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TessellationMode(pub u32);
-
-impl TessellationMode {
-    pub const DISCRETE: Self = Self(0);
-    pub const CONTINUOUS: Self = Self(1);
-    pub const ADAPTIVE: Self = Self(2);
+pub enum TessellationMode {
+    #[default]
+    Discrete = 0,
+    Continuous = 1,
+    Adaptive = 2,
 }
 
 /// GX2TexBorderType
 #[doc(alias = "GX2TexBorderType")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TexBorderType(pub u32);
-
-impl TexBorderType {
-    pub const TRANSPARENT_BLACK: Self = Self(0);
-    pub const BLACK: Self = Self(1);
-    pub const WHITE: Self = Self(2);
-    pub const VARIABLE: Self = Self(3);
+pub enum TexBorderType {
+    #[default]
+    TransparentBlack = 0,
+    Black = 1,
+    White = 2,
+    Variable = 3,
 }
 
 /// GX2TexClampMode
 #[doc(alias = "GX2TexClampMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TexClampMode(pub u32);
-
-impl TexClampMode {
-    pub const WRAP: Self = Self(0);
-    pub const MIRROR: Self = Self(1);
-    pub const CLAMP: Self = Self(2);
-    pub const MIRROR_ONCE: Self = Self(3);
-    pub const CLAMP_HALF_BORDER: Self = Self(4);
-    pub const MIRROR_ONCE_HALF_BORDER: Self = Self(5);
-    pub const CLAMP_BORDER: Self = Self(6);
-    pub const MIRROR_ONCE_BORDER: Self = Self(7);
+pub enum TexClampMode {
+    #[default]
+    Wrap = 0,
+    Mirror = 1,
+    Clamp = 2,
+    MirrorOnce = 3,
+    ClampHalfBorder = 4,
+    MirrorOnceHalfBorder = 5,
+    ClampBorder = 6,
+    MirrorOnceBorder = 7,
 }
 
 /// GX2TexMipFilterMode
 #[doc(alias = "GX2TexMipFilterMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TexMipFilterMode(pub u32);
-
-impl TexMipFilterMode {
-    pub const NONE: Self = Self(0);
-    pub const POINT: Self = Self(1);
-    pub const LINEAR: Self = Self(2);
+pub enum TexMipFilterMode {
+    #[default]
+    None = 0,
+    Point = 1,
+    Linear = 2,
 }
 
 /// GX2TexMipPerfMode
 #[doc(alias = "GX2TexMipPerfMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TexMipPerfMode(pub u32);
-
-impl TexMipPerfMode {
-    pub const DISABLE: Self = Self(0);
+pub enum TexMipPerfMode {
+    #[default]
+    Disable = 0,
 }
 
 /// GX2TexXYFilterMode
 #[doc(alias = "GX2TexXYFilterMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TexXYFilterMode(pub u32);
-
-impl TexXYFilterMode {
-    pub const POINT: Self = Self(0);
-    pub const LINEAR: Self = Self(1);
-    pub const BICUBIC: Self = Self(2);
+pub enum TexXYFilterMode {
+    #[default]
+    Point = 0,
+    Linear = 1,
+    Bicubic = 2,
 }
 
 /// GX2TexAnisoRatio
 #[doc(alias = "GX2TexAnisoRatio")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TexAnisoRatio(pub u32);
-
-impl TexAnisoRatio {
-    pub const NONE: Self = Self(0);
-    pub const RATIO_2_TO_1: Self = Self(1);
-    pub const RATIO_4_TO_1: Self = Self(2);
-    pub const RATIO_8_TO_1: Self = Self(3);
-    pub const RATIO_16_TO_1: Self = Self(4);
+pub enum TexAnisoRatio {
+    #[default]
+    None = 0,
+    Ratio2To1 = 1,
+    Ratio4To1 = 2,
+    Ratio8To1 = 3,
+    Ratio16To1 = 4,
 }
 
 /// GX2TexZFilterMode
 #[doc(alias = "GX2TexZFilterMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TexZFilterMode(pub u32);
-
-impl TexZFilterMode {
-    pub const NONE: Self = Self(0);
-    pub const POINT: Self = Self(1);
-    pub const LINEAR: Self = Self(2);
+pub enum TexZFilterMode {
+    #[default]
+    None = 0,
+    Point = 1,
+    Linear = 2,
 }
 
 /// GX2TexZPerfMode
 #[doc(alias = "GX2TexZPerfMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TexZPerfMode(pub u32);
-
-impl TexZPerfMode {
-    pub const DISABLED: Self = Self(0);
+pub enum TexZPerfMode {
+    #[default]
+    Disabled = 0,
 }
 
 /// GX2TileMode
@@ -884,16 +860,15 @@ impl TileMode {
 
 /// GX2TVRenderMode
 #[doc(alias = "GX2TVRenderMode")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TvRenderMode(pub u32);
-
-impl TvRenderMode {
-    pub const DISABLED: Self = Self(0);
-    pub const STANDARD_480P: Self = Self(1);
-    pub const WIDE_480P: Self = Self(2);
-    pub const WIDE_720P: Self = Self(3);
-    pub const WIDE_1080P: Self = Self(5);
+pub enum TvRenderMode {
+    #[default]
+    Disabled = 0,
+    Standard480p = 1,
+    Wide480p = 2,
+    Wide720p = 3,
+    Wide1080p = 5,
 }
 
 /// GX2TVScanMode

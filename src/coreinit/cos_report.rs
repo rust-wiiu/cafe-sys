@@ -6,15 +6,13 @@ use crate::ffi;
 
 /// COSReportLevel
 #[doc(alias = "COSReportLevel")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Level(pub u32);
-
-impl Level {
-    pub const ERROR: Self = Self(0);
-    pub const WARN: Self = Self(1);
-    pub const INFO: Self = Self(2);
-    pub const VERBOSE: Self = Self(3);
+pub enum Level {
+    Error = 0,
+    Warn = 1,
+    Info = 2,
+    Verbose = 3,
 }
 
 /// COSReportModule

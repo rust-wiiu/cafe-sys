@@ -6,24 +6,20 @@ use crate::ffi;
 
 /// OSSavedFrameType
 #[doc(alias = "OSSavedFrameType")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SavedFrameType(pub u32);
-
-impl SavedFrameType {
-    pub const A: Self = Self(0);
-    pub const B: Self = Self(1);
+pub enum SavedFrameType {
+    A = 0,
+    B = 1,
 }
 
 /// OSSavedFrameScreen
 #[doc(alias = "OSSavedFrameScreen")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SavedFrameScreen(pub u32);
-
-impl SavedFrameScreen {
-    pub const TV: Self = Self(2);
-    pub const DRC: Self = Self(4);
+pub enum SavedFrameScreen {
+    Tv = 2,
+    Drc = 4,
 }
 
 unsafe extern "C" {

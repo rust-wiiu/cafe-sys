@@ -13,21 +13,23 @@ pub const MAX_STREAMOUT_BUFFERS: usize = 4;
 
 /// GX2_SQ_SEL
 #[doc(alias = "GX2_SQ_SEL")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct Component(pub u32);
+pub enum Component {
+    #[default]
+    X = 0,
+    Y = 1,
+    Z = 2,
+    W = 3,
+    Zero = 4,
+    One = 5,
+}
 
 impl Component {
-    pub const X: Self = Self(0);
-    pub const Y: Self = Self(1);
-    pub const Z: Self = Self(2);
-    pub const W: Self = Self(3);
-    pub const R: Self = Self(0);
-    pub const G: Self = Self(1);
-    pub const B: Self = Self(2);
-    pub const A: Self = Self(3);
-    pub const ZERO: Self = Self(4);
-    pub const ONE: Self = Self(5);
+    pub const R: Self = Self::X;
+    pub const G: Self = Self::Y;
+    pub const B: Self = Self::Z;
+    pub const A: Self = Self::W;
 }
 
 /// Source component for each of the x, y, z and w destination components.
@@ -40,7 +42,12 @@ impl ComponentSelection {
     #[doc(alias = "GX2_COMP_MAP")]
     #[inline]
     pub const fn new(x: Component, y: Component, z: Component, w: Component) -> Self {
-        Self(((x.0 & 0xFF) << 24) | ((y.0 & 0xFF) << 16) | ((z.0 & 0xFF) << 8) | (w.0 & 0xFF))
+        Self(
+            (((x as u32) & 0xFF) << 24)
+                | (((y as u32) & 0xFF) << 16)
+                | (((z as u32) & 0xFF) << 8)
+                | ((w as u32) & 0xFF),
+        )
     }
 }
 

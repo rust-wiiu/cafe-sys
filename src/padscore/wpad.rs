@@ -246,30 +246,28 @@ impl DataFormat {
 ///
 /// Pointer (IR camera) mode.
 #[doc(alias = "WPADDpdFormat")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct DpdFormat(pub u32);
-
-impl DpdFormat {
-    pub const OFF: Self = Self(0);
-    pub const STD: Self = Self(1);
-    pub const EXP: Self = Self(3);
-    pub const FULL: Self = Self(5);
+pub enum DpdFormat {
+    #[default]
+    Off = 0,
+    Std = 1,
+    Exp = 3,
+    Full = 5,
 }
 
 /// WPADSpeakerCmd
 #[doc(alias = "WPADSpeakerCmd")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct SpeakerCommand(pub u32);
-
-impl SpeakerCommand {
-    pub const OFF: Self = Self(0);
-    pub const ON: Self = Self(1);
-    pub const MUTE: Self = Self(2);
-    pub const MUTE_OFF: Self = Self(3);
-    pub const PLAY: Self = Self(4);
-    pub const RESET: Self = Self(5);
+pub enum SpeakerCommand {
+    #[default]
+    Off = 0,
+    On = 1,
+    Mute = 2,
+    MuteOff = 3,
+    Play = 4,
+    Reset = 5,
 }
 
 /// WPADMplsMode
@@ -377,45 +375,41 @@ impl ClearEvent {
 
 /// WPADBalanceBoardCmd
 #[doc(alias = "WPADBalanceBoardCmd")]
-#[repr(transparent)]
+#[repr(u8)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct BlCommand(pub u8);
-
-impl BlCommand {
-    pub const UPDATE_TEMP: Self = Self(0);
-    pub const OFF: Self = Self(85);
-    pub const ON: Self = Self(170);
+pub enum BlCommand {
+    #[default]
+    UpdateTemp = 0,
+    Off = 85,
+    On = 170,
 }
 
 /// WPADClampType
 #[doc(alias = "WPADClampType")]
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct StickClamp(pub u32);
-
-impl StickClamp {
-    pub const OCTA_WITH_PLAY: Self = Self(0);
-    pub const OCTA_WITHOUT_PLAY: Self = Self(1);
-    pub const CIRCLE_WITH_PLAY: Self = Self(2);
-    pub const CIRCLE_WITHOUT_PLAY: Self = Self(3);
+pub enum StickClamp {
+    #[default]
+    OctaWithPlay = 0,
+    OctaWithoutPlay = 1,
+    CircleWithPlay = 2,
+    CircleWithoutPlay = 3,
 }
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct TriggerClamp(pub u32);
-
-impl TriggerClamp {
-    pub const FIXED_BASE: Self = Self(0);
-    pub const INDIVIDUAL_BASE: Self = Self(1);
+pub enum TriggerClamp {
+    #[default]
+    FixedBase = 0,
+    IndividualBase = 1,
 }
 
-#[repr(transparent)]
+#[repr(u32)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
-pub struct AccClamp(pub u32);
-
-impl AccClamp {
-    pub const CUBE: Self = Self(0);
-    pub const SPHERE: Self = Self(1);
+pub enum AccClamp {
+    #[default]
+    Cube = 0,
+    Sphere = 1,
 }
 
 /// WPAD_MOTOR_*
