@@ -8,6 +8,7 @@ unsafe extern "C" {
     /// ENVGetEnvironmentVariable
     #[doc(alias = "ENVGetEnvironmentVariable")]
     #[link_name = "ENVGetEnvironmentVariable"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn get_variable(
         key: *const ffi::c_char,
         value: *mut ffi::c_char,

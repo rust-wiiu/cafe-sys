@@ -108,16 +108,19 @@ unsafe extern "C" {
     /// OSIsEnabledOverlayArenaDev
     #[doc(alias = "OSIsEnabledOverlayArenaDev")]
     #[link_name = "OSIsEnabledOverlayArenaDev"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn is_enabled_overlay_arena_dev() -> ffi::c_bool;
 
     /// OSEnableOverlayArenaDev
     #[doc(alias = "OSEnableOverlayArenaDev")]
     #[link_name = "OSEnableOverlayArenaDev"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn enable_overlay_arena_dev(allow_av: ffi::c_bool, addr: *mut u32, size: *mut u32);
 
     /// OSEnableOverlayArenaWithTimeoutDev
     #[doc(alias = "OSEnableOverlayArenaWithTimeoutDev")]
     #[link_name = "OSEnableOverlayArenaWithTimeoutDev"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn enable_overlay_arena_with_timeout_dev(
         allow_av: ffi::c_bool,
         timeout: u32,
@@ -129,11 +132,13 @@ unsafe extern "C" {
     /// OSDisableOverlayArenaDev
     #[doc(alias = "OSDisableOverlayArenaDev")]
     #[link_name = "OSDisableOverlayArenaDev"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn disable_overlay_arena_dev();
 
     /// OSDisableOverlayArenaWithTimeoutDev
     #[doc(alias = "OSDisableOverlayArenaWithTimeoutDev")]
     #[link_name = "OSDisableOverlayArenaWithTimeoutDev"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn disable_overlay_arena_with_timeout_dev(
         timeout: u32,
         error: *mut OverlayArenaError,

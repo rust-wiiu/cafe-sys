@@ -58,16 +58,19 @@ unsafe extern "C" {
     /// HIOInit
     #[doc(alias = "HIOInit")]
     #[link_name = "HIOInit"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn init() -> Status;
 
     /// HIOShutdown
     #[doc(alias = "HIOShutdown")]
     #[link_name = "HIOShutdown"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn shutdown() -> Status;
 
     /// HIOOpenEx
     #[doc(alias = "HIOOpenEx")]
     #[link_name = "HIOOpenEx"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn open_ex(
         name: *const ffi::c_char,
         async_struct: *mut AsyncStruct,
@@ -78,6 +81,7 @@ unsafe extern "C" {
     /// HIOClose
     #[doc(alias = "HIOClose")]
     #[link_name = "HIOClose"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn close(handle: Handle) -> Status;
 
     /// HIORead
@@ -85,11 +89,13 @@ unsafe extern "C" {
     /// Returns the bytes read or an error.
     #[doc(alias = "HIORead")]
     #[link_name = "HIORead"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn read(handle: Handle, size: u32, data: *mut ffi::c_void) -> Status;
 
     /// HIOReadAsyncEx
     #[doc(alias = "HIOReadAsyncEx")]
     #[link_name = "HIOReadAsyncEx"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn read_async_ex(
         handle: Handle,
         size: u32,
@@ -102,11 +108,13 @@ unsafe extern "C" {
     /// Returns the bytes written or an error.
     #[doc(alias = "HIOWrite")]
     #[link_name = "HIOWrite"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn write(handle: Handle, size: u32, data: *const ffi::c_void) -> Status;
 
     /// HIOWriteAsyncEx
     #[doc(alias = "HIOWriteAsyncEx")]
     #[link_name = "HIOWriteAsyncEx"]
+    #[deprecated = "Only for development / devkits."]
     pub unsafe fn write_async_ex(
         handle: Handle,
         size: u32,
