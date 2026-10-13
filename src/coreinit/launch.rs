@@ -15,7 +15,7 @@ unsafe extern "C" {
     pub unsafe fn launch_title_v(
         title_id: u64,
         argc: u32,
-        argv: *mut *mut ffi::c_char,
+        argv: *const *const ffi::c_char,
     ) -> ffi::c_int;
 
     /// OSLaunchTitlel
@@ -32,7 +32,7 @@ unsafe extern "C" {
         path: *const ffi::c_char,
         path_size: u32,
         argc: u32,
-        argv: *mut *mut ffi::c_char,
+        argv: *const *const ffi::c_char,
     ) -> ffi::c_int;
 
     /// OSLaunchTitleByPathl
@@ -49,7 +49,7 @@ unsafe extern "C" {
     #[doc(alias = "OSRestartGame")]
     #[link_name = "OSRestartGame"]
     #[deprecated(note = "Use sysapp::relaunch_title instead")]
-    pub unsafe fn restart_game(argc: u32, argv: *mut *mut ffi::c_char) -> ffi::c_int;
+    pub unsafe fn restart_game(argc: u32, argv: *const *const ffi::c_char) -> ffi::c_int;
 
     /// OSForceFullRelaunch
     #[doc(alias = "OSForceFullRelaunch")]
@@ -90,7 +90,7 @@ unsafe extern "C" {
     #[deprecated(note = "Use sysapp instead")]
     pub unsafe fn send_app_switch_request(
         target: Upid,
-        args: *mut ffi::c_void,
+        args: *const ffi::c_void,
         args_size: u32,
     ) -> ffi::c_bool;
 }

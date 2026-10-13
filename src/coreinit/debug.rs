@@ -248,7 +248,7 @@ unsafe extern "C" {
     #[doc(alias = "OSSendFatalError")]
     #[link_name = "OSSendFatalError"]
     pub unsafe fn send_fatal_error(
-        error: *mut FatalError,
+        error: *const FatalError,
         function_name: *const ffi::c_char,
         line: u32,
     );
@@ -313,7 +313,7 @@ unsafe extern "C" {
     /// __OSSetAppCrashControl
     #[doc(alias = "__OSSetAppCrashControl")]
     #[link_name = "__OSSetAppCrashControl"]
-    pub unsafe fn set_app_crash_control(control: *mut CrashControl);
+    pub unsafe fn set_app_crash_control(control: *const CrashControl);
 
     /// __OSClearAppCrash
     #[doc(alias = "__OSClearAppCrash")]
@@ -328,7 +328,7 @@ unsafe extern "C" {
     /// OSRestartCrashedApp
     #[doc(alias = "OSRestartCrashedApp")]
     #[link_name = "OSRestartCrashedApp"]
-    pub unsafe fn restart_crashed_app(args: *mut ffi::c_void, args_size: u32) -> ffi::c_bool;
+    pub unsafe fn restart_crashed_app(args: *const ffi::c_void, args_size: u32) -> ffi::c_bool;
 
     /// OSRebootCrash
     #[doc(alias = "OSRebootCrash")]
@@ -369,7 +369,7 @@ unsafe extern "C" {
     #[doc(alias = "DisassemblePPCOpcode")]
     #[link_name = "DisassemblePPCOpcode"]
     pub unsafe fn disassemble_ppc_opcode(
-        opcode: *mut u32,
+        opcode: *const u32,
         buffer: *mut ffi::c_char,
         buffer_size: u32,
         find_symbol: DisassemblyFindSymbolFn,
@@ -380,8 +380,8 @@ unsafe extern "C" {
     #[doc(alias = "DisassemblePPCRange")]
     #[link_name = "DisassemblePPCRange"]
     pub unsafe fn disassemble_ppc_range(
-        start: *mut ffi::c_void,
-        end: *mut ffi::c_void,
+        start: *const ffi::c_void,
+        end: *const ffi::c_void,
         print: DisassemblyPrintFn,
         find_symbol: DisassemblyFindSymbolFn,
         flags: DisassemblyFlags,
@@ -394,7 +394,7 @@ unsafe extern "C" {
         category: LogCategory,
         level: LogLevel,
         options: u32,
-        buffer: *mut ffi::c_void,
+        buffer: *const ffi::c_void,
         size: usize,
     );
 
@@ -422,7 +422,7 @@ unsafe extern "C" {
         func_name: *const ffi::c_char,
         func_name_size: u32,
         line: u32,
-        argv: *mut u32,
+        argv: *const u32,
         argc: u32,
     );
 

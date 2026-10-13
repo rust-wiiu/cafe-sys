@@ -432,7 +432,7 @@ unsafe extern "C" {
         voice: *mut Voice,
         device: DeviceType,
         id: u32,
-        mix: *mut DeviceMixData,
+        mix: *const DeviceMixData,
     ) -> Error;
 
     /// AXSetVoiceInitialTimeDelay

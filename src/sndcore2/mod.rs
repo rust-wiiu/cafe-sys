@@ -199,7 +199,7 @@ pub struct TransitionAudioBuffer {
     _unk2: ffi::unknown<4>,
     pub length: u32,
     pub loop_point: u32,
-    pub audio_buffer: *mut ffi::c_void,
+    pub audio_buffer: *const ffi::c_void,
     pub audio_buffer_len: u32,
     pub tv: TransitionAudioBufferDevice,
     pub drc: TransitionAudioBufferDevice,
@@ -277,7 +277,7 @@ unsafe extern "C" {
     /// AXSetUpTransitionAudio
     #[doc(alias = "AXSetUpTransitionAudio")]
     #[link_name = "AXSetUpTransitionAudio"]
-    pub unsafe fn set_up_transition_audio(buffer: *mut TransitionAudioBuffer);
+    pub unsafe fn set_up_transition_audio(buffer: *const TransitionAudioBuffer);
 
     /// AXStartTransitionAudio
     #[doc(alias = "AXStartTransitionAudio")]

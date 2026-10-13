@@ -606,7 +606,7 @@ unsafe extern "C" {
     /// FSGetUserData
     #[doc(alias = "FSGetUserData")]
     #[link_name = "FSGetUserData"]
-    pub unsafe fn get_user_data(block: *mut CmdBlock) -> *mut ffi::c_void;
+    pub unsafe fn get_user_data(block: *const CmdBlock) -> *mut ffi::c_void;
 
     /// FSGetCurrentCmdBlock
     ///
@@ -627,7 +627,7 @@ unsafe extern "C" {
     #[link_name = "FSSetStateChangeNotification"]
     pub unsafe fn set_state_change_notification(
         client: *mut Client,
-        params: *mut StateChangeParams,
+        params: *const StateChangeParams,
     );
 
     /// FSGetAsyncResult
@@ -635,14 +635,14 @@ unsafe extern "C" {
     /// Result of an async command reported through a message queue.
     #[doc(alias = "FSGetAsyncResult")]
     #[link_name = "FSGetAsyncResult"]
-    pub unsafe fn get_async_result(message: *mut Message) -> *mut AsyncResult;
+    pub unsafe fn get_async_result(message: *const Message) -> *mut AsyncResult;
 
     /// FSGetStateChangeInfo
     ///
     /// State change reported through a message queue.
     #[doc(alias = "FSGetStateChangeInfo")]
     #[link_name = "FSGetStateChangeInfo"]
-    pub unsafe fn get_state_change_info(message: *mut Message) -> *mut StateNoticeInfo;
+    pub unsafe fn get_state_change_info(message: *const Message) -> *mut StateNoticeInfo;
 
     /// FSGetMountSource
     #[doc(alias = "FSGetMountSource")]
@@ -700,7 +700,7 @@ unsafe extern "C" {
     pub unsafe fn mount(
         client: *mut Client,
         block: *mut CmdBlock,
-        source: *mut MountSource,
+        source: *const MountSource,
         target: *mut ffi::c_char,
         bytes: u32,
         error_mask: ErrorFlag,
@@ -714,7 +714,7 @@ unsafe extern "C" {
     pub unsafe fn mount_async(
         client: *mut Client,
         block: *mut CmdBlock,
-        source: *mut MountSource,
+        source: *const MountSource,
         target: *mut ffi::c_char,
         bytes: u32,
         error_mask: ErrorFlag,

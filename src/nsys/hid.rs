@@ -123,7 +123,7 @@ unsafe extern "C" {
         descriptor_type: u8,
         descriptor_index: u8,
         language_id: u16,
-        buf: *mut u8,
+        buf: *const u8,
         buf_len: u32,
         callback: Callback,
         context: *mut ffi::c_void,
@@ -149,7 +149,7 @@ unsafe extern "C" {
         handle: Handle,
         report_type: u8,
         report_id: u8,
-        buf: *mut u8,
+        buf: *const u8,
         buf_len: u32,
         callback: Callback,
         context: *mut ffi::c_void,
@@ -217,7 +217,7 @@ unsafe extern "C" {
     #[link_name = "HIDWrite"]
     pub unsafe fn write(
         handle: Handle,
-        buf: *mut u8,
+        buf: *const u8,
         buf_len: u32,
         callback: Callback,
         context: *mut ffi::c_void,

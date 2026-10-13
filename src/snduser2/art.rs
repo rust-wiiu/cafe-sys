@@ -49,7 +49,7 @@ pub struct Art {
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Lfo {
-    pub lfo: *mut f32,
+    pub lfo: *const f32,
     pub length: u32,
     pub delta: f32,
     pub sample_index: u32,
@@ -410,7 +410,7 @@ unsafe extern "C" {
     /// `samples` is one period of `length` samples.
     #[doc(alias = "AXARTInitLfo")]
     #[link_name = "AXARTInitLfo"]
-    pub unsafe fn init_lfo(lfo: *mut Lfo, samples: *mut f32, length: u32, delta: f32);
+    pub unsafe fn init_lfo(lfo: *mut Lfo, samples: *const f32, length: u32, delta: f32);
 
     /// AXARTInitArt3D
     #[doc(alias = "AXARTInitArt3D")]

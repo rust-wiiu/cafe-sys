@@ -857,7 +857,7 @@ unsafe extern "C" {
     /// KPADSetMplsDirReviseBase
     #[doc(alias = "KPADSetMplsDirReviseBase")]
     #[link_name = "KPADSetMplsDirReviseBase"]
-    pub unsafe fn set_mpls_dir_revise_base(chan: wpad::Channel, base: *mut MpDir);
+    pub unsafe fn set_mpls_dir_revise_base(chan: wpad::Channel, base: *const MpDir);
 
     /// KPADSetMplsDirReviseParam
     #[doc(alias = "KPADSetMplsDirReviseParam")]
@@ -867,7 +867,7 @@ unsafe extern "C" {
     /// KPADSetMplsDirection
     #[doc(alias = "KPADSetMplsDirection")]
     #[link_name = "KPADSetMplsDirection"]
-    pub unsafe fn set_mpls_direction(chan: wpad::Channel, dir: *mut MpDir);
+    pub unsafe fn set_mpls_direction(chan: wpad::Channel, dir: *const MpDir);
 
     /// KPADSetMplsDirectionMag
     #[doc(alias = "KPADSetMplsDirectionMag")]

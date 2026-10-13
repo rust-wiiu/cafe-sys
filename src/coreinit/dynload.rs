@@ -126,7 +126,7 @@ impl NotifyReason {
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct NotifyData {
-    pub name: *mut ffi::c_char,
+    pub name: *const ffi::c_char,
     pub text_addr: u32,
     pub text_offset: u32,
     pub text_size: u32,

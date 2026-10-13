@@ -28,8 +28,8 @@ pub type ControllerCallback = Option<unsafe extern "C" fn(track: *mut Track, con
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Track {
     pub sequence: *mut Sequence,
-    pub start: *mut u8,
-    pub end: *mut u8,
+    pub start: *const u8,
+    pub end: *const u8,
     pub current: *mut u8,
     /// MIDI running status.
     pub status: u8,
@@ -79,9 +79,9 @@ unsafe extern "C" {
     #[link_name = "SEQAddSequence"]
     pub unsafe fn add_sequence(
         sequence: *mut Sequence,
-        midi_stream: *mut u8,
-        wavetable: *mut u8,
-        samples: *mut u8,
+        midi_stream: *const u8,
+        wavetable: *const u8,
+        samples: *const u8,
         zero_buffer: *mut u8,
         priority_voice_alloc: u32,
         priority_note_on: u32,

@@ -858,7 +858,7 @@ unsafe extern "C" {
     /// AXFXReverbHiExpGetMemSize
     #[doc(alias = "AXFXReverbHiExpGetMemSize")]
     #[link_name = "AXFXReverbHiExpGetMemSize"]
-    pub unsafe fn reverb_hi_exp_get_mem_size(reverb: *mut ReverbHiExp) -> i32;
+    pub unsafe fn reverb_hi_exp_get_mem_size(reverb: *const ReverbHiExp) -> i32;
 
     /// AXFXReverbHiExpInit
     #[doc(alias = "AXFXReverbHiExpInit")]
@@ -892,7 +892,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFXReverbHiExpGetMemSizeDpl2")]
     #[link_name = "AXFXReverbHiExpGetMemSizeDpl2"]
     #[deprecated]
-    pub unsafe fn reverb_hi_exp_get_mem_size_dpl2(reverb: *mut ReverbHiExpDpl2) -> i32;
+    pub unsafe fn reverb_hi_exp_get_mem_size_dpl2(reverb: *const ReverbHiExpDpl2) -> i32;
 
     /// AXFXReverbHiExpInitDpl2
     #[doc(alias = "AXFXReverbHiExpInitDpl2")]
@@ -930,7 +930,7 @@ unsafe extern "C" {
     /// AXFXReverbHiGetMemSize
     #[doc(alias = "AXFXReverbHiGetMemSize")]
     #[link_name = "AXFXReverbHiGetMemSize"]
-    pub unsafe fn reverb_hi_get_mem_size(reverb: *mut ReverbHi) -> i32;
+    pub unsafe fn reverb_hi_get_mem_size(reverb: *const ReverbHi) -> i32;
 
     /// AXFXReverbHiInit
     #[doc(alias = "AXFXReverbHiInit")]
@@ -956,7 +956,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFXReverbHiGetMemSizeDpl2")]
     #[link_name = "AXFXReverbHiGetMemSizeDpl2"]
     #[deprecated]
-    pub unsafe fn reverb_hi_get_mem_size_dpl2(reverb: *mut ReverbHiDpl2) -> i32;
+    pub unsafe fn reverb_hi_get_mem_size_dpl2(reverb: *const ReverbHiDpl2) -> i32;
 
     /// AXFXReverbHiInitDpl2
     #[doc(alias = "AXFXReverbHiInitDpl2")]
@@ -988,7 +988,7 @@ unsafe extern "C" {
     /// AXFXReverbStdExpGetMemSize
     #[doc(alias = "AXFXReverbStdExpGetMemSize")]
     #[link_name = "AXFXReverbStdExpGetMemSize"]
-    pub unsafe fn reverb_std_exp_get_mem_size(reverb: *mut ReverbStdExp) -> i32;
+    pub unsafe fn reverb_std_exp_get_mem_size(reverb: *const ReverbStdExp) -> i32;
 
     /// AXFXReverbStdExpInit
     #[doc(alias = "AXFXReverbStdExpInit")]
@@ -1022,7 +1022,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFXReverbStdExpGetMemSizeDpl2")]
     #[link_name = "AXFXReverbStdExpGetMemSizeDpl2"]
     #[deprecated]
-    pub unsafe fn reverb_std_exp_get_mem_size_dpl2(reverb: *mut ReverbStdExpDpl2) -> i32;
+    pub unsafe fn reverb_std_exp_get_mem_size_dpl2(reverb: *const ReverbStdExpDpl2) -> i32;
 
     /// AXFXReverbStdExpInitDpl2
     #[doc(alias = "AXFXReverbStdExpInitDpl2")]
@@ -1061,7 +1061,7 @@ unsafe extern "C" {
     /// AXFXReverbStdGetMemSize
     #[doc(alias = "AXFXReverbStdGetMemSize")]
     #[link_name = "AXFXReverbStdGetMemSize"]
-    pub unsafe fn reverb_std_get_mem_size(reverb: *mut ReverbStd) -> i32;
+    pub unsafe fn reverb_std_get_mem_size(reverb: *const ReverbStd) -> i32;
 
     /// AXFXReverbStdInit
     #[doc(alias = "AXFXReverbStdInit")]
@@ -1087,7 +1087,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFXReverbStdGetMemSizeDpl2")]
     #[link_name = "AXFXReverbStdGetMemSizeDpl2"]
     #[deprecated]
-    pub unsafe fn reverb_std_get_mem_size_dpl2(reverb: *mut ReverbStdDpl2) -> i32;
+    pub unsafe fn reverb_std_get_mem_size_dpl2(reverb: *const ReverbStdDpl2) -> i32;
 
     /// AXFXReverbStdInitDpl2
     #[doc(alias = "AXFXReverbStdInitDpl2")]
@@ -1119,7 +1119,7 @@ unsafe extern "C" {
     /// AXFXDelayExpGetMemSize
     #[doc(alias = "AXFXDelayExpGetMemSize")]
     #[link_name = "AXFXDelayExpGetMemSize"]
-    pub unsafe fn delay_exp_get_mem_size(delay: *mut DelayExp) -> i32;
+    pub unsafe fn delay_exp_get_mem_size(delay: *const DelayExp) -> i32;
 
     /// AXFXDelayExpInit
     #[doc(alias = "AXFXDelayExpInit")]
@@ -1150,7 +1150,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFXDelayExpGetMemSizeDpl2")]
     #[link_name = "AXFXDelayExpGetMemSizeDpl2"]
     #[deprecated]
-    pub unsafe fn delay_exp_get_mem_size_dpl2(delay: *mut DelayExpDpl2) -> i32;
+    pub unsafe fn delay_exp_get_mem_size_dpl2(delay: *const DelayExpDpl2) -> i32;
 
     /// AXFXDelayExpInitDpl2
     #[doc(alias = "AXFXDelayExpInitDpl2")]
@@ -1188,7 +1188,7 @@ unsafe extern "C" {
     /// AXFXDelayGetMemSize
     #[doc(alias = "AXFXDelayGetMemSize")]
     #[link_name = "AXFXDelayGetMemSize"]
-    pub unsafe fn delay_get_mem_size(delay: *mut Delay) -> i32;
+    pub unsafe fn delay_get_mem_size(delay: *const Delay) -> i32;
 
     /// AXFXDelayInit
     #[doc(alias = "AXFXDelayInit")]
@@ -1214,7 +1214,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFXDelayGetMemSizeDpl2")]
     #[link_name = "AXFXDelayGetMemSizeDpl2"]
     #[deprecated]
-    pub unsafe fn delay_get_mem_size_dpl2(delay: *mut DelayDpl2) -> i32;
+    pub unsafe fn delay_get_mem_size_dpl2(delay: *const DelayDpl2) -> i32;
 
     /// AXFXDelayInitDpl2
     #[doc(alias = "AXFXDelayInitDpl2")]
@@ -1243,7 +1243,7 @@ unsafe extern "C" {
     /// AXFXChorusExpGetMemSize
     #[doc(alias = "AXFXChorusExpGetMemSize")]
     #[link_name = "AXFXChorusExpGetMemSize"]
-    pub unsafe fn chorus_exp_get_mem_size(chorus: *mut ChorusExp) -> i32;
+    pub unsafe fn chorus_exp_get_mem_size(chorus: *const ChorusExp) -> i32;
 
     /// AXFXChorusExpInit
     #[doc(alias = "AXFXChorusExpInit")]
@@ -1274,7 +1274,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFXChorusExpGetMemSizeDpl2")]
     #[link_name = "AXFXChorusExpGetMemSizeDpl2"]
     #[deprecated]
-    pub unsafe fn chorus_exp_get_mem_size_dpl2(chorus: *mut ChorusExpDpl2) -> i32;
+    pub unsafe fn chorus_exp_get_mem_size_dpl2(chorus: *const ChorusExpDpl2) -> i32;
 
     /// AXFXChorusExpInitDpl2
     #[doc(alias = "AXFXChorusExpInitDpl2")]
@@ -1312,7 +1312,7 @@ unsafe extern "C" {
     /// AXFXChorusGetMemSize
     #[doc(alias = "AXFXChorusGetMemSize")]
     #[link_name = "AXFXChorusGetMemSize"]
-    pub unsafe fn chorus_get_mem_size(chorus: *mut Chorus) -> i32;
+    pub unsafe fn chorus_get_mem_size(chorus: *const Chorus) -> i32;
 
     /// AXFXChorusInit
     #[doc(alias = "AXFXChorusInit")]
@@ -1338,7 +1338,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFXChorusGetMemSizeDpl2")]
     #[link_name = "AXFXChorusGetMemSizeDpl2"]
     #[deprecated]
-    pub unsafe fn chorus_get_mem_size_dpl2(chorus: *mut ChorusDpl2) -> i32;
+    pub unsafe fn chorus_get_mem_size_dpl2(chorus: *const ChorusDpl2) -> i32;
 
     /// AXFXChorusInitDpl2
     #[doc(alias = "AXFXChorusInitDpl2")]
@@ -1370,7 +1370,7 @@ unsafe extern "C" {
     /// AXFXMultiChReverbGetMemSize
     #[doc(alias = "AXFXMultiChReverbGetMemSize")]
     #[link_name = "AXFXMultiChReverbGetMemSize"]
-    pub unsafe fn multi_ch_reverb_get_mem_size(reverb: *mut MultiChReverb) -> i32;
+    pub unsafe fn multi_ch_reverb_get_mem_size(reverb: *const MultiChReverb) -> i32;
 
     /// AXFXMultiChReverbInit
     #[doc(alias = "AXFXMultiChReverbInit")]
@@ -1418,7 +1418,7 @@ unsafe extern "C" {
     /// AXFXMultiChDelayGetMemSize
     #[doc(alias = "AXFXMultiChDelayGetMemSize")]
     #[link_name = "AXFXMultiChDelayGetMemSize"]
-    pub unsafe fn multi_ch_delay_get_mem_size(delay: *mut MultiChDelay) -> i32;
+    pub unsafe fn multi_ch_delay_get_mem_size(delay: *const MultiChDelay) -> i32;
 
     /// AXFXMultiChDelayInit
     #[doc(alias = "AXFXMultiChDelayInit")]
@@ -1456,7 +1456,7 @@ unsafe extern "C" {
     /// AXFXMultiChChorusGetMemSize
     #[doc(alias = "AXFXMultiChChorusGetMemSize")]
     #[link_name = "AXFXMultiChChorusGetMemSize"]
-    pub unsafe fn multi_ch_chorus_get_mem_size(chorus: *mut MultiChChorus) -> i32;
+    pub unsafe fn multi_ch_chorus_get_mem_size(chorus: *const MultiChChorus) -> i32;
 
     /// AXFXMultiChChorusInit
     #[doc(alias = "AXFXMultiChChorusInit")]
@@ -1502,7 +1502,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX2chReverbGetMemSize")]
     #[link_name = "AXFX2chReverbGetMemSize"]
     #[deprecated(note = "Use multi_ch_reverb_* instead")]
-    pub unsafe fn reverb_2ch_get_mem_size(reverb: *mut MultiChReverb) -> i32;
+    pub unsafe fn reverb_2ch_get_mem_size(reverb: *const MultiChReverb) -> i32;
 
     /// AXFX2chReverbInit
     #[doc(alias = "AXFX2chReverbInit")]
@@ -1544,7 +1544,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX4chReverbGetMemSize")]
     #[link_name = "AXFX4chReverbGetMemSize"]
     #[deprecated(note = "Use multi_ch_reverb_* instead")]
-    pub unsafe fn reverb_4ch_get_mem_size(reverb: *mut MultiChReverb) -> i32;
+    pub unsafe fn reverb_4ch_get_mem_size(reverb: *const MultiChReverb) -> i32;
 
     /// AXFX4chReverbInit
     #[doc(alias = "AXFX4chReverbInit")]
@@ -1586,7 +1586,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX6chReverbGetMemSize")]
     #[link_name = "AXFX6chReverbGetMemSize"]
     #[deprecated(note = "Use multi_ch_reverb_* instead")]
-    pub unsafe fn reverb_6ch_get_mem_size(reverb: *mut MultiChReverb) -> i32;
+    pub unsafe fn reverb_6ch_get_mem_size(reverb: *const MultiChReverb) -> i32;
 
     /// AXFX6chReverbInit
     #[doc(alias = "AXFX6chReverbInit")]
@@ -1628,7 +1628,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX6ch6chReverbGetMemSize")]
     #[link_name = "AXFX6ch6chReverbGetMemSize"]
     #[deprecated(note = "Use multi_ch_reverb_* instead")]
-    pub unsafe fn reverb_6ch_6ch_get_mem_size(reverb: *mut MultiChReverb) -> i32;
+    pub unsafe fn reverb_6ch_6ch_get_mem_size(reverb: *const MultiChReverb) -> i32;
 
     /// AXFX6ch6chReverbInit
     #[doc(alias = "AXFX6ch6chReverbInit")]
@@ -1670,7 +1670,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX6chMultiDelayGetMemSize")]
     #[link_name = "AXFX6chMultiDelayGetMemSize"]
     #[deprecated(note = "Use multi_ch_delay_* instead")]
-    pub unsafe fn multi_delay_6ch_get_mem_size(multi_delay: *mut MultiChDelay) -> i32;
+    pub unsafe fn multi_delay_6ch_get_mem_size(multi_delay: *const MultiChDelay) -> i32;
 
     /// AXFX6chMultiDelayInit
     #[doc(alias = "AXFX6chMultiDelayInit")]
@@ -1703,7 +1703,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX2chMultiDelayGetMemSize")]
     #[link_name = "AXFX2chMultiDelayGetMemSize"]
     #[deprecated(note = "Use multi_ch_delay_* instead")]
-    pub unsafe fn multi_delay_2ch_get_mem_size(multi_delay: *mut MultiChDelay) -> i32;
+    pub unsafe fn multi_delay_2ch_get_mem_size(multi_delay: *const MultiChDelay) -> i32;
 
     /// AXFX2chMultiDelayInit
     #[doc(alias = "AXFX2chMultiDelayInit")]
@@ -1736,7 +1736,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX4chMultiDelayGetMemSize")]
     #[link_name = "AXFX4chMultiDelayGetMemSize"]
     #[deprecated(note = "Use multi_ch_delay_* instead")]
-    pub unsafe fn multi_delay_4ch_get_mem_size(multi_delay: *mut MultiChDelay) -> i32;
+    pub unsafe fn multi_delay_4ch_get_mem_size(multi_delay: *const MultiChDelay) -> i32;
 
     /// AXFX4chMultiDelayInit
     #[doc(alias = "AXFX4chMultiDelayInit")]
@@ -1769,7 +1769,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX6chChorusGetMemSize")]
     #[link_name = "AXFX6chChorusGetMemSize"]
     #[deprecated(note = "Use multi_ch_chorus_* instead")]
-    pub unsafe fn chorus_6ch_get_mem_size(chorus: *mut MultiChChorus) -> i32;
+    pub unsafe fn chorus_6ch_get_mem_size(chorus: *const MultiChChorus) -> i32;
 
     /// AXFX6chChorusInit
     #[doc(alias = "AXFX6chChorusInit")]
@@ -1808,7 +1808,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX2chChorusGetMemSize")]
     #[link_name = "AXFX2chChorusGetMemSize"]
     #[deprecated(note = "Use multi_ch_chorus_* instead")]
-    pub unsafe fn chorus_2ch_get_mem_size(chorus: *mut MultiChChorus) -> i32;
+    pub unsafe fn chorus_2ch_get_mem_size(chorus: *const MultiChChorus) -> i32;
 
     /// AXFX2chChorusInit
     #[doc(alias = "AXFX2chChorusInit")]
@@ -1847,7 +1847,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX4chChorusGetMemSize")]
     #[link_name = "AXFX4chChorusGetMemSize"]
     #[deprecated(note = "Use multi_ch_chorus_* instead")]
-    pub unsafe fn chorus_4ch_get_mem_size(chorus: *mut MultiChChorus) -> i32;
+    pub unsafe fn chorus_4ch_get_mem_size(chorus: *const MultiChChorus) -> i32;
 
     /// AXFX4chChorusInit
     #[doc(alias = "AXFX4chChorusInit")]
@@ -1990,7 +1990,7 @@ unsafe extern "C" {
     #[doc(alias = "AXFX2DelayGetMemSize")]
     #[link_name = "AXFX2DelayGetMemSize"]
     pub unsafe fn delay2_get_mem_size(
-        delay: *mut Delay2,
+        delay: *const Delay2,
         mode: DelayMode,
         sample_rate: SampleRate,
     ) -> i32;

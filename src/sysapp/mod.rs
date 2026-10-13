@@ -258,7 +258,7 @@ unsafe extern "C" {
     /// SYSRelaunchTitle
     #[doc(alias = "SYSRelaunchTitle")]
     #[link_name = "SYSRelaunchTitle"]
-    pub unsafe fn relaunch_title(argc: u32, argv: *mut *mut ffi::c_char) -> Error;
+    pub unsafe fn relaunch_title(argc: u32, argv: *const *const ffi::c_char) -> Error;
 
     /// SYSLaunchMenu
     ///
@@ -412,7 +412,7 @@ unsafe extern "C" {
     #[doc(alias = "SYSDeserializeSysArgsFromBlock")]
     #[link_name = "SYSDeserializeSysArgsFromBlock"]
     pub unsafe fn deserialize_sys_args_from_block(
-        block: *mut ffi::c_void,
+        block: *const ffi::c_void,
         block_size: u32,
         callback: DeserializeCallback,
         user_arg: *mut ffi::c_void,

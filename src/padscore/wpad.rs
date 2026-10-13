@@ -1051,7 +1051,7 @@ unsafe extern "C" {
     /// WPADSendStreamData
     #[doc(alias = "WPADSendStreamData")]
     #[link_name = "WPADSendStreamData"]
-    pub unsafe fn send_stream_data(chan: Channel, buf: *mut ffi::c_void, len: u16) -> Error;
+    pub unsafe fn send_stream_data(chan: Channel, buf: *const ffi::c_void, len: u16) -> Error;
 
     /// WPADCanSendStreamData
     #[doc(alias = "WPADCanSendStreamData")]
@@ -1142,7 +1142,7 @@ unsafe extern "C" {
     #[link_name = "WPADWriteMemoryAsync"]
     pub unsafe fn write_memory_async(
         chan: Channel,
-        src: *mut ffi::c_void,
+        src: *const ffi::c_void,
         size: u32,
         addr: u32,
         callback: Callback,

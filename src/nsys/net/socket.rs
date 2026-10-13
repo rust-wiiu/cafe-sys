@@ -302,11 +302,11 @@ pub struct RecvFromMultiBuffers {
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SendToMultiExBuffers {
-    pub buf: *mut ffi::c_void,
+    pub buf: *const ffi::c_void,
     pub buf_len: ffi::c_uint,
-    pub datagram_lens: *mut ffi::c_int,
+    pub datagram_lens: *const ffi::c_int,
     pub datagram_lens_len: ffi::c_uint,
-    pub dests: *mut SockAddr,
+    pub dests: *const SockAddr,
     pub dests_len: ffi::c_uint,
     pub results: *mut ffi::c_int,
     pub results_len: ffi::c_uint,
@@ -577,7 +577,7 @@ unsafe extern "C" {
     pub unsafe fn sendto_multi_ex(
         fd: FileDescriptor,
         flags: MsgFlags,
-        bufs: *mut SendToMultiExBuffers,
+        bufs: *const SendToMultiExBuffers,
         datagram_count: ffi::c_int,
     ) -> ffi::c_int;
 

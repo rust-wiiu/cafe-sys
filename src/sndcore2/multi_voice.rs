@@ -33,7 +33,7 @@ unsafe extern "C" {
         priority: Priority,
         callback: CallbackEx,
         user_context: *mut ffi::c_void,
-        adpcm: *mut DspAdpcm,
+        adpcm: *const DspAdpcm,
         multi_voice: *mut *mut MultiVoice,
     ) -> Error;
 
@@ -109,7 +109,7 @@ unsafe extern "C" {
     /// AXSetMultiVoiceOffsets
     #[doc(alias = "AXSetMultiVoiceOffsets")]
     #[link_name = "AXSetMultiVoiceOffsets"]
-    pub unsafe fn set_offsets(multi_voice: *mut MultiVoice, offsets: *mut Offsets);
+    pub unsafe fn set_offsets(multi_voice: *mut MultiVoice, offsets: *const Offsets);
 
     /// AXGetMultiVoiceOffsets
     #[doc(alias = "AXGetMultiVoiceOffsets")]
@@ -139,12 +139,12 @@ unsafe extern "C" {
     /// AXSetMultiVoiceAdpcm
     #[doc(alias = "AXSetMultiVoiceAdpcm")]
     #[link_name = "AXSetMultiVoiceAdpcm"]
-    pub unsafe fn set_adpcm(multi_voice: *mut MultiVoice, adpcm: *mut DspAdpcm);
+    pub unsafe fn set_adpcm(multi_voice: *mut MultiVoice, adpcm: *const DspAdpcm);
 
     /// AXSetMultiVoiceAdpcmLoop
     #[doc(alias = "AXSetMultiVoiceAdpcmLoop")]
     #[link_name = "AXSetMultiVoiceAdpcmLoop"]
-    pub unsafe fn set_adpcm_loop(multi_voice: *mut MultiVoice, loop_data: *mut AdpcmLoopData);
+    pub unsafe fn set_adpcm_loop(multi_voice: *mut MultiVoice, loop_data: *const AdpcmLoopData);
 
     /// AXSetMultiVoiceSrc
     #[doc(alias = "AXSetMultiVoiceSrc")]

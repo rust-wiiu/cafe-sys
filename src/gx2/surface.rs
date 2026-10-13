@@ -189,7 +189,7 @@ unsafe extern "C" {
     #[doc(alias = "GX2CalcDepthBufferHiZInfo")]
     #[link_name = "GX2CalcDepthBufferHiZInfo"]
     pub unsafe fn calc_depth_buffer_hi_z_info(
-        depth_buffer: *mut DepthBuffer,
+        depth_buffer: *const DepthBuffer,
         size: *mut u32,
         alignment: *mut u32,
     );
@@ -200,7 +200,7 @@ unsafe extern "C" {
     #[doc(alias = "GX2CalcColorBufferAuxInfo")]
     #[link_name = "GX2CalcColorBufferAuxInfo"]
     pub unsafe fn calc_color_buffer_aux_info(
-        color_buffer: *mut ColorBuffer,
+        color_buffer: *const ColorBuffer,
         size: *mut u32,
         alignment: *mut u32,
     );

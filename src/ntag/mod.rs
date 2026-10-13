@@ -331,7 +331,7 @@ unsafe extern "C" {
     pub unsafe fn format(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
+        uid: *const nfc::Uid,
         rw_size: u16,
         rw_data: *const ffi::c_void,
         callback: Callback,
@@ -344,8 +344,8 @@ unsafe extern "C" {
     pub unsafe fn set_read_only(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        uid_mask: *mut nfc::Uid,
+        uid: *const nfc::Uid,
+        uid_mask: *const nfc::Uid,
         read_only: ffi::c_bool,
         callback: Callback,
         context: *mut ffi::c_void,
@@ -357,8 +357,8 @@ unsafe extern "C" {
     pub unsafe fn read(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        uid_mask: *mut nfc::Uid,
+        uid: *const nfc::Uid,
+        uid_mask: *const nfc::Uid,
         callback: ReadCallback,
         context: *mut ffi::c_void,
     ) -> Error;
@@ -369,7 +369,7 @@ unsafe extern "C" {
     pub unsafe fn write(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
+        uid: *const nfc::Uid,
         rw_size: u16,
         rw_data: *const ffi::c_void,
         callback: Callback,
@@ -382,8 +382,8 @@ unsafe extern "C" {
     pub unsafe fn read_t2t(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        uid_mask: *mut nfc::Uid,
+        uid: *const nfc::Uid,
+        uid_mask: *const nfc::Uid,
         callback: ReadT2TCallback,
         context: *mut ffi::c_void,
     ) -> Error;
@@ -394,8 +394,8 @@ unsafe extern "C" {
     pub unsafe fn read_t2t_raw_data(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        uid_mask: *mut nfc::Uid,
+        uid: *const nfc::Uid,
+        uid_mask: *const nfc::Uid,
         callback: ReadT2TRawDataCallback,
         context: *mut ffi::c_void,
     ) -> Error;
@@ -406,8 +406,8 @@ unsafe extern "C" {
     pub unsafe fn write_t2t(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        data: *mut RawDataContainerT2T,
+        uid: *const nfc::Uid,
+        data: *const RawDataContainerT2T,
         callback: Callback,
         context: *mut ffi::c_void,
     ) -> Error;
@@ -418,11 +418,11 @@ unsafe extern "C" {
     pub unsafe fn write_t2t_config_area(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        cfg0: *mut u32,
-        cfg1: *mut u32,
-        pwd: *mut u32,
-        pack: *mut u16,
+        uid: *const nfc::Uid,
+        cfg0: *const u32,
+        cfg1: *const u32,
+        pwd: *const u32,
+        pack: *const u16,
         callback: Callback,
         context: *mut ffi::c_void,
     ) -> Error;
@@ -433,10 +433,10 @@ unsafe extern "C" {
     pub unsafe fn write_t2t_lock_area(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        lock_bytes: *mut u32,
-        dynamic_lock: *mut u32,
-        cc: *mut u32,
+        uid: *const nfc::Uid,
+        lock_bytes: *const u32,
+        dynamic_lock: *const u32,
+        cc: *const u32,
         callback: Callback,
         context: *mut ffi::c_void,
     ) -> Error;
@@ -447,8 +447,8 @@ unsafe extern "C" {
     pub unsafe fn write_t2t_raw_data(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        data: *mut RawDataT2T,
+        uid: *const nfc::Uid,
+        data: *const RawDataT2T,
         callback: Callback,
         context: *mut ffi::c_void,
     ) -> Error;
@@ -459,8 +459,8 @@ unsafe extern "C" {
     pub unsafe fn write_t2t_raw_data_ex(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        data: *mut RawDataT2T,
+        uid: *const nfc::Uid,
+        data: *const RawDataT2T,
         callback: Callback,
         context: *mut ffi::c_void,
         authenticate: u8,
@@ -472,8 +472,8 @@ unsafe extern "C" {
     pub unsafe fn write_t2t_with_convert(
         chan: Channel,
         timeout: u16,
-        uid: *mut nfc::Uid,
-        data: *mut DataT2T,
+        uid: *const nfc::Uid,
+        data: *const DataT2T,
         callback: Callback,
         context: *mut ffi::c_void,
     ) -> Error;
@@ -481,13 +481,13 @@ unsafe extern "C" {
     /// NTAGConvertT2T
     #[doc(alias = "NTAGConvertT2T")]
     #[link_name = "NTAGConvertT2T"]
-    pub unsafe fn convert_t2t(out: *mut DataT2T, data: *mut DataT2T) -> Error;
+    pub unsafe fn convert_t2t(out: *mut DataT2T, data: *const DataT2T) -> Error;
 
     /// NTAGParseHeader
     #[doc(alias = "NTAGParseHeader")]
     #[link_name = "NTAGParseHeader"]
     pub unsafe fn parse_header(
-        data: *mut ffi::c_void,
+        data: *const ffi::c_void,
         noft: *mut NoftHeader,
         info: *mut InfoHeader,
         rw: *mut AreaHeader,

@@ -253,7 +253,7 @@ unsafe extern "C" {
     #[link_name = "smdPpcSendMessage"]
     pub unsafe fn ppc_send_message(
         smd: *mut Ppc,
-        message: *mut ffi::c_void,
+        message: *const ffi::c_void,
         message_size: u32,
     ) -> Error;
 
@@ -263,14 +263,14 @@ unsafe extern "C" {
     pub unsafe fn ppc_send_vector_spec(
         smd: *mut Ppc,
         command: u32,
-        specs: *mut VectorSpec,
+        specs: *const VectorSpec,
         specs_count: i32,
     ) -> Error;
 
     /// smdPpcSendVector
     #[doc(alias = "smdPpcSendVector")]
     #[link_name = "smdPpcSendVector"]
-    pub unsafe fn ppc_send_vector(smd: *mut Ppc, vector: *mut Vector) -> Error;
+    pub unsafe fn ppc_send_vector(smd: *mut Ppc, vector: *const Vector) -> Error;
 
     /// smdSimpleBufPoolCreate
     #[doc(alias = "smdSimpleBufPoolCreate")]

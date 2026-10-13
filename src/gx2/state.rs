@@ -103,7 +103,7 @@ unsafe extern "C" {
     /// `attributes` is null or a list of [InitAttributes][super::enums::InitAttributes] and value pairs, terminated by [InitAttributes::END][super::enums::InitAttributes::END]. The calling core becomes the main GX2 core.
     #[doc(alias = "GX2Init")]
     #[link_name = "GX2Init"]
-    pub unsafe fn init(attributes: *mut u32);
+    pub unsafe fn init(attributes: *const u32);
 
     /// GX2Shutdown
     #[doc(alias = "GX2Shutdown")]

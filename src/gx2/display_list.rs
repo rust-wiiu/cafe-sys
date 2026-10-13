@@ -77,6 +77,6 @@ unsafe extern "C" {
         display_list: *mut ffi::c_void,
         kind: PatchType,
         offset: u32,
-        object: *mut ffi::c_void,
+        object: *const ffi::c_void,
     );
 }

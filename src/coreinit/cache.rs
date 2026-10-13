@@ -69,7 +69,7 @@ unsafe extern "C" {
     /// ICInvalidateRange
     #[doc(alias = "ICInvalidateRange")]
     #[link_name = "ICInvalidateRange"]
-    pub unsafe fn ic_invalidate_range(addr: *mut ffi::c_void, size: u32);
+    pub unsafe fn ic_invalidate_range(addr: *const ffi::c_void, size: u32);
 
     /// OSMemoryBarrier
     #[doc(alias = "OSMemoryBarrier")]

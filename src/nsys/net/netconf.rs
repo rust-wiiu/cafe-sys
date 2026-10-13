@@ -465,7 +465,7 @@ unsafe extern "C" {
 
     /// netconf_set_running
     #[link_name = "netconf_set_running"]
-    pub unsafe fn set_running(config: *mut Profile) -> Error;
+    pub unsafe fn set_running(config: *const Profile) -> Error;
 
     /// netconf_get_startup_profile_id
     ///
@@ -507,7 +507,7 @@ unsafe extern "C" {
     ///
     /// Writes a stored profile.
     #[link_name = "netconf_nv_write"]
-    pub unsafe fn nv_write(id: ProfileId, config: *mut Profile) -> Error;
+    pub unsafe fn nv_write(id: ProfileId, config: *const Profile) -> Error;
 
     /// netconf_nv_load
     #[link_name = "netconf_nv_load"]
@@ -523,7 +523,7 @@ unsafe extern "C" {
 
     /// netconf_write_aoss_config
     #[link_name = "netconf_write_aoss_config"]
-    pub unsafe fn write_aoss_config(id: ProfileId, config: *mut AossConfig) -> Error;
+    pub unsafe fn write_aoss_config(id: ProfileId, config: *const AossConfig) -> Error;
 
     /// netconf_read_compat_profile_id
     #[link_name = "netconf_read_compat_profile_id"]
@@ -563,7 +563,7 @@ unsafe extern "C" {
 
     /// netconf_set_if_ipv4_info
     #[link_name = "netconf_set_if_ipv4_info"]
-    pub unsafe fn set_if_ipv4_info(info: *mut Ipv4Info) -> Error;
+    pub unsafe fn set_if_ipv4_info(info: *const Ipv4Info) -> Error;
 
     /// netconf_get_if_ipv4_info_ex
     #[link_name = "netconf_get_if_ipv4_info_ex"]
@@ -571,7 +571,7 @@ unsafe extern "C" {
 
     /// netconf_set_if_ipv4_info_ex
     #[link_name = "netconf_set_if_ipv4_info_ex"]
-    pub unsafe fn set_if_ipv4_info_ex(nic: Nic, info: *mut Ipv4Info) -> Error;
+    pub unsafe fn set_if_ipv4_info_ex(nic: Nic, info: *const Ipv4Info) -> Error;
 
     /// netconf_get_interface_mtu
     #[link_name = "netconf_get_interface_mtu"]
@@ -603,7 +603,7 @@ unsafe extern "C" {
 
     /// netconf_set_dns
     #[link_name = "netconf_set_dns"]
-    pub unsafe fn set_dns(nic: Nic, dns1: *mut u32, dns2: *mut u32) -> Error;
+    pub unsafe fn set_dns(nic: Nic, dns1: *const u32, dns2: *const u32) -> Error;
 
     /// netconf_get_eth_cfg
     #[link_name = "netconf_get_eth_cfg"]
@@ -611,7 +611,7 @@ unsafe extern "C" {
 
     /// netconf_set_eth_cfg
     #[link_name = "netconf_set_eth_cfg"]
-    pub unsafe fn set_eth_cfg(config: *mut EthConfig) -> Error;
+    pub unsafe fn set_eth_cfg(config: *const EthConfig) -> Error;
 
     /// netconf_get_wifi_cfg
     #[link_name = "netconf_get_wifi_cfg"]
@@ -619,7 +619,7 @@ unsafe extern "C" {
 
     /// netconf_set_wifi_cfg
     #[link_name = "netconf_set_wifi_cfg"]
-    pub unsafe fn set_wifi_cfg(config: *mut WifiConfig) -> Error;
+    pub unsafe fn set_wifi_cfg(config: *const WifiConfig) -> Error;
 
     /// netconf_get_last_wifi_link_error
     #[link_name = "netconf_get_last_wifi_link_error"]
@@ -631,7 +631,7 @@ unsafe extern "C" {
 
     /// netconf_set_proxy_config
     #[link_name = "netconf_set_proxy_config"]
-    pub unsafe fn set_proxy_config(config: *mut ProxyConfig) -> Error;
+    pub unsafe fn set_proxy_config(config: *const ProxyConfig) -> Error;
 
     /// SOGetProxyConfig
     #[link_name = "SOGetProxyConfig"]

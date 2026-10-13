@@ -110,7 +110,7 @@ unsafe extern "C" {
     /// _GX2DebugSetCaptureInterface
     #[doc(alias = "_GX2DebugSetCaptureInterface")]
     #[link_name = "_GX2DebugSetCaptureInterface"]
-    pub unsafe fn set_capture_interface(interface: *mut DebugCaptureInterface) -> ffi::c_bool;
+    pub unsafe fn set_capture_interface(interface: *const DebugCaptureInterface) -> ffi::c_bool;
 
     /// GX2DebugCaptureStart
     ///

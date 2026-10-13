@@ -100,7 +100,7 @@ unsafe extern "C" {
         instance: u32,
         attribute: *const ffi::c_char,
         options_size: u32,
-        options: *mut ffi::c_void,
+        options: *const ffi::c_void,
     ) -> Error;
 
     /// bspShutdown
@@ -136,7 +136,7 @@ unsafe extern "C" {
         instance: u8,
         attribute: *const ffi::c_char,
         size: usize,
-        data: *mut ffi::c_void,
+        data: *const ffi::c_void,
     ) -> Error;
 
     /// bspQuery

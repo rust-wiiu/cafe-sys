@@ -396,7 +396,7 @@ unsafe extern "C" {
     #[link_name = "UhsClassDrvReg"]
     pub unsafe fn class_drv_reg(
         client: *mut Client,
-        filter: *mut InterfaceFilter,
+        filter: *const InterfaceFilter,
         context: *mut ffi::c_void,
         probe: ProbeCallback,
     ) -> DevRegHandle;
@@ -409,7 +409,7 @@ unsafe extern "C" {
     #[link_name = "UhsQueryInterfaces"]
     pub unsafe fn query_interfaces(
         client: *mut Client,
-        filter: *mut InterfaceFilter,
+        filter: *const InterfaceFilter,
         profiles: *mut InterfaceProfile,
         max_profiles: u32,
     ) -> Status;

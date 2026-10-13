@@ -390,7 +390,7 @@ pub mod kpr {
         /// KPRGetMode
         #[doc(alias = "KPRGetMode")]
         #[link_name = "KPRGetMode"]
-        pub unsafe fn get_mode(queue: *mut Queue) -> Mode;
+        pub unsafe fn get_mode(queue: *const Queue) -> Mode;
 
         /// KPRPutChar
         #[doc(alias = "KPRPutChar")]

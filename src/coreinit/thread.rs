@@ -362,7 +362,7 @@ unsafe extern "C" {
     /// OSIsThreadSuspended
     #[doc(alias = "OSIsThreadSuspended")]
     #[link_name = "OSIsThreadSuspended"]
-    pub unsafe fn is_suspended(thread: *mut Thread) -> ffi::c_bool;
+    pub unsafe fn is_suspended(thread: *const Thread) -> ffi::c_bool;
 
     /// OSIsThreadTerminated
     #[doc(alias = "OSIsThreadTerminated")]
@@ -408,7 +408,7 @@ unsafe extern "C" {
     /// OSGetThreadPriority
     #[doc(alias = "OSGetThreadPriority")]
     #[link_name = "OSGetThreadPriority"]
-    pub unsafe fn get_priority(thread: *mut Thread) -> Priority;
+    pub unsafe fn get_priority(thread: *const Thread) -> Priority;
 
     /// OSSetThreadPriority
     #[doc(alias = "OSSetThreadPriority")]
@@ -418,7 +418,7 @@ unsafe extern "C" {
     /// OSGetThreadAffinity
     #[doc(alias = "OSGetThreadAffinity")]
     #[link_name = "OSGetThreadAffinity"]
-    pub unsafe fn get_affinity(thread: *mut Thread) -> ThreadAttributes;
+    pub unsafe fn get_affinity(thread: *const Thread) -> ThreadAttributes;
 
     /// OSSetThreadAffinity
     ///
@@ -503,7 +503,7 @@ unsafe extern "C" {
     /// OSGetUserStackPointer
     #[doc(alias = "OSGetUserStackPointer")]
     #[link_name = "OSGetUserStackPointer"]
-    pub unsafe fn get_user_stack_pointer(thread: *mut Thread) -> u32;
+    pub unsafe fn get_user_stack_pointer(thread: *const Thread) -> u32;
 
     /// OSClearStack
     ///

@@ -207,7 +207,7 @@ unsafe extern "C" {
     /// AXSetDeviceCompressorTable
     #[doc(alias = "AXSetDeviceCompressorTable")]
     #[link_name = "AXSetDeviceCompressorTable"]
-    pub unsafe fn set_compressor_table(device: DeviceType, table: *mut u16, frames: u16) -> Error;
+    pub unsafe fn set_compressor_table(device: DeviceType, table: *const u16, frames: u16) -> Error;
 
     /// AXMakeCompressorTable
     ///

@@ -45,7 +45,7 @@ unsafe extern "C" {
     /// WBCSetZEROPoint
     #[doc(alias = "WBCSetZEROPoint")]
     #[link_name = "WBCSetZEROPoint"]
-    pub unsafe fn set_zero_point(press_ave: *mut f64, size: u32) -> Error;
+    pub unsafe fn set_zero_point(press_ave: *const f64, size: u32) -> Error;
 
     /// WBCGetZEROPoint
     #[doc(alias = "WBCGetZEROPoint")]
@@ -60,7 +60,7 @@ unsafe extern "C" {
     pub unsafe fn get_tgc_weight(
         total_weight_ave: f64,
         tgc_weight: *mut f64,
-        status: *mut BlStatus,
+        status: *const BlStatus,
     ) -> Error;
 
     /// WBCGetTCWeight

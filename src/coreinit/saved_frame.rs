@@ -91,7 +91,7 @@ unsafe extern "C" {
     /// __OSSetSavedFrame
     #[doc(alias = "__OSSetSavedFrame")]
     #[link_name = "__OSSetSavedFrame"]
-    pub unsafe fn set(screen: SavedFrameScreen, data: *mut ffi::c_void, size: u32) -> ffi::c_int;
+    pub unsafe fn set(screen: SavedFrameScreen, data: *const ffi::c_void, size: u32) -> ffi::c_int;
 
     /// __OSSetSavedFrameGamma
     #[doc(alias = "__OSSetSavedFrameGamma")]

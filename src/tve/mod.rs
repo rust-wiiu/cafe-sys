@@ -175,7 +175,7 @@ unsafe extern "C" {
     pub unsafe fn cec_send_command(
         destination: CecLogicalAddress,
         op_code: CecOpCode,
-        parameters: *mut u8,
+        parameters: *const u8,
         num_parameters: u8,
     ) -> ffi::c_bool;
 

@@ -107,5 +107,5 @@ unsafe extern "C" {
     /// GX2DispatchCompute
     #[doc(alias = "GX2DispatchCompute")]
     #[link_name = "GX2DispatchCompute"]
-    pub unsafe fn dispatch_compute(params: *mut DispatchParams);
+    pub unsafe fn dispatch_compute(params: *const DispatchParams);
 }

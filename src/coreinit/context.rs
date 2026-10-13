@@ -144,7 +144,7 @@ unsafe extern "C" {
     /// Prints the registers of `context`.
     #[doc(alias = "OSDumpContext")]
     #[link_name = "OSDumpContext"]
-    pub unsafe fn dump(context: *mut Context);
+    pub unsafe fn dump(context: *const Context);
 
     /// OSSwitchStack
     ///

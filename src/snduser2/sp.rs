@@ -54,7 +54,7 @@ unsafe extern "C" {
     /// Resolves the entries of `table` against `samples`. If `data_size` is not null, the size of the sample data in bytes is written to it.
     #[doc(alias = "SPInitSoundTable")]
     #[link_name = "SPInitSoundTable"]
-    pub unsafe fn init_sound_table(table: *mut SoundTable, samples: *mut u8, data_size: *mut u32);
+    pub unsafe fn init_sound_table(table: *mut SoundTable, samples: *const u8, data_size: *mut u32);
 
     /// SPGetSoundEntry
     #[doc(alias = "SPGetSoundEntry")]
@@ -66,12 +66,12 @@ unsafe extern "C" {
     /// Sets up `voice` to play `sound` at `sample_rate`.
     #[doc(alias = "SPPrepareSound")]
     #[link_name = "SPPrepareSound"]
-    pub unsafe fn prepare_sound(sound: *mut SoundEntry, voice: *mut Voice, sample_rate: u32);
+    pub unsafe fn prepare_sound(sound: *const SoundEntry, voice: *mut Voice, sample_rate: u32);
 
     /// SPPrepareEnd
     ///
     /// Lets a playing looped sound play to its end and stop.
     #[doc(alias = "SPPrepareEnd")]
     #[link_name = "SPPrepareEnd"]
-    pub unsafe fn prepare_end(sound: *mut SoundEntry, voice: *mut Voice);
+    pub unsafe fn prepare_end(sound: *const SoundEntry, voice: *mut Voice);
 }

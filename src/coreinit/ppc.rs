@@ -312,7 +312,7 @@ unsafe extern "C" {
     /// Halts with a message.
     #[doc(alias = "PPCHalt")]
     #[link_name = "PPCHalt"]
-    pub unsafe fn halt(message: *mut ffi::c_char, size: u32);
+    pub unsafe fn halt(message: *const ffi::c_char, size: u32);
 
     /// __PPCHalt
     #[doc(alias = "__PPCHalt")]

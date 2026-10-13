@@ -101,7 +101,7 @@ pub struct Date {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ApplicationAreaCreateInfo {
     pub access_id: u32,
-    pub data: *mut ffi::c_void,
+    pub data: *const ffi::c_void,
     pub size: u32,
     pub reserved: ffi::unknown<0x30>,
 }

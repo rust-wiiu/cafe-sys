@@ -151,7 +151,7 @@ unsafe extern "C" {
     /// H264DECSetParam
     #[doc(alias = "H264DECSetParam")]
     #[link_name = "H264DECSetParam"]
-    pub unsafe fn set_param(mem: *mut ffi::c_void, id: ParamId, param: *mut ffi::c_void) -> Error;
+    pub unsafe fn set_param(mem: *mut ffi::c_void, id: ParamId, param: *const ffi::c_void) -> Error;
 
     /// H264DECOpen
     #[doc(alias = "H264DECOpen")]
@@ -249,7 +249,7 @@ unsafe extern "C" {
     /// Returns -1 if the memory crosses a 256 MB boundary, [Error::PARAM] for a null pointer or zero size.
     #[doc(alias = "H264DECCheckMemSegmentation")]
     #[link_name = "H264DECCheckMemSegmentation"]
-    pub unsafe fn check_memory_segmentation(mem: *mut ffi::c_void, size: u32) -> Error;
+    pub unsafe fn check_memory_segmentation(mem: *const ffi::c_void, size: u32) -> Error;
 
     /// H264DECCheckSkipableFrame
     #[doc(alias = "H264DECCheckSkipableFrame")]

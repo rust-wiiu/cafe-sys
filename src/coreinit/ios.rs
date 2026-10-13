@@ -148,7 +148,7 @@ unsafe extern "C" {
     pub unsafe fn ioctl(
         handle: Handle,
         request: u32,
-        in_buf: *mut ffi::c_void,
+        in_buf: *const ffi::c_void,
         in_len: u32,
         out_buf: *mut ffi::c_void,
         out_len: u32,
@@ -160,7 +160,7 @@ unsafe extern "C" {
     pub unsafe fn ioctl_async(
         handle: Handle,
         request: u32,
-        in_buf: *mut ffi::c_void,
+        in_buf: *const ffi::c_void,
         in_len: u32,
         out_buf: *mut ffi::c_void,
         out_len: u32,

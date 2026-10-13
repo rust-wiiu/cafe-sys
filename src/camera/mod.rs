@@ -225,7 +225,7 @@ unsafe extern "C" {
     /// CAMInit
     #[doc(alias = "CAMInit")]
     #[link_name = "CAMInit"]
-    pub unsafe fn init(instance: Instance, setup: *mut SetupInfo, err: *mut Error) -> Handle;
+    pub unsafe fn init(instance: Instance, setup: *const SetupInfo, err: *mut Error) -> Handle;
 
     /// CAMExit
     #[doc(alias = "CAMExit")]
@@ -247,7 +247,7 @@ unsafe extern "C" {
     /// Returns the size of the work memory in bytes.
     #[doc(alias = "CAMGetMemReq")]
     #[link_name = "CAMGetMemReq"]
-    pub unsafe fn memory_requirement(stream_info: *mut StreamInfo) -> ffi::c_int;
+    pub unsafe fn memory_requirement(stream_info: *const StreamInfo) -> ffi::c_int;
 
     /// CAMSubmitTargetSurface
     #[doc(alias = "CAMSubmitTargetSurface")]
@@ -267,7 +267,7 @@ unsafe extern "C" {
     /// CAMSetState
     #[doc(alias = "CAMSetState")]
     #[link_name = "CAMSetState"]
-    pub unsafe fn set_state(handle: Handle, state: State, value: *mut ffi::c_int) -> Error;
+    pub unsafe fn set_state(handle: Handle, state: State, value: *const ffi::c_int) -> Error;
 
     /// CAMCheckMemSegmentation
     ///
@@ -275,7 +275,7 @@ unsafe extern "C" {
     /// Returns [Error::SEGMENT_VIOLATION] if they do, [Error::INVALID_ARG] for a null pointer or zero size.
     #[doc(alias = "CAMCheckMemSegmentation")]
     #[link_name = "CAMCheckMemSegmentation"]
-    pub unsafe fn check_memory_segmentation(mem: *mut ffi::c_void, size: ffi::c_uint) -> Error;
+    pub unsafe fn check_memory_segmentation(mem: *const ffi::c_void, size: ffi::c_uint) -> Error;
 }
 
 imports_section!(

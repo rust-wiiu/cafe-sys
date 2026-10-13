@@ -105,7 +105,7 @@ unsafe extern "C" {
     #[link_name = "OSSendMessage"]
     pub unsafe fn send(
         queue: *mut MessageQueue,
-        message: *mut Message,
+        message: *const Message,
         flags: MessageFlags,
     ) -> ffi::c_bool;
 

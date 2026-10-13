@@ -111,7 +111,7 @@ pub struct Synth {
     pub art: *mut WtArt,
     pub sample: *mut WtSample,
     pub adpcm: *mut WtAdpcm,
-    pub samples: *mut u8,
+    pub samples: *const u8,
     pub priority_voice_alloc: u32,
     pub priority_note_on: u32,
     pub priority_note_release: u32,
@@ -245,8 +245,8 @@ unsafe extern "C" {
     #[link_name = "SYNInitSynth"]
     pub unsafe fn init_synth(
         synth: *mut Synth,
-        wavetable: *mut u8,
-        samples: *mut u8,
+        wavetable: *const u8,
+        samples: *const u8,
         zero_buffer: *mut u8,
         priority_voice_alloc: u32,
         priority_note_on: u32,
@@ -263,7 +263,7 @@ unsafe extern "C" {
     /// Sends one MIDI command.
     #[doc(alias = "SYNMidiInput")]
     #[link_name = "SYNMidiInput"]
-    pub unsafe fn midi_input(synth: *mut Synth, input: *mut u8);
+    pub unsafe fn midi_input(synth: *mut Synth, input: *const u8);
 
     /// SYNGetMidiController
     #[doc(alias = "SYNGetMidiController")]
